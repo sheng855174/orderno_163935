@@ -1,0 +1,2692 @@
+﻿/*
+* jQuery Secureinside eDoc plugin
+* Version 1.0 (09/01/2010)
+* @requires jQuery v1.4.4 or later
+*
+* Copyright (c) 2010 Secureinside co.,
+* Dual licensed under the MIT (MIT-LICENSE.txt)
+* and GPL (GPL-LICENSE.txt) licenses.
+*
+* Depends:
+*   jquery.form.js
+*	jquery.selectboxes.js
+*   secu.tools.js
+*/
+
+function eDocApply(ckTime) {
+    var applyInfo = new btApplyInfo();
+    var btMainDataList = [];
+    var _index = -1;
+    var _inTime = ($(ckTime) == 'undefined' ? true : ckTime);
+    var _ref = this;
+    this.sel = function (idx) { ////按送件區資料
+        _index = idx;
+        changrowcolor(_index);
+        this.clear();
+        this.checkuserapply();
+        btMainDataList[_index].setToDocument();
+    };
+    this.getCurrentMainData = function () {
+        if (_index == -1)
+            return null;
+        return btMainDataList[_index];
+    }
+    this.exist = function (_curr) {
+        for (var r = 0; r < btMainDataList.length; r++) {
+            _data = btMainDataList[r];//ANN
+            if (_curr.equals(btMainDataList[r])) {
+                ////回傳已存在的資料在第幾筆
+                //alert("r=" + r);
+                return r;
+            }
+        }
+        return -1;
+    }
+    this.add = function () {
+        applyInfo.getFromDocument();
+        var _data = getFromDocument();
+        var _idx = this.exist(_data); ////判斷欲新增的資料是否已存在
+        if (document.getElementById("ErrorMsgText").innerText != '' && typeof (document.getElementById("ErrorMsgText").innerText) != "undefined") 
+	    {
+            var _msg = '<ul>不能複製有錯誤的資料!!</ul>';
+            //            $('#msg_dialog').html(_msg).dialog('option', 'title', '謄本資料輸入錯誤').dialog('open');
+            $('#msg_dialog').html(_msg).dialog(
+                { title: '謄本資料輸入錯誤',
+                    buttons: [{ text: "OK", click: function () { $(this).dialog("close"); } }]
+                }).dialog('open');
+        } 
+	    else if (_idx >= 0) 
+        {
+            var _msg = '<ul>新增的「地、建號」或「收件年字號」有重覆，是否繼續新增此筆地建號?</ul>';
+            if (_data.isVaild(applyInfo.ApplyMode)) {
+                $('#msg_dialog').html(_msg).dialog(
+                { title: '', buttons: [
+                    { text: "是", click: function () 
+                    {
+                        if (_data.isVaild(applyInfo.ApplyMode)) 
+                        {
+                            btMainDataList.push(_data);
+                            _index = btMainDataList.length - 1;
+                            _ref.show();
+                            _ref.sel(_index);
+                            $(this).dialog("close");
+                        }
+                    }
+                    },
+                    { text: "否", click: function () { $(this).dialog("close"); } }]
+                }).dialog('open');
+            } else {
+                var _msg = '<ul>' + _data.msg + '</ul>';
+                $('#msg_dialog').html(_msg).dialog(
+                { title: '謄本資料輸入錯誤', 
+                  buttons: [{ text: "OK", click: function () {$(this).dialog("close");}}]
+                }).dialog('open');
+            }
+
+        } else if (_data.isVaild(applyInfo.ApplyMode)) {
+            btMainDataList.push(_data);
+            _index = btMainDataList.length - 1;
+            this.show();
+            this.sel(_index);
+        } else {
+            var _msg = '<ul>' + _data.msg + '</ul>';
+            //            $('#msg_dialog').html(_msg).dialog('option', 'title', '謄本資料輸入錯誤').dialog('open');
+            $('#msg_dialog').html(_msg).dialog(
+                { title: '謄本資料輸入錯誤',
+                    buttons: [{ text: "OK", click: function () { $(this).dialog("close"); } }]
+                }).dialog('open');
+        }
+    };
+    this.edit = function () {
+        applyInfo.getFromDocument();
+        var _data = getFromDocument();
+        var _idx = this.exist(_data);
+        //alert("_idx=" + _idx);
+        //        if (_idx >= 0 && _idx != _index) {
+        //            var _msg = '<ul>此筆資料已存在目前的申請資料中!!</ul>';
+        //            $('#msg_dialog').html(_msg).dialog('option', 'title', '謄本資料輸入錯誤').dialog('open');
+        //        } else 
+        if (_data.isVaild(applyInfo.ApplyMode)) {
+            this.setErrFlag();
+            btMainDataList[_index] = _data;
+            _data.status = '';
+            this.show();
+            this.sel(_index);
+        } else {
+            var _msg = '<ul>' + _data.msg + '</ul>';
+            //            $('#msg_dialog').html(_msg).dialog('option', 'title', '謄本資料輸入錯誤').dialog('open');
+            $('#msg_dialog').html(_msg).dialog(
+                { title: '謄本資料輸入錯誤',
+                    buttons: [{ text: "OK", click: function () { $(this).dialog("close"); } }]
+                }).dialog('open');
+        }
+    };
+    this.del = function () {
+        this.setErrFlag();
+        btMainDataList.splice(_index, 1);
+        this.show();
+        if (btMainDataList.length > 0)
+            this.sel(0);
+        else if (btMainDataList.length == 0) {
+            document.getElementById("ErrorMsgText").innerText = '';
+            document.getElementById("ErrorMsgArea").style.display = 'none';
+        }
+    };
+    this.setErrFlag = function () {
+        if (!document.getElementById("ErrorMsgText").innerText == '') {
+           // alert("11");
+            $('#muti_row_list table tbody tr[id^="muti_rowid"]')
+            .each(function (i, item) {
+                if (($(item).attr('class') == "error_row_select") || ($(item).attr('class') == "error_row_color")) {
+                    btMainDataList[i].status = 'E';
+                }
+            });
+        }
+    };
+    this.show = function () {       
+        var el = $('#muti_row_list table tbody');
+        el.html('');
+        var _data = null;
+        var _html = '';
+        for (var r = 0; r < btMainDataList.length; r++) {
+            _data = btMainDataList[r];
+            //alert("data.AA49=" + _data.AA49);
+            var selected_session = document.getElementById(_data.AA48); //難字
+            var session_value = selected_session.innerHTML; //難字
+            _html = '<tr id="muti_rowid' + r.toString() + '" align="center" class=' + (_data.status == '' ? '"unselect_row"' : '"error_row_color"') + ' onclick="eApply.sel(' + r.toString() + ');" onmouseover="JavaScript:this.style.cursor=\'pointer\';">'
+            		   + '<td style="display:none"><font size="2">' + (_data.status == '' ? '' : '<img src=\"../images/to_warn.gif\" alt=\"已列入警示或已存在\">') + '</font></td>'
+            		   + '<td><font size="2">' + session_value + '</font></td>' //難字
+            //                       + '<td><font size="2">' + _data.AA48C + '</font></td>'//難字
+            		   + '<td><font size="2">' + _data.AA49 + '</font></td>'
+            		   + '<td><font size="2">' + _data.AA49_1 + '</font></td>'
+            		   + '<td><font size="2">' + _data.LIDN + '</font></td>'
+            		   + '</tr>\n';
+            el.append(_html);
+        }
+
+        //同筆案件申請類型和申請身份只能選擇一次
+        ApplyForm.REGTYPE.disabled = (btMainDataList.length > 0);
+        ApplyForm.CERT_AGENT_TYPE.disabled = (btMainDataList.length > 0);
+    };
+    this.clear = function () {
+        $('.btMainData input[name^="INPUT_"]:checkbox').each(function (i, item) {
+            item.disabled = true;
+            if ('INPUT_021,INPUT_031,INPUT_041,INPUT_051,INPUT_061,INPUT_081,INPUT_0331'.indexOf(item.name) >= 0)
+                item.disabled = false;
+            else if ('INPUT_071'.indexOf(item.name) >= 0 && ApplyForm.REGTYPE.value == "1") {
+                //2014-02-21「異動清冊」只有「登記名義人本人」、「登記名義人代理人」「第一類」可申請
+                item.disabled = false;
+            }
+            item.checked = false;
+        });
+        $('.btMainData input[name^="INPUT_"]:radio').each(function (i, item) {
+            item.disabled = true;
+            item.checked = false;
+        });
+        $('.btMainData input[name^="INPUT_"]:text').each(function (i, item) {
+            if ('INPUT_011,INPUT_013,INPUT_014,INPUT_015,INPUT_019'.indexOf(item.name) >= 0) {
+                item.disabled = false;
+                if ('INPUT_011'.indexOf(item.name) < 0) 
+                    $(item).val('');
+                if (ApplyForm.UserApplyType.value == "1")   //申請角色為「登記名義人本人」
+                {
+                    ApplyForm.INPUT_015.value = CertID;
+                    ApplyForm.INPUT_015.disabled = true;
+                }
+            }
+            else {
+                item.disabled = true;
+                item.className = "inputtext_disabled";
+                $(item).val('');
+            }
+
+        });
+        $('.btMainData select').each(function (i, item) {
+            if ('Show_land_num'.indexOf(item.name) < 0) {
+                item.disabled = true;
+            }
+            item.selectedIndex = -1;
+        });
+
+
+    };
+    this.checkuserapply = function () {
+        if (CertType == 'Y') {
+            if (ApplyForm.UserApplyType.value == "1") 
+            {
+                ApplyForm.INPUT_015.disabled = true;
+            }
+        }
+    };
+    this.toXML = function () {
+        var _xml = '';
+        var _data = null;
+        applyInfo.getFromDocument();
+        _xml += applyInfo.toXML();
+        var _idxidcheck = 'N';
+        var _idridcheck = 'N';
+        for (var i = 0; i < btMainDataList.length; i++) {
+            _data = btMainDataList[i];
+            _data.NO = i;
+            //20141031_若異動索引有勾「含權利人完整姓名」，須檢核「申請人(含利害關係人)統編」
+            if (_data.IDX.CHECK == 'Y') {
+                if (_data.IDX.INPUT_064 == 'A')
+                    _idxidcheck = 'Y';
+            }
+            if (_data.IDR.CHECK == 'Y')
+                _idridcheck = 'Y';
+            _xml += _data.toXML();
+        }
+        //20141031_若異動索引有勾「含權利人完整姓名」，須檢核「申請人(含利害關係人)統編」
+        if (_idxidcheck == 'Y') {
+            if (ApplyForm.CONSIGNOR_ID.value == '')
+                return "idxidcheck";
+                //2014-11-13 惠琦提若是選本人要check是否為憑証統編
+            if (ApplyForm.CONSIGNOR_ID.value != CertID && ApplyForm.UserApplyType.value =='1') {
+                return "idxid";
+            }
+        }
+        //20141031_若異動清冊勾選時，須檢核「申請人(含利害關係人)統編」
+        if (_idridcheck == 'Y') {
+            if (ApplyForm.CONSIGNOR_ID.value == '')
+                return "idridcheck";
+            //2014-11-13 惠琦提若是選本人要check是否為憑証統編
+            if (ApplyForm.CONSIGNOR_ID.value != CertID && ApplyForm.UserApplyType.value == '1') {
+                return "idrid";
+            }
+        }
+        return _xml;
+    };
+    this.submit = function () {
+        var el = this;
+        var _msg = '';
+        var xmlstr = el.toXML();
+        if (xmlstr == "idxidcheck") {
+            _msg = '<li>異動索引-含權利人完整姓名</li><ol><li>請輸入委託(申請)人統編</li></ol>';
+            $('#msg_dialog').html(_msg).dialog(
+                { title: '申請人資料',
+                    buttons: [{ text: "OK", click: function () { $(this).dialog("close"); } }]
+                }).dialog('open');
+            return;
+        }else if (xmlstr == "idxid") {
+            _msg = '<li>異動索引-含權利人完整姓名</li><ol><li>請輸入正確的委託(申請)人統編，需與憑証相同</li></ol>';
+            $('#msg_dialog').html(_msg).dialog(
+                { title: '申請人資料',
+                    buttons: [{ text: "OK", click: function () { $(this).dialog("close"); } }]
+                }).dialog('open');
+            return;
+        }else if (xmlstr == "idridcheck") {
+            _msg = '<li>異動清冊</li><ol><li>請輸入委託(申請)人統編</li></ol>';
+            $('#msg_dialog').html(_msg).dialog(
+                { title: '申請人資料',
+                    buttons: [{ text: "OK", click: function () { $(this).dialog("close"); } }]
+                }).dialog('open');
+            return;
+        }else if (xmlstr == "idrid") {
+            _msg = '<li>異動清冊</li><ol><li>請輸入正確的委託(申請)人統編</li></ol>';
+            $('#msg_dialog').html(_msg).dialog(
+                { title: '申請人資料',
+                    buttons: [{ text: "OK", click: function () { $(this).dialog("close"); } }]
+                }).dialog('open');
+            return;
+        }
+
+        if (document.getElementById("ErrorMsgText").innerText != '') {
+            var _msg = '<ul>不能送出有錯誤的資料!!</ul>';
+            //            $('#msg_dialog').html(_msg).dialog('option', 'title', '謄本資料輸入錯誤').dialog('open');
+            $('#msg_dialog').html(_msg).dialog(
+                { title: '謄本資料輸入錯誤',
+                    buttons: [{ text: "OK", click: function () { $(this).dialog("close"); } }]
+                }).dialog('open');
+        }
+        if (!applyInfo.isVaild())
+            _msg += applyInfo.msg;
+        if (btMainDataList.length == 0)
+            _msg += '<li>請新增要申請的謄本資料</li>';
+        if (_msg.length > 0) {
+            //            $('#msg_dialog').html(_msg).dialog('option', 'title', '謄本申請輸入錯誤').dialog('open');
+            $('#msg_dialog').html(_msg).dialog(
+                { title: '謄本資料輸入錯誤',
+                    buttons: [{ text: "OK", click: function () { $(this).dialog("close"); } }]
+                }).dialog('open');
+            return;
+        }
+//        _msg = '確定要送件!!';
+        if (_inTime == false) {
+            _msg = '已過本日謄本申請時間, \n' + _msg;
+        }
+//        var rst = confirm(_msg);
+//        if (rst == false)
+//            return;
+        if (applyInfo.ApplyMode == '0') {
+            //todo: check 已存在
+        }
+        xmlstr =
+			'[REQUEST]\n' +
+			    xmlstr +
+			'[/REQUEST]\n';
+        if (xmlstr != "") {
+            document.getElementById("BtnControlArea").style.visibility = 'hidden';
+            document.ApplyForm.SXML.value = xmlstr;
+            clientsubmitform();
+        }
+    };
+    this.reset = function () {
+        applyInfo.reset();
+        $('#charge_type').each(function (i, item) { item.selectedIndex = 0; });
+        btMainDataList.length = 0;
+        this.show();
+        $('#city_id').changeCityOption('', '', '', '');
+        $('input[name="INPUT_013"]').val('');
+        $('input[name="INPUT_014"]').val('');
+        $('input[name="INPUT_015"]').val('');
+        $('input[name="INPUT_025"]').selectCheckBox('N');
+        this.clear();
+    };
+    function getFromDocument() {
+        var currData = new btMainData();
+        currData.getFromDocument();
+        return currData;
+    };
+    function setToDocument() {
+        var currData = null;
+        if (_index >= 0) {
+            currData = btMainDataList[_index];
+            currData.setToDocument();
+        }
+    };
+    function changrowcolor(index) {  //設定Focus記錄的bgcolor
+        var errcount = 0;
+        $('#muti_row_list table tbody tr[id^="muti_rowid"]')
+			.each(function (i, item) {
+			    if (($(item).attr('class') == "error_row_select") || ($(item).attr('class') == "error_row_color")) {
+			        errcount++;
+			        if (i == index)
+			            $(item).removeClass().addClass('error_row_select');
+			        else
+			            $(item).removeClass().addClass('error_row_color'); ;
+			    } else {
+			        //alert("tt");
+			        if (i == index)
+			            $(item).removeClass().addClass('select_row');
+			        else
+			            $(item).removeClass().addClass('unselect_row');
+			    }
+
+			});
+			//alert("errcount1=" + errcount);
+			if (errcount == 0) {
+			    document.getElementById("ErrorMsgText").innerText = '';
+                document.getElementById("ErrorMsgArea").style.display = 'none';
+            }
+
+    };
+};
+
+function getVal(obj, defVal) {
+    if (obj && obj.val() != undefined)
+        return $.trim(obj.val());
+    if (defVal)
+        return defVal;
+    else
+        return '';
+}
+
+function btApplyInfo() {
+    var _data = {
+        ApplyMode: '0',
+        MAXPAGE: 10,
+        BIOID: '',
+        OID: '',
+        User: {
+            ID: '',
+            NAME: ''
+        },
+        Unit: {
+            ID: '',
+            NAME: ''
+        },
+        Account: {
+            ID: '',
+            PWD: '',
+            ACCTYPE: '',
+            NAME: '',
+            CHECK: function () {
+                if ((this.ID + this.PWD + this.ACCTYPE + this.NAME).length > 0)
+                    return true;
+                else
+                    return false;
+            }
+        },
+        AAA_CODE: '',
+        Charge: {
+            TYPE: '',
+            User: {
+                ID: '',
+                NAME: ''
+            },
+            Unit: {
+                ID: '',
+                NAME: ''
+            },
+            toXML: function () {
+                var _xml = '';
+                if (this.CHECK) {
+                    _xml =
+						'   [Charge]\n' +
+						'      [TYPE]' + this.TYPE + '[/TYPE]\n' +
+						'      [User ID="' + this.User.ID + '"]' + this.User.NAME + '[/User]\n' +
+						'      [Unit ID="' + this.Unit.ID + '"]' + this.Unit.NAME + '[/Unit]\n' +
+						'   [/Charge]\n';
+                }
+                return _xml;
+            },
+            getFromDocument: function () {
+                this.TYPE = getVal($('select[name="charge_type"]'));
+                this.User.ID = getVal($('input[name="charge_user_id"]'));
+                this.User.NAME = getVal($('input[name="charge_user_name"]'));
+                this.Unit.ID = getVal($('input[name="charge_unit_id"]'));
+                this.Unit.NAME = getVal($('input[name="charge_unit_name"]'));
+            },
+            CHECK: function () {
+                if ((this.TYPE + this.User.ID + this.User.NAME + this.Unit.ID + this.Unit.NAME).length > 0)
+                    return true;
+                else
+                    return false;
+            },
+            reset: function () {
+                this.TYPE = '';
+                this.User.ID = '';
+                this.User.NAME = '';
+                this.Unit.ID = '';
+                this.Unit.NAME = '';
+            }
+        },
+        ManageRNO: '',
+        msg: '',
+        isVaild: function () {
+            var _msg = this.validate();
+            if (_msg.replace(new RegExp('\n', 'gm'), '').length > 0) {
+                this.msg = _msg;
+                return false;
+            } else
+                return true;
+        },
+        validate: function () {
+            var _msg = '';
+            if (UserName.length == 0) {
+                _msg += '<li>請輸入申請者姓名</li>';
+            }
+            if (this.INPUT_APPLYFOR == "") {
+                _msg += '<li>請選擇申請用途</li>';
+            }
+            if (this.INPUT_APPLYFOR == "04" && this.INPUT_REASONORGID == "") {
+                _msg += '<li>請選擇政府單位!!</li>';
+            }
+            if (this.Charge.TYPE == '*') {
+                _msg += '<li>請選擇業務別</li>';
+            }
+            if (isNaN(this.MAXPAGE) || parseInt(this.MAXPAGE, 10) <= 0) {
+                _msg += '<li>限制張數必須為數字並且大於0</li>';
+            }
+            if (this.MAXPAGE.length == 0) {
+                _msg += '<li>限制張數不可為0或空值</li>';
+            }
+            if (_msg.length > 0)
+                _msg = '<li>申請人資料</li><ol>' + _msg + '</ol>';
+            return _msg;
+        },
+        toXML: function () {
+            var _xml =
+                '[COMMON]\n';
+            _xml = _xml +
+                  '   [FROM_ID]' + FromID + '[/FROM_ID]\n' +
+                  '   [USER_ID]' + UserID + '[/USER_ID]\n' +
+                  '   [USERIP]' + UserIP + '[/USERIP]\n' +
+                  '   [USER_NAME]' + UserName + '[/USER_NAME]\n' +
+                  '   [USER_TYPE]' + LoginType + '[/USER_TYPE]\n' +
+                  '   [APPLYUSER]' + APPLYUSER + '[/APPLYUSER]\n' +
+                  '   [APPLYUSER_LIDN]' + APPLYUSERLIDN + '[/APPLYUSER_LIDN]\n' +
+                  '   [REASON_ORG_ID]' + this.INPUT_REASONORGID + '[/REASON_ORG_ID]\n' + //申請用途政府單位ID
+                  '   [REASON_ID]' + this.INPUT_APPLYFOR + '[/REASON_ID]\n'; //申請用途政ID
+            if (Applyform == "Y") {
+                _xml = _xml +
+                  '   [APPLYUSER1]' + ApplyForm.APPLYUSER1.value + '[/APPLYUSER1]\n' +
+                  '   [APPLYUSER_LIDN1]' + ApplyForm.APPLYUSER_LIDN1.value + '[/APPLYUSER_LIDN1]\n' +
+                  '   [APPLYUSER_TEL1]' + ApplyForm.APPLYUSER_TEL1.value + '[/APPLYUSER_TEL1]\n' +
+                  '   [APPLYUSER2]' + ApplyForm.APPLYUSER2.value + '[/APPLYUSER2]\n' +
+                  '   [APPLYUSER_LIDN2]' + ApplyForm.APPLYUSER_LIDN2.value + '[/APPLYUSER_LIDN2]\n' +
+                  '   [APPLYUSER_TEL2]' + ApplyForm.APPLYUSER_TEL2.value + '[/APPLYUSER_TEL2]\n' +
+                  '   [CONSIGNOR_TEL]' + ApplyForm.CONSIGNOR_TEL.value + '[/CONSIGNOR_TEL]\n' +
+                  '   [REASON][/REASON]\n' +
+          	      '   [REG_CNT]' + ApplyForm.REG_CNT.value + '[/REG_CNT]\n' +
+          	      '   [PIC1_CNT]' + ApplyForm.PIC1_CNT.value + '[/PIC1_CNT]\n' +
+          	      '   [PIC2_CNT]' + ApplyForm.PIC2_CNT.value + '[/PIC2_CNT]\n' +
+          	      '   [PRC_CNT]' + ApplyForm.PRC_CNT.value + '[/PRC_CNT]\n' +
+          	      '   [IDX_CNT]' + ApplyForm.IDX_CNT.value + '[/IDX_CNT]\n' +
+          	      '   [IDR_CNT]' + ApplyForm.IDR_CNT.value + '[/IDR_CNT]\n' +
+            	  '   [REF_CNT]' + ApplyForm.REF_CNT.value + '[/REF_CNT]\n' +
+                  '   [CNT]1[/CNT]\n';
+            }
+            else {
+                _xml = _xml + '   [CNT]1[/CNT]\n';
+            }
+
+            _xml = _xml + '   [MAXPAGE]' + this.MAXPAGE + '[/MAXPAGE]\n' +
+		          '   [LN]' + this.LN + '[/LN]\n' +
+                  '   [AREA]' + this.AREA + '[/AREA]\n' +
+                  '   [CITYID]' + this.CITYID + '[/CITYID]\n' +
+                  '   [CITYNAME]' + this.CITYNAME + '[/CITYNAME]\n' +
+                  '   [CONSIGNOR_ID]' + this.CONSIGNOR_ID + '[/CONSIGNOR_ID]\n' +
+                  '   [CONSIGNOR]' + this.CONSIGNOR + '[/CONSIGNOR]\n' +
+                  '   [APPLYUSER_TYPE]' + ApplyForm.UserApplyType.value + '[/APPLYUSER_TYPE]\n' +
+                  '   [USER_CITYID][/USER_CITYID]\n' +  //測試QRCODE
+                  '   [USER_LN][/USER_LN]\n' + //測試QRCODE
+                  '   [USER_AREAID]' + UserAreaID + '[/USER_AREAID]\n' +
+                  '   [USER_MANAGER]' + UserManager + '[/USER_MANAGER]\n' +
+                  '   [USER_LN_NAME]' + UserLnName + '[/USER_LN_NAME]\n' +
+                  '   [SR_DATE]' + SrDate + '[/SR_DATE]\n' +
+                  '   [SR_TIME]' + SrTime + '[/SR_TIME]\n' +
+                  "   [CERT_ID CHECK='" + CertType + "']" + CertID + "[/CERT_ID]\n" +
+                  "   [CERT_NAME]" + CertName + "[/CERT_NAME]\n";
+            _xml = _xml + "   [CERT_TYPE]" + CertLoingType2 + "[/CERT_TYPE]\n";
+            _xml = _xml + '   [IDENTITY_ID]' + this.IDENTITY_ID + '[/IDENTITY_ID]\n' +
+                  '   [CERT_AGENT_ID]' + CertAgentID + '[/CERT_AGENT_ID]\n' +
+                  '   [CERT_AGENT_TYPE]' + ApplyForm.CERT_AGENT_TYPE.value + '[/CERT_AGENT_TYPE]\n' +
+                  '   [REGTYPE]' + this.REGTYPE + '[/REGTYPE]\n' +
+                  '[/COMMON]\n';
+            return _xml;
+        },
+        getFromDocument: function () {
+            this.INPUT_REASONORGID = getVal($('select[name="ReasonOrgId"]'));
+            this.INPUT_APPLYFOR = getVal($('select[name="applyfor"]'));
+            this.MAXPAGE = getVal($('input[name="MAXPAGE"]'), 10);
+            this.AREA = getVal($('input[name="AreaID"]'));
+            this.LN = getVal($('input[name="LN"]'));
+            this.CITYID = getVal($('input[name="CityID"]'));
+            this.CITYNAME = getVal($('input[name="CityName"]'));
+            this.CONSIGNOR_ID = getVal($('input[name="CONSIGNOR_ID"]'));
+            this.CONSIGNOR = getVal($('input[name="CONSIGNOR"]'));
+            this.IDENTITY_ID = getVal($('input[name="IDENTITY_ID"]'));
+            this.REGTYPE = getVal($('select[name="REGTYPE"]'));
+
+        },
+        reset: function () {
+            this.ApplyMode = '0';
+            this.MAXPAGE = 10;
+            this.BIOID = '';
+            this.OID = '';
+            this.User.ID = '';
+            this.User.NAME = '';
+            this.Unit.ID = '';
+            this.Unit.NAME = '';
+            this.Charge.reset();
+            this.ManageRNO = '';
+        }
+    }
+    return eval(_data);
+};
+
+function btMainData() {
+    var _data = {
+        NO: 1,
+        CITYID: '',
+        CITYNAME: '',
+        AREAID: '',
+        AREANAME: '',
+        LN: '',
+        AA48: '',
+        AA48C: '',
+        AA49: '',
+        AA49_1: '',
+        LIDN: '',
+        SAVE_P00: 'N',
+        REG: {
+            CHECK: 'Y',
+            PRINT_HD: 'N',
+            PRINT_OD: 'N',
+            REG_SRPRCE: 'N',
+            TYPE: '0',
+            REG_CNT: '0',
+            REGTYPE: '0',
+            validate: function (parent) {
+                var _msg = '';
+                if (this.CHECK == 'Y') {
+                    if (parent.AA49.length == 0 && parent.AA49_1.length == 0)
+                        _msg += '<li>請輸入地號或建號</li>';
+                    else {
+                        if (parent.AA49.length != 0) {
+                            var _chkmsg = '';
+                            _chkmsg = CheckInputLB1(parent.AA49, 'L');
+                            if (_chkmsg != '')
+                                _msg += '<li>' + _chkmsg + '</li>';
+                        }
+                        if (parent.AA49_1.length != 0) {
+                            var _chkmsg = '';
+                            _chkmsg = CheckInputLB1(parent.AA49_1, 'B');
+                            if (_chkmsg != '')
+                                _msg += '<li>' + _chkmsg + '</li>';
+                        }
+                    }
+                    //20140721 巫總提無論，第一類謄本，第二類謄本，皆可輸入統編
+                    //20140722 巫總提個人及他項權利部個人要輸入統編
+                    //20141105 巫總提，第一類謄本，除了「標示部選項」，其他皆要統編及姓名，但選「登記名義人本人」時不用確認(向惠琦確認的)
+                    //20150121 巫總提，登記謄本新增「他項權利個人全部」選項，輸入統編規則與個人一樣
+                    //20180117 惠琦提，統編由8碼以上改為輸入5碼以上(帶入登序)，因帶入的統編有可能7碼
+                    if (this.REGTYPE == '1') { //第一類謄本
+
+                        if (this.TYPE != '2') {
+                            if (parent.LIDN.length < 5)
+                                _msg += '<li>請輸入正確的統一編號</li>';
+                            //20180828 Grace提，統編增加檢核
+                            if (parent.LIDN.length >= 1 && FastCheckOwn2(parent.LIDN) != "")
+                                _msg += '<li>' + FastCheckOwn2(parent.LIDN) + '</li>';
+                        } else {
+                            if (ApplyForm.UserApplyType.value != "1") {
+                                if (parent.LIDN.length > 0) {
+                                    _msg += '<li>不需輸入統一編號!!</li>';
+                                    ApplyForm.INPUT_015.value = "";
+                                }
+                            }
+
+                        }
+
+                        //                        //2013-12-06 惠琦提 改為「所有權部」、「標示部及所有權部」統編可選擇輸入或不輸入
+                        //                        if (this.TYPE == '0' || this.TYPE == '1' || this.TYPE == '4' || this.TYPE == '5' || this.TYPE == '7') {
+                        //                            if (parent.LIDN.length < 8)
+                        //                                _msg += '<li>請輸入正確的統一編號</li>';
+                        //                        }
+                    }
+                    //20141105 巫總提，第二類除了「部份(個人全部)」及「他項權利部之個人」其他皆不要統編及姓名
+                    //，但選「登記名義人本人」時不用確認(向惠琦確認的)
+                    //20150121 巫總提，登記謄本新增「他項權利個人全部」選項，輸入統編規則與個人一樣
+                    //20150918 maggie提，增加統編可帶入登序，因此將長度檢查由八碼變為五碼
+                    else if (this.REGTYPE == '2') { //第二類謄本
+                        if (this.TYPE == '0' || this.TYPE == '5' || this.TYPE == '9') {//當勾選個人全部,他項權利部個人
+                            if (parent.LIDN.length < 5)
+                                _msg += '<li>請輸入正確的統一編號</li>';
+                            if (parent.LIDN.length >= 1 && FastCheckOwn2(parent.LIDN) != "")
+                                _msg += '<li>' + FastCheckOwn2(parent.LIDN) + '</li>';
+                        } else {
+                            if (ApplyForm.UserApplyType.value != "1") {
+                                if (parent.LIDN.length > 0) {
+                                    _msg += '<li>不需輸入統一編號!!</li>';
+                                    ApplyForm.INPUT_015.value = "";
+                                }
+                            }
+                        }
+                        //                        if (ApplyForm.UserApplyType.value == "1") {  //申請角色為「登記名義人本人」
+                        //                            if (parent.LIDN.length < 8)
+                        //                                _msg += '<li>請輸入統一編號</li>';
+                        //                        }
+                    }
+                    //                        else {
+                    //                    if (this.TYPE == '0' || this.TYPE == '5') { //當勾選「他項權利部個人」或「部分」
+                    //                        if (parent.LIDN.length < 8)
+                    //                            _msg += '<li>請輸入正確的統一編號</li>';
+                    //                    }
+
+                    if (this.TYPE == '5' && parent.LIDN.length > 0) {
+                        //當勾選他項權利部個人時，統編不能輸入多筆
+                        if (parent.LIDN.indexOf(",") != -1) {
+                            _msg += '<li>「他項權利部之個人」只能輸入單筆統一編號!!</li>';
+                        }
+                    }
+
+                    if (this.TYPE == '0' && parent.AA49.length != 0) {
+                        //20200414,Fiona提當勾選所有權個人全部時，不可輸入連續地號
+                        if (parent.AA49.indexOf("~") != -1) {
+                            _msg += '<li>「所有權個人全部」不可輸入連續地號(~)!!</li>';
+                        }
+                    }
+
+                    if (this.TYPE == '0' && parent.AA49_1.length != 0) {
+                        //20200414,Fiona提當勾選所有權個人全部時，不可輸入連續建號
+                        if (parent.AA49_1.indexOf("~") != -1) {
+                            _msg += '<li>「所有權個人全部」不可輸入連續建號(~)!!</li>';
+                        }
+                    }
+
+                    //                            else if (this.TYPE == '1') { //當勾選「全部」
+                    //                                20140716惠琦修改民眾端「登記名義人本人」申請二類「全部」不需輸入統一編號
+                    //                                //「登記名義人代理人」
+                    //                                if ((ApplyForm.UserApplyType.value == "2") && (parent.LIDN.length < 8))
+                    //                                    _msg += '<li>請輸入統一編號</li>';
+                    //                                else if (ApplyForm.UserApplyType.value != "2") {
+                    //                                    if (parent.LIDN.length > 0) {
+                    //                                        _msg += '<li>不需輸入統一編號!!</li>';
+                    //                                        ApplyForm.INPUT_015.value = "";
+                    //                                    }
+                    //                                }
+                    //                            } else if (this.TYPE == '3' || this.TYPE == '6') {
+                    //                                //2013-12-06 改為「所有權部」、「標示部及所有權部」統編可選擇輸入或不輸入
+                    //                            }
+                    //                            else {
+                    //                                if (parent.LIDN.length > 0) {
+                    //                                    _msg += '<li>不需輸入統一編號!!</li>';
+                    //                                    ApplyForm.INPUT_015.value = "";
+                    //                                }
+                    //                            }
+                    //                        }
+                    //                        
+                    //                    }
+
+                    if (parent.OWNAME.length != 0 && NameRgexp(parent.OWNAME))
+                        _msg += '<li>姓名內不可輸入&#符號</li>';
+
+                    if (this.TYPE.length == 0)
+                        _msg += '<li>請選擇要申請的登記謄本種類</li>';
+
+                    if (_msg.length > 0)
+                        _msg = '<li>登記謄本</li><ol>' + _msg + '</ol>';
+                }
+                return _msg;
+            },
+            toXML: function () {
+                var _xml = '';
+                if (this.CHECK == 'Y') {
+                    _xml =
+						'   [REG CHECK="Y"]\n' +
+						'      [PRINT_HD]' + this.PRINT_HD + '[/PRINT_HD]\n' +
+						'      [PRINT_OD]' + this.PRINT_OD + '[/PRINT_OD]\n' +
+						'      [REG_SRPRCE]' + this.REG_SRPRCE + '[/REG_SRPRCE]\n' +
+						'      [TYPE]' + this.TYPE + '[/TYPE]\n' +
+						'      [CNT]1[/CNT]\n' +
+						'   [/REG]\n';
+                }
+                return _xml;
+            },
+            getFromDocument: function () {
+                this.CHECK = getVal($('input[name="INPUT_021"]:checked'), 'N');
+                this.REG_CNT = getVal($('input[name="REG_CNT"]'));
+                if (this.CHECK == 'Y') {
+                    this.PRINT_HD = getVal($('input[name="INPUT_022"]:checked'), 'Y');
+                    this.PRINT_OD = getVal($('input[name="INPUT_024"]:checked'), 'Y');
+                    this.REG_SRPRCE = getVal($('input[name="INPUT_025"]:checked'), 'Y');
+                    this.TYPE = getVal($('input[name="INPUT_023"]:checked'));
+                    this.REGTYPE = getVal($('select[name="REGTYPE"]'));
+                }
+            },
+            setToDocument: function () {
+                $('input[name="INPUT_021"]').selectCheckBox(this.CHECK);
+                $('input[name="REG_CNT"]').val(this.REG_CNT);
+                if (this.CHECK == 'Y') {
+                    $('input[name="INPUT_022"]').selectCheckBox(this.PRINT_HD);
+                    $('input[name="INPUT_024"]').selectCheckBox(this.PRINT_OD);
+                    $('input[name="INPUT_025"]').selectCheckBox(this.REG_SRPRCE);
+                    $('input[name="INPUT_023"]').selectRadio(this.TYPE);
+                }
+            }
+        },
+        PRC: {
+            CHECK: 'N',
+            BRSURVER: 'N',
+            AA16: {
+                CHECK: 'N',
+                TYPE: '1',
+                START_YEAR: '',
+                END_YEAR: '',
+                toXML: function () {
+                    var _xml = '';
+                    _xml =
+                            '      [AA16 CHECK="' + this.CHECK + '" TYPE="' + this.TYPE + '"]\n' +
+							'         [START_YEAR]' + this.START_YEAR + '[/START_YEAR]\n' +
+							'         [END_YEAR]' + this.END_YEAR + '[/END_YEAR]\n' +
+							'      [/AA16]\n';
+                    return _xml;
+                },
+                getFromDocument: function () {
+                    this.CHECK = getVal($('input[name="INPUT_053"]:checked'), 'N');
+
+                    if (this.CHECK == 'Y') {
+                        if ((ApplyForm.INPUT_056[0].checked) && (ApplyForm.INPUT_056[1].checked))
+                            this.TYPE = "2";
+                        else if (ApplyForm.INPUT_056[0].checked)
+                            this.TYPE = "0";
+                        else if (ApplyForm.INPUT_056[1].checked)
+                            this.TYPE = "1";
+                        else
+                            this.TYPE = "";
+
+
+                        if (this.TYPE >= 1) {
+                            this.START_YEAR = getVal($('input[name="INPUT_0561"]'));
+                            this.END_YEAR = getVal($('input[name="INPUT_0562"]'));
+                        }
+                    }
+                },
+                setToDocument: function () {
+                    $('input[name="INPUT_053"]').selectCheckBox(this.CHECK);
+                    if (this.CHECK == 'Y') {
+                        if (this.TYPE == 2)
+                            $('input[name="INPUT_056"]').selectCheckBox('0,1');
+                        else
+                            $('input[name="INPUT_056"]').selectCheckBox(this.TYPE);
+                        if (this.TYPE >= 1) {
+                            $('input[name="INPUT_0561"]').val(this.START_YEAR);
+                            $('input[name="INPUT_0562"]').val(this.END_YEAR);
+                        }
+
+                        if (ApplyForm.INPUT_056[1].checked) {
+                            ApplyForm.INPUT_0561.disabled = false;
+                            ApplyForm.INPUT_0561.className = "";
+                            ApplyForm.INPUT_0562.disabled = false;
+                            ApplyForm.INPUT_0562.className = "";
+                            ApplyForm.INPUT_0561.focus();
+                        } else {
+                            ApplyForm.INPUT_0561.disabled = true;
+                            ApplyForm.INPUT_0561.className = "inputtext_disabled";
+                            ApplyForm.INPUT_0562.disabled = true;
+                            ApplyForm.INPUT_0562.className = "inputtext_disabled";
+                        }
+                        ApplyForm.INPUT_056[0].disabled = ((!ApplyForm.INPUT_053.checked) || (ApplyForm.INPUT_052.checked));
+                    }
+                },
+                validate: function (parent) {
+                    var _msg = '';
+                    var today = new Date();
+                    if (this.CHECK == 'Y' && this.TYPE >= 1) {
+                        if (this.START_YEAR.length == 0)
+                            _msg += '<li>請輸入公告現值歷年起始值</li>';
+                        if (this.END_YEAR.length == 0)
+                            _msg += '<li>請輸入公告現值歷年終止值</li>';
+                        if (this.END_YEAR < this.START_YEAR)
+                            _msg += '<li>公告現值的歷年區間輸入有誤!!</li>';
+                        if (this.END_YEAR >= (today.getFullYear() - 1911))
+                            _msg += '<li>公告現值歷年區間輸入有誤!!\n輸入數值需小於(' + (today.getFullYear() - 1911) + '年)!!</li>';
+                    }
+                    return _msg;
+                }
+            },
+            BB21: {
+                CHECK: 'N',
+                TYPE: '1',
+                START_YEAR: '',
+                END_YEAR: '',
+                toXML: function () {
+                    var _xml = '';
+                    _xml =
+                            '      [BB21 CHECK="' + this.CHECK + '" TYPE="' + this.TYPE + '"]\n' +
+							'         [START_YEAR]' + this.START_YEAR + '[/START_YEAR]\n' +
+							'         [END_YEAR]' + this.END_YEAR + '[/END_YEAR]\n' +
+							'      [/BB21]\n';
+                    return _xml;
+                },
+                getFromDocument: function () {
+                    this.CHECK = getVal($('input[name="INPUT_054"]:checked'), 'N');
+                    if (this.CHECK == 'Y') {
+                        if ((ApplyForm.INPUT_057[0].checked) && (ApplyForm.INPUT_057[1].checked))
+                            this.TYPE = "2";
+                        else if (ApplyForm.INPUT_057[0].checked)
+                            this.TYPE = "0";
+                        else if (ApplyForm.INPUT_057[1].checked)
+                            this.TYPE = "1";
+                        else
+                            this.TYPE = "";
+                        if (this.TYPE >= 1) {
+                            this.START_YEAR = getVal($('input[name="INPUT_0571"]'));
+                            this.END_YEAR = getVal($('input[name="INPUT_0572"]'));
+                        }
+                    }
+                },
+                setToDocument: function () {
+                    $('input[name="INPUT_054"]').selectCheckBox(this.CHECK);
+                    if (this.CHECK == 'Y') {
+                        if (this.TYPE == 2)
+                            $('input[name="INPUT_057"]').selectCheckBox('0,1');
+                        else
+                            $('input[name="INPUT_057"]').selectCheckBox(this.TYPE);
+                        if (this.TYPE >= 1) {
+                            $('input[name="INPUT_0571"]').val(this.START_YEAR);
+                            $('input[name="INPUT_0572"]').val(this.END_YEAR);
+                        }
+                        if (ApplyForm.INPUT_057[1].checked) {
+                            ApplyForm.INPUT_0571.disabled = false;
+                            ApplyForm.INPUT_0571.className = "";
+                            ApplyForm.INPUT_0572.disabled = false;
+                            ApplyForm.INPUT_0572.className = "";
+                            ApplyForm.INPUT_0571.focus();
+                        } else {
+                            ApplyForm.INPUT_0571.disabled = true;
+                            ApplyForm.INPUT_0571.className = "inputtext_disabled";
+                            ApplyForm.INPUT_0572.disabled = true;
+                            ApplyForm.INPUT_0572.className = "inputtext_disabled";
+                        }
+                        ApplyForm.INPUT_057[0].disabled = ((!ApplyForm.INPUT_054.checked) || (ApplyForm.INPUT_052.checked));
+                    }
+                },
+                validate: function (parent) {
+                    var _msg = '';
+                    var today = new Date();
+                    var prcyear = today.getFullYear() - 1911;
+                    // 20130107修改，歷年申報地價稽核標準為93'96'99...每三年一次，非跟目前年次相比
+                    // 20180103修改，歷年申報地價稽核改為每二年一次
+                    // 20190108修改，歷年申報地價稽核改為統一減一
+                    prcyear = prcyear - 1;
+                    if (this.CHECK == 'Y' && this.TYPE >= 1) {
+                        if (this.START_YEAR.length == 0)
+                            _msg += '<li>請輸入申報地價歷年起始值</li>';
+                        if (this.END_YEAR.length == 0)
+                            _msg += '<li>請輸入申報地價歷年終止值</li>';
+                        if (this.END_YEAR < this.START_YEAR)
+                            _msg += '<li>申報地價的歷年區間輸入有誤!!</li>';
+                        if (this.END_YEAR >= prcyear)
+                            _msg += '<li>申報地價歷年區間輸入有誤!!\n輸入數值需小於(' + prcyear + '年)!!</li>';
+                    }
+                    return _msg;
+                }
+            },
+            SRPRCE: 'Y',
+            PRCTYPE: '0',
+            PRC_CNT: '0',
+            REGTYPE: '0',
+            validate: function (parent) {
+                var _msg = '';
+                if (this.CHECK == 'Y') {
+                    if (parent.AA49.length == 0)
+                        _msg = '<li>請輸入地號</li>';
+                    else {
+                        var _chkmsg = '';
+                        _chkmsg = CheckInputLB1(parent.AA49, 'L');
+                        if (_chkmsg != '')
+                            _msg += '<li>' + _chkmsg + '</li>';
+                    }
+
+                    //2015-11-13惠琦提，地價若勾選「重測前」之「申請身份」不得為管理者，因CERT_AGENT_TYPE值是存最後一筆
+                    //(位於上方common區)，目前先只新增時檔，若user在最後一筆改選「申請身份」，後面產製程式會擋
+                    if (this.BRSURVER == 'Y' && ApplyForm.CERT_AGENT_TYPE.value == '2')
+                        _msg = '<li>勾選「重測前」之「申請身份」不得為管理者</li>';
+
+                    //20140721巫總提無論，第一類謄本，第二類謄本，皆可輸入統編
+                    //20140722巫總提個人要輸入統編
+                    //                    if (this.PRCTYPE == "0" && parent.LIDN.length < 8) {
+                    //                        _msg += '<li>請輸入正確的統一編號</li>';
+                    //                    }
+
+                    if (this.REGTYPE == '1') { //第一類謄本
+                        //20141105 巫總提，第一類除了「標示部選項」，其他皆要統編及姓名
+                        //20180117 惠琦提，統編由8碼以上改為輸入5碼以上(帶入登序)，因帶入的統編有可能7碼
+                        if (this.PRCTYPE == "0" || this.PRCTYPE == "1") {
+                            if (parent.LIDN.length < 5)
+                                _msg += '<li>請輸入正確的統一編號</li>';
+                            if (parent.LIDN.length >= 1 && FastCheckOwn2(parent.LIDN) != "")
+                                _msg += '<li>' + FastCheckOwn2(parent.LIDN) + '</li>';
+                        }
+                    } else if (this.REGTYPE == '2') { //第二類謄本    
+                        //20141105 巫總提，第二類除了「部份(個人全部)」及「他項權利部之個人」其他皆不要統編及姓名
+                        //，但選「登記名義人本人」時不用確認(向惠琦確認的)  
+                        //20150918 maggie提，增加統編可帶入登序，因此將長度檢查由八碼變為五碼             
+                        if (this.PRCTYPE == '0') {//當勾選「部份(個人全部)」
+                            if (parent.LIDN.length < 5)
+                                _msg += '<li>請輸入正確的統一編號</li>';
+                            if (parent.LIDN.length >= 1 && FastCheckOwn2(parent.LIDN) != "")
+                                _msg += '<li>' + FastCheckOwn2(parent.LIDN) + '</li>';
+                        } else {
+                            if (ApplyForm.UserApplyType.value != "1") {
+                                if (parent.LIDN.length > 0) {
+                                    _msg += '<li>不需輸入統一編號!!</li>';
+                                    ApplyForm.INPUT_015.value = "";
+                                }
+                            }
+
+                        }
+                    }
+                    //                    //一類全部要輸入統編
+                    //                    if (this.PRCTYPE == "1" && this.REGTYPE =="1" && parent.LIDN.length < 8) {
+                    //                        _msg += '<li>請輸入正確的統一編號</li>';
+                    //                    }
+                    //                    //二類全部不要輸入統編
+                    //                    if (ApplyForm.UserApplyType.value != "1" && this.PRCTYPE == "1" && this.REGTYPE == "2" && parent.LIDN.length >0) {
+                    //                        _msg += '<li>不需輸入統一編號!!</li>';
+                    //                        ApplyForm.INPUT_015.value = ""; ;
+                    //                    }
+
+                    _msg += this.AA16.validate(this);
+                    _msg += this.BB21.validate(this);
+
+                    if (parent.OWNAME.length != 0 && NameRgexp(parent.OWNAME))
+                        _msg += '<li>姓名內不可輸入&#符號</li>';
+
+                    if (_msg.length > 0)
+                        _msg = '<li>地價謄本</li><ol>' + _msg + '</ol>';
+                }
+                return _msg;
+            },
+            toXML: function () {
+                var _xml = '';
+                if (this.CHECK == 'Y') {
+                    _xml =
+						'   [PRC CHECK="Y"]\n' +
+						'      [BRSURVEY]' + this.BRSURVER + '[/BRSURVEY]\n' +
+						       this.AA16.toXML() +
+						       this.BB21.toXML() +
+						'      [SRPRCE]' + this.SRPRCE + '[/SRPRCE]\n' +
+						'      [PRCTYPE]' + this.PRCTYPE + '[/PRCTYPE]\n' +
+						'      [CNT]1[/CNT]\n' +
+						'   [/PRC]\n';
+                }
+                return _xml;
+            },
+            getFromDocument: function () {
+                this.CHECK = getVal($('input[name="INPUT_051"]:checked'), 'N');
+                this.PRC_CNT = getVal($('input[name="PRC_CNT"]'));
+                if (this.CHECK == 'Y') {
+                    this.PRCTYPE = getVal($('input[name="INPUT_058"]:checked'));
+                    this.BRSURVER = getVal($('input[name="INPUT_052"]:checked'), 'N');
+                    this.AA16.getFromDocument();
+                    this.BB21.getFromDocument();
+                    this.SRPRCE = getVal($('input[name="INPUT_055"]:checked'), 'N');
+                    this.REGTYPE = getVal($('select[name="REGTYPE"]'));
+                }
+            },
+            setToDocument: function () {
+                $('input[name="INPUT_051"]').selectCheckBox(this.CHECK);
+                $('input[name="PRC_CNT"]').val(this.PRC_CNT);
+                if (this.CHECK == 'Y') {
+                    $('input[name="INPUT_052"]').selectCheckBox(this.BRSURVER);
+                    this.AA16.setToDocument();
+                    this.BB21.setToDocument();
+                    $('input[name="INPUT_055"]').selectCheckBox(this.SRPRCE);
+                    //alert("prctype=" + this.PRCTYPE);
+                    if (this.PRCTYPE != '')
+                        $('input[name="INPUT_058"]').selectRadio(this.PRCTYPE);
+                    else {
+                        ApplyForm.INPUT_058[0].disabled = true;
+                        ApplyForm.INPUT_058[1].disabled = true;
+                    }
+                    ApplyForm.INPUT_055.disabled = (ApplyForm.INPUT_052.checked);
+                }
+            }
+        },
+        PIC1: {
+            CHECK: 'N',
+            P1: 'N',
+            P2: '-1',
+            P3: '',
+            PIC1_CNT: '0',
+            validate: function (parent) {
+                var _msg = '';
+                if (this.CHECK == 'Y') {
+                    if (parent.AA49.length == 0)
+                        _msg = '<li>請輸入地號</li>';
+                    else {
+                        var _chkmsg = '';
+                        _chkmsg = CheckInputLB1(parent.AA49, 'L');
+                        if (_chkmsg != '')
+                            _msg += '<li>' + _chkmsg + '</li>';
+                    }
+                    _msg += this.validateP2();
+
+                    if (parent.OWNAME.length != 0 && NameRgexp(parent.OWNAME))
+                        _msg += '<li>姓名內不可輸入&#符號</li>';
+
+                    if (_msg.length > 0)
+                        _msg = '<li>地籍圖謄本</li><ol>' + _msg + '</ol>';
+                }
+                return _msg;
+            },
+            validateP2: function () {
+                if (this.P2.length > 0 && parseInt(this.P2, 10) < 2)
+                    return '';
+                if (this.P2 == '2') {
+                    if (parseInt(this.P3) < 100)
+                        return '<li>指定比例尺請輸入100單位以上</li>';
+                    if (this.P3.length == 0 || isNaN(this.P3))
+                        return '<li>比例尺只能輸入數字</li>';
+                    if (!TestRgexp(this.P3))
+                        return '<li>比例尺請輸入正整數</li>';
+                }
+                return '';
+            },
+            toXML: function () {
+                var _xml = '';
+                if (this.CHECK == 'Y') {
+                    _xml =
+						'   [PIC1 CHECK="Y"]\n' +
+						'      [P1]' + this.P1 + '[/P1]\n';
+                    if (this.P2 == '2')
+                        _xml += '      [P2]' + this.P3 + '[/P2]\n';
+                    else
+                        _xml += '      [P2]' + this.P2 + '[/P2]\n';
+
+                    _xml += '      [P3]A4[/P3]\n' +
+						'      [CNT]1[/CNT]\n' +
+						'   [/PIC1]\n';
+
+                }
+                return _xml;
+            },
+            getFromDocument: function () {
+                this.CHECK = getVal($('input[name="INPUT_031"]:checked'), 'N');
+                this.PIC1_CNT = getVal($('input[name="PIC1_CNT"]'));
+                if (this.CHECK == 'Y') {
+                    this.P1 = getVal($('input[name="INPUT_032"]:checked'), 'N');
+                    this.P2 = getVal($('input[name="INPUT_033"]:checked'));
+                    this.P3 = parseInt(getVal($('input[name="INPUT_0331"]')), 10);
+                }
+            },
+            setToDocument: function () {
+                $('input[name="INPUT_031"]').selectCheckBox(this.CHECK);
+                $('input[name="PIC1_CNT"]').val(this.PIC1_CNT);
+                if (this.CHECK == 'Y') {
+                    $('input[name="INPUT_032"]').selectCheckBox(this.P1);
+                    if (this.P2 == '2')
+                        $('input[name="INPUT_0331"]').val(this.P3);
+                    else
+                        $('input[name="INPUT_0331"]').val('');
+                    $('input[name="INPUT_033"]').selectRadio(this.P2);
+
+                    if (ApplyForm.INPUT_033[2].checked) {
+                        ApplyForm.INPUT_0331.disabled = false;
+                        ApplyForm.INPUT_0331.className = "";
+                        ApplyForm.INPUT_0331.focus();
+                    } else {
+                        ApplyForm.INPUT_0331.disabled = true;
+                        ApplyForm.INPUT_0331.className = "inputtext_disabled";
+                    }
+                }
+            }
+        },
+        PIC2: {
+            CHECK: 'N',
+            PIC2_CNT: 'Y',
+            validate: function (parent) {
+                var _msg = '';
+                if (this.CHECK == 'Y') {
+                    if (parent.AA49_1.length == 0)
+                        _msg = '<li>請輸入建號</li>';
+                    else {
+                        var _chkmsg = '';
+                        _chkmsg = CheckInputLB1(parent.AA49_1, 'B');
+                        if (_chkmsg != '')
+                            _msg += '<li>' + _chkmsg + '</li>';
+                    }
+
+                    if (parent.OWNAME.length != 0 && NameRgexp(parent.OWNAME))
+                        _msg += '<li>姓名內不可輸入&#符號</li>';
+
+                    if (_msg.length > 0)
+                        _msg = '<li>建物測量成果圖</li><ol>' + _msg + '</ol>';
+                }
+                return _msg;
+            },
+            toXML: function () {
+                var _xml = '';
+                if (this.CHECK == 'Y') {
+                    _xml =
+						'   [PIC2 CHECK="Y"]\n' +
+						'      [CNT]1[/CNT]\n' +
+						'   [/PIC2]\n';
+                }
+                return _xml;
+            },
+            getFromDocument: function () {
+                this.CHECK = getVal($('input[name="INPUT_041"]:checked'), 'N');
+                this.PIC2_CNT = getVal($('input[name="PIC2_CNT"]'));
+            },
+            setToDocument: function () {
+                $('input[name="INPUT_041"]').selectCheckBox(this.CHECK);
+                $('input[name="PIC2_CNT"]').val(this.PIC2_CNT);
+            }
+        },
+        IDX: {
+            CHECK: 'N',
+            IS03: '',
+            IS04_1: '',
+            IS04_1C: '',
+            IS04_1_1: '',
+            IS04_1_1_C: '',
+            IS04_1_2: '',
+            IS04_2: '',
+            IS00: 'A',
+            IS01: '',
+            ISTYPE: '0',
+            ISKIND: '0',
+            IS05_START: '',
+            IS05Y_START: '',
+            IS05M_START: '',
+            IS05D_START: '',
+            IS05_END: '',
+            IS05Y_END: '',
+            IS05M_END: '',
+            IS05D_END: '',
+            IDX_CNT: '0',
+            INPUT_063: 'N',
+            INPUT_064: '',
+            validate: function (parent) {
+                var _msg = '';
+                if (this.CHECK == 'Y') {
+                    if (this.ISTYPE == '0') {
+                        if (this.IS03.length < 3 || isNaN(this.IS03))
+                            _msg += '<li>收件字號年輸入錯誤</li>';
+                        if (this.ISKIND == '0') { //本縣市
+                            if (this.IS04_1.length == 0)
+                                _msg += '<li>請選擇收件字資料</li>';
+                        } else if (this.ISKIND == '1') { //跨縣市 
+                            if (this.IS04_1_2.length == 0 || this.IS04_1_2 == '0')
+                                _msg += '<li>請選擇收件字資料</li>';
+                        }
+                        if (this.IS04_2.length == 0)
+                            _msg += '<li>請輸入收件號</li>';
+                    } else {
+                        if (this.ISTYPE == '2' || this.ISTYPE == '4' || this.ISTYPE == '6' || this.ISTYPE == '8') {
+                            if (parent.AA49.length == 0)
+                                _msg += '<li>請輸入地號</li>';
+                            else {
+                                var _chkmsg = '';
+                                _chkmsg = CheckInputLB1(parent.AA49, 'L');
+                                if (_chkmsg != '')
+                                    _msg += '<li>' + _chkmsg + '</li>';
+                            }
+                            if (this.ISTYPE == "6") {
+                                if (this.IS00 == "D" || this.IS00 == "E" || this.IS00 == "F")
+                                    _msg += '<li>部別選擇錯誤，請選擇土地相關部別!</li>';
+                            }
+                        }
+
+                        if (this.ISTYPE == '3' || this.ISTYPE == '5' || this.ISTYPE == '7' || this.ISTYPE == '9') {
+                            if (parent.AA49_1.length == 0)
+                                _msg += '<li>請輸入建號</li>';
+                            else {
+                                var _chkmsg = '';
+                                _chkmsg = CheckInputLB1(parent.AA49_1, 'B');
+                                if (_chkmsg != '')
+                                    _msg += '<li>' + _chkmsg + '</li>';
+                            }
+                            if (this.ISTYPE == "7") {
+                                if (this.IS00 == "A" || this.IS00 == "B" || this.IS00 == "C")
+                                    _msg += '<li>部別選擇錯誤，請選擇建物相關部別!</li>';
+                            }
+                        }
+                        if (this.ISTYPE == '4' || this.ISTYPE == '5') {
+                            if (this.IS01.length == 0)
+                                _msg += '<li>請輸入登記次序</li>';
+                        }
+                        if (this.ISTYPE == '8' || this.ISTYPE == '9') {
+                            if (parent.LIDN.length == 0)
+                                _msg += '<li>請輸入統一編號</li>';
+                            if (parent.LIDN.length >= 1 && FastCheckOwn2(parent.LIDN) != "")
+                                _msg += '<li>' + FastCheckOwn2(parent.LIDN) + '</li>';
+                        }
+                    }
+                    if (this.INPUT_063 == 'Y') {
+                        if (ApplyForm.A105070.value == "Y") {
+                            if (this.IS05Y_START.length == 0 || this.IS05M_START.length == 0 || this.IS05D_START.length == 0)
+                                _msg += '<li>請完整輸入異動日期範圍起始之年月日</li>';
+                            if (this.IS05Y_END.length == 0 || this.IS05M_END.length == 0 || this.IS05D_END.length == 0)
+                                _msg += '<li>請完整輸入異動日期範圍截止之年月日</li>';
+                            if (this.IS05Y_START.length != 3 || this.IS05Y_END.length != 3 || this.IS05M_START.length != 2 || this.IS05D_START.length != 2 || this.IS05M_END.length != 2 || this.IS05D_END.length != 2)
+                                _msg += '<li>異動日期範圍之「年」長度需為3碼、「月」、「日」長度需為2碼</li>';
+                            else {
+                                var sday = this.IS05Y_START + this.IS05M_START + this.IS05D_START;
+                                var eday = this.IS05Y_END + this.IS05M_END + this.IS05D_END;
+                                if (sday > eday)
+                                    _msg += '<li>異動日期範圍起始日大於終止日</li>';
+                            }
+                        }
+                    }
+
+                    if (parent.OWNAME.length != 0 && NameRgexp(parent.OWNAME))
+                        _msg += '<li>姓名內不可輸入&#符號</li>';
+
+                    if (this.ISTYPE.length == 0)
+                        _msg += '<li>請選擇要申請的異動索引種類</li>';
+
+                    if (_msg.length > 0)
+                        _msg = '<li>異動索引</li><ol>' + _msg + '</ol>';
+                }
+                return _msg;
+            },
+            toXML: function () {
+                var _xml = '';
+                if (this.CHECK == 'Y') {
+                    _xml =
+						'   [IDX CHECK="Y"]\n' +
+						'      [IS03]' + this.IS03 + '[/IS03]\n';
+
+                    if (this.ISKIND == '0') //本縣市
+                    {
+                        _xml = _xml + '      [IS04_1]' + this.IS04_1 + '[/IS04_1]\n' +
+                                '      [IS04_1C]' + this.IS04_1C + '[/IS04_1C]\n';
+                    } else //跨縣市
+                    {
+                        _xml = _xml + '      [IS04_1]' + this.IS04_1_2 + '[/IS04_1]\n' +
+                        '      [IS04_1C]' + this.IS04_1_1_C + '[/IS04_1C]\n';
+                    }
+
+                    _xml = _xml + '      [IS04_2]' + this.IS04_2 + '[/IS04_2]\n' +
+						'      [IS00]' + this.IS00 + '[/IS00]\n' +
+						'      [IS01]' + this.IS01 + '[/IS01]\n' +
+						'      [ISTYPE]' + this.ISTYPE + this.INPUT_064 + '[/ISTYPE]\n';
+                    if (ApplyForm.A105070.value == "Y") {
+                        _xml += '      [IS05_START]' + this.IS05Y_START + this.IS05M_START + this.IS05D_START + '[/IS05_START]\n' +
+                                    '      [IS05_END]' + this.IS05Y_END + this.IS05M_END + this.IS05D_END + '[/IS05_END]\n';
+                    } else {
+                        _xml += '      [IS05_START]' + this.IS05_START + '[/IS05_START]\n' +
+                                    '      [IS05_END]' + this.IS05_END + '[/IS05_END]\n';
+                    }
+                    _xml += '      [CNT]1[/CNT]\n' +
+						      '   [/IDX]\n';
+                }
+                return _xml;
+            },
+            getFromDocument: function () {
+                this.CHECK = getVal($('input[name="INPUT_061"]:checked'), 'N');
+                this.IDX_CNT = getVal($('input[name="IDX_CNT"]'));
+                if (this.CHECK == 'Y') {
+                    this.IS03 = getVal($('input[name="INPUT_0611"]'));
+                    this.IS04_1 = getVal($('#INPUT_0612'));
+                    this.IS04_1_1 = getVal($('#INPUT_06121')); //縣市
+                    this.IS04_1_2 = getVal($('#INPUT_06122')); //跨縣市收件代碼
+                    this.IS04_1C = $('select#INPUT_0612 option:selected').text();
+                    this.IS04_1_1_C = $('select#INPUT_06122 option:selected').text(); //跨縣市收件中文
+                    this.IS04_2 = getVal($('input[name="INPUT_0613"]'));
+                    this.IS00 = getVal($('#INPUT_0615'));
+                    this.IS01 = getVal($('input[name="INPUT_0614"]'));
+                    this.ISTYPE = getVal($('input[name="INPUT_062"]:checked'));
+                    this.ISKIND = getVal($('input[name="INPUT_065"]:checked'));
+                    this.IS05_START = getVal($('input[name="INPUT_0631"]'));
+                    this.IS05Y_START = getVal($('input[name="INPUT_0631Y"]'));
+                    this.IS05M_START = getVal($('input[name="INPUT_0631M"]'));
+                    this.IS05D_START = getVal($('input[name="INPUT_0631D"]'));
+                    this.IS05_END = getVal($('input[name="INPUT_0632"]'));
+                    this.IS05Y_END = getVal($('input[name="INPUT_0632Y"]'));
+                    this.IS05M_END = getVal($('input[name="INPUT_0632M"]'));
+                    this.IS05D_END = getVal($('input[name="INPUT_0632D"]'));
+                    this.INPUT_063 = getVal($('input[name="INPUT_063"]:checked'), 'N');
+                    if (ApplyForm.INPUT_0641.checked)
+                        this.INPUT_064 = 'A';
+                    else
+                        this.INPUT_064 = '';
+
+                }
+            },
+            setToDocument: function () {
+                $('input[name="INPUT_061"]').selectCheckBox(this.CHECK);
+                $('input[name="IDX_CNT"]').val(this.IDX_CNT);
+                if (this.CHECK == 'Y') {
+                    if (this.INPUT_063 == 'Y') { //this.IS05_START
+                        $('input[name="INPUT_0631"]').val(this.IS05_START); //起始日期
+                        $('input[name="INPUT_0631Y"]').val(this.IS05Y_START); //起始年
+                        $('input[name="INPUT_0631M"]').val(this.IS05M_START); //起始月
+                        $('input[name="INPUT_0631D"]').val(this.IS05D_START); //起始日
+                        $('input[name="INPUT_0632"]').val(this.IS05_END); //終止日期
+                        $('input[name="INPUT_0632Y"]').val(this.IS05Y_END); //起始年
+                        $('input[name="INPUT_0632M"]').val(this.IS05M_END); //起始月
+                        $('input[name="INPUT_0632D"]').val(this.IS05D_END); //起始日
+                        ApplyForm.INPUT_063.checked = true;
+                        ApplyForm.INPUT_0631.className = "";
+                        ApplyForm.INPUT_0631Y.className = "";
+                        ApplyForm.INPUT_0631M.className = "";
+                        ApplyForm.INPUT_0631D.className = "";
+                        ApplyForm.INPUT_0632.className = "";
+                        ApplyForm.INPUT_0632Y.className = "";
+                        ApplyForm.INPUT_0632M.className = "";
+                        ApplyForm.INPUT_0632D.className = "";
+                    }
+                    $('input[name="INPUT_062"]').selectRadio(this.ISTYPE); //索引類型
+
+                    if (this.ISTYPE == '0') { //若選收件年期字號
+                        $('input[name="INPUT_065"]').selectRadio(this.ISKIND);
+                        ChangeINPUT_065();
+                        $('input[name="INPUT_0611"]').val(this.IS03); //收件"年"三位數字
+                        for (var tempi = 0; tempi < ApplyForm.INPUT_0612.options.length; tempi++) { //收件"字"下拉式選單
+                            if (ApplyForm.INPUT_0612.options[tempi].value == this.IS04_1)
+                                ApplyForm.INPUT_0612.selectedIndex = tempi;
+                        }
+                        for (var tempi = 0; tempi < ApplyForm.INPUT_06121.options.length; tempi++) {
+                            if (ApplyForm.INPUT_06121.options[tempi].value == this.IS04_1_1)
+                                ApplyForm.INPUT_06121.selectedIndex = tempi;
+                        }
+
+                        var sendData = {
+                            city_id: getVal($('input[name="CityID"]')),
+                            area_id: getVal($('input[name="AreaID"]')),
+                            fromaddress: this.IS04_1_1
+                        };
+                        Rechar(sendData, 0, this.IS04_1_2, "INPUT_06122"); //下拉選單指向this.IS04_1_2（跨縣市收件代碼）
+
+                        $('input[name="INPUT_0613"]').val(this.IS04_2); //收件"號"
+                        $('input[name="INPUT_0616"]').val(this.IS04_1); //收件"字"代碼
+                        ApplyForm.INPUT_0611.className = "";
+                        ApplyForm.INPUT_0613.className = "";
+                        ApplyForm.INPUT_0616.className = "";
+                        ApplyForm.INPUT_06162.className = "";
+                        ApplyForm.INPUT_06122.disabled = "";
+                    }
+                    $('input[name="INPUT_0614"]').val(this.IS01); //登記次序
+                    for (var tempi = 0; tempi < ApplyForm.INPUT_0615.options.length; tempi++) {//部別下拉式選單
+                        if (ApplyForm.INPUT_0615.options[tempi].value == this.IS00)
+                            ApplyForm.INPUT_0615.selectedIndex = tempi;
+                    }
+
+
+                    ApplyForm.INPUT_0611.disabled = (!ApplyForm.INPUT_062[0].checked);
+                    ApplyForm.INPUT_0612.disabled = (!ApplyForm.INPUT_062[0].checked);
+                    ApplyForm.INPUT_06122.disabled = !ApplyForm.INPUT_062[0].checked;
+                    ApplyForm.INPUT_0613.disabled = (!ApplyForm.INPUT_062[0].checked);
+                    ApplyForm.INPUT_0614.disabled = ((!ApplyForm.INPUT_062[2].checked) && (!ApplyForm.INPUT_062[7].checked));
+                    ApplyForm.INPUT_0615.disabled = ((!ApplyForm.INPUT_062[3].checked) && (!ApplyForm.INPUT_062[8].checked));
+                    ApplyForm.INPUT_0616.disabled = (!ApplyForm.INPUT_062[0].checked);
+                    ApplyForm.INPUT_06162.disabled = !ApplyForm.INPUT_062[0].checked;
+                    ApplyForm.INPUT_0631.disabled = (!ApplyForm.INPUT_063.checked);
+                    ApplyForm.INPUT_0631Y.disabled = (!ApplyForm.INPUT_063.checked);
+                    ApplyForm.INPUT_0631M.disabled = (!ApplyForm.INPUT_063.checked);
+                    ApplyForm.INPUT_0631D.disabled = (!ApplyForm.INPUT_063.checked);
+                    ApplyForm.INPUT_0632.disabled = (!ApplyForm.INPUT_063.checked);
+                    ApplyForm.INPUT_0632Y.disabled = (!ApplyForm.INPUT_063.checked);
+                    ApplyForm.INPUT_0632M.disabled = (!ApplyForm.INPUT_063.checked);
+                    ApplyForm.INPUT_0632D.disabled = (!ApplyForm.INPUT_063.checked);
+                    ApplyForm.INPUT_063.disabled = (!ApplyForm.INPUT_061.checked || ApplyForm.INPUT_062[0].checked); // 異動日期範圍
+
+                    if (ApplyForm.INPUT_061.checked && ApplyForm.CERT_TYPE1.value == 'Y' && ApplyForm.REGTYPE.value == "1")
+                        ApplyForm.INPUT_0641.disabled = false; //含權利人完整姓名
+                    else {
+                        ApplyForm.INPUT_0641.disabled = true; //含權利人完整姓名
+                    }
+
+                    if (this.ISTYPE == '0') {
+                        ApplyForm.INPUT_0611.focus();
+                    }
+                    if (this.ISTYPE == '4' || this.ISTYPE == '5') {
+                        ApplyForm.INPUT_0614.className = "";
+                        ApplyForm.INPUT_0614.focus();
+                    } else {
+                        ApplyForm.INPUT_0614.className = "inputtext_disabled";
+                    }
+
+                    if (this.INPUT_064 == 'A') {
+                        ApplyForm.INPUT_0641.checked = true;
+                        ApplyForm.INPUT_062[1].disabled = true;
+                        ApplyForm.INPUT_062[2].disabled = true;
+                        ApplyForm.INPUT_062[3].disabled = true;
+
+                        ApplyForm.INPUT_062[5].disabled = true;
+                        ApplyForm.INPUT_062[6].disabled = true;
+                        ApplyForm.INPUT_062[7].disabled = true;
+                        ApplyForm.INPUT_062[8].disabled = true;
+                    }
+                }
+            }
+        },
+        IDR: {
+            CHECK: 'N',
+            IS03: '',
+            IS04_1: '',
+            IS04_1C: '',
+            IS04_1_1: '',
+            IS04_1_1_C: '',
+            IS04_1_2: '',
+            IS04_2: '',
+            ISTYPE: '1',
+            ISTYPE2: '0',
+            ISKIND: '0',
+            IS05_1: '',
+            IS05_2: '',
+            IS05_3: '',
+            IDR_CNT: '0',
+            REGTYPE: '0',
+            validate: function (parent) {
+                var _msg = '';
+                if (this.CHECK == 'Y') {
+                    if (this.IS03.length < 3 || isNaN(this.IS03))
+                        _msg += '<li>收件字號年輸入錯誤</li>';
+                    if (this.ISKIND == '0') { //本縣市
+                        if (this.IS04_1.length == 0)
+                            _msg += '<li>請選擇收件字資料</li>';
+                    } else if (this.ISKIND == '1') { //跨縣市 
+                        if (this.IS04_1_2.length == 0 || this.IS04_1_2 == '0')
+                            _msg += '<li>請選擇收件字資料</li>';
+                    }
+                    if (this.IS04_2.length == 0)
+                        _msg += '<li>請輸入收件號</li>';
+                    //20141031_Maggie改成只確認申請人(含利害關係人)統編，不確認統一編號
+                    //                    if (this.ISTYPE == '1') { //完整	
+                    //                        if (parent.LIDN.length == 0)
+                    //                            _msg += '<li>請輸入畫面上方的統一编號</li>';
+                    //                        else if (parent.LIDN.length < 8)
+                    //                            _msg += '<li>請正確輸入畫面上方的統一编號</li>';
+                    //                    }
+                    if (this.ISTYPE == '2') { //部份
+                        //20141031_Maggie改成只確認申請人(含利害關係人)統編，不確認統一編號
+                        //                        if (parent.LIDN.length == 0)
+                        //                            _msg += '<li>請輸入畫面上方的統一编號</li>';
+                        //                        else if (parent.LIDN.length < 8)
+                        //                            _msg += '<li>請正確輸入畫面上方的統一编號</li>';
+                        if (this.ISTYPE2 == '0' && this.IS05_1.length == 0)
+                            _msg += '<li>請輸入統一编號</li>';
+                        else if (this.ISTYPE2 == '0' && this.IS05_1.length < 8)
+                            _msg += '<li>請輸入正確的統一编號</li>';
+                        else if (this.ISTYPE2 == '0' && FastCheckOwn2(this.IS05_1) != "")
+                            _msg += '<li>' + FastCheckOwn2(this.IS05_1) + '</li>';
+                        else if (this.ISTYPE2 == '1' && this.IS05_2.length == 0)
+                            _msg += '<li>請輸入登記次序</li>';
+                        else if (this.ISTYPE2 == '1' && this.IS05_2.length > 8)
+                            _msg += '<li>登記次序長度需小於等於八位</li>';
+                        else if (this.ISTYPE2 == '2' && this.IS05_3.length == 0)
+                            _msg += '<li>請輸入姓名</li>';
+                    }
+
+                    if (parent.OWNAME.length != 0 && NameRgexp(parent.OWNAME))
+                        _msg += '<li>姓名內不可輸入&#符號</li>';
+
+                    if (this.ISTYPE.length == 0)
+                        _msg += '<li>請選擇要申請的異動清冊種類</li>';
+
+                    if (_msg.length > 0)
+                        _msg = '<li>異動清冊</li><ol>' + _msg + '</ol>';
+
+                }
+                return _msg;
+            },
+            toXML: function () {
+                var _xml = '';
+                if (this.CHECK == 'Y') {
+                    _xml =
+						'   [IDR CHECK="Y"]\n' +
+						'      [IS03]' + this.IS03 + '[/IS03]\n';
+                    if (this.ISKIND == '0') //本縣市
+                    {
+                        _xml = _xml + '      [IS04_1]' + this.IS04_1 + '[/IS04_1]\n' +
+                        '      [IS04_1C]' + this.IS04_1C + '[/IS04_1C]\n';
+                    } else //跨縣市
+                    {
+                        _xml = _xml + '      [IS04_1]' + this.IS04_1_2 + '[/IS04_1]\n' +
+                        '      [IS04_1C]' + this.IS04_1_1_C + '[/IS04_1C]\n';
+                    }
+                    _xml = _xml + '      [IS04_2]' + this.IS04_2 + '[/IS04_2]\n' +
+                        '      [ISTYPE]' + this.ISTYPE + '[/ISTYPE]\n' + //0:人工檢核.1:完整.2:部份
+                        '      [CONDITION TYPE="' + this.ISTYPE2 + '"]';
+                    if (this.ISTYPE2 == '0') //統一編號
+                        _xml = _xml + this.IS05_1;
+                    else if (this.ISTYPE2 == '1')//登記次序
+                        _xml = _xml + this.IS05_2;
+                    else //姓名
+                        _xml = _xml + this.IS05_3;
+                    _xml = _xml + '[/CONDITION]\n' +
+                        '      [CNT]1[/CNT]\n' +
+						'   [/IDR]\n';
+                }
+                return _xml;
+            },
+            getFromDocument: function () {
+                this.CHECK = getVal($('input[name="INPUT_071"]:checked'), 'N');
+                this.IDR_CNT = getVal($('input[name="IDR_CNT"]'));
+                if (this.CHECK == 'Y') {
+                    this.IS03 = getVal($('input[name="INPUT_0731"]'));
+                    this.IS04_1 = getVal($('#INPUT_0732'));
+                    this.IS04_1_1 = getVal($('#INPUT_07321')); //縣市
+                    this.IS04_1_2 = getVal($('#INPUT_07322')); //跨縣市收件代碼
+                    this.IS04_1C = $('select#INPUT_0732 option:selected').text();
+                    this.IS04_1_1_C = $('select#INPUT_07322 option:selected').text(); //跨縣市收件中文
+                    this.IS04_2 = getVal($('input[name="INPUT_0733"]'));
+                    this.ISTYPE = getVal($('input[name="INPUT_075"]:checked'));
+                    this.ISTYPE2 = getVal($('input[name="INPUT_076"]:checked'));
+                    this.ISKIND = getVal($('input[name="INPUT_0731_A"]:checked'));
+                    this.IS05_1 = getVal($('input[name="INPUT_077"]'));
+                    this.IS05_2 = getVal($('input[name="INPUT_078"]'));
+                    this.IS05_3 = getVal($('input[name="INPUT_079"]'));
+                    this.REGTYPE = getVal($('select[name="REGTYPE"]'));
+                }
+            },
+            setToDocument: function () {
+                $('input[name="INPUT_071"]').selectCheckBox(this.CHECK);
+                $('input[name="IDR_CNT"]').val(this.IDR_CNT);
+                ApplyForm.INPUT_071.disabled = (ApplyForm.REGTYPE.value == "2")
+                if (this.CHECK == 'Y') {
+                    $('input[name="INPUT_075"]').selectRadio(this.ISTYPE); //人工檢核或完整或部份
+                    if (this.ISTYPE == '2') { //部份
+                        $('input[name="INPUT_076"]').selectRadio(this.ISTYPE2); //統一編號或登記次序或姓名
+                        if (this.ISTYPE2 == '0') {
+                            $('input[name="INPUT_077"]').val(this.IS05_1);
+                            ApplyForm.INPUT_077.disabled = false;
+                            ApplyForm.INPUT_077.className = "";
+                        }
+                        else if (this.ISTYPE2 == '1') {
+                            $('input[name="INPUT_078"]').val(this.IS05_2);
+                            ApplyForm.INPUT_078.disabled = false;
+                            ApplyForm.INPUT_078.className = "";
+                        }
+                        else {
+                            $('input[name="INPUT_079"]').val(this.IS05_3);
+                            ApplyForm.INPUT_079.disabled = false;
+                            ApplyForm.INPUT_079.className = "";
+                        }
+                    }
+                    $('input[name="INPUT_0731_A"]').selectRadio(this.ISKIND);
+                    ChangeINPUT_0731_A();
+
+                    $('input[name="INPUT_0731"]').val(this.IS03);
+                    for (var tempi = 0; tempi < ApplyForm.INPUT_0732.options.length; tempi++) {
+                        if (ApplyForm.INPUT_0732.options[tempi].value == this.IS04_1)
+                            ApplyForm.INPUT_0732.selectedIndex = tempi;
+                    }
+                    for (var tempi = 0; tempi < ApplyForm.INPUT_07321.options.length; tempi++) {
+                        if (ApplyForm.INPUT_07321.options[tempi].value == this.IS04_1_1)
+                            ApplyForm.INPUT_07321.selectedIndex = tempi;
+                    }
+
+                    var sendData = {
+                        city_id: getVal($('input[name="CityID"]')),
+                        area_id: getVal($('input[name="AreaID"]')),
+                        fromaddress: this.IS04_1_1
+                    };
+                    Rechar(sendData, 0, this.IS04_1_2, "INPUT_07322"); //下拉選單指向this.IS04_1_2（跨縣市收件代碼）
+
+                    $('input[name="INPUT_0733"]').val(this.IS04_2);
+                    $('input[name="INPUT_0734"]').val(this.IS04_1);
+                    ApplyForm.INPUT_0731.disabled = !ApplyForm.INPUT_071.checked;
+                    ApplyForm.INPUT_0731.className = "";
+                    ApplyForm.INPUT_0732.disabled = !ApplyForm.INPUT_071.checked;
+                    ApplyForm.INPUT_0733.disabled = !ApplyForm.INPUT_071.checked;
+                    ApplyForm.INPUT_0733.className = "";
+                    ApplyForm.INPUT_0734.disabled = !ApplyForm.INPUT_071.checked;
+                    ApplyForm.INPUT_0734.className = "";
+                    ApplyForm.INPUT_07342.disabled = !ApplyForm.INPUT_071.checked;
+                    ApplyForm.INPUT_07342.className = "";
+                    ApplyForm.INPUT_07322.disabled = !ApplyForm.INPUT_071.checked;
+                    ApplyForm.INPUT_07322.className = "";
+                    ApplyForm.IDR_CNT.disabled = !ApplyForm.INPUT_071.checked;
+                    //                    if (CertType == "Y") 
+                    //                    { //憑証登入
+                    //                        if (ApplyForm.UserApplyType.value == "1") {
+                    //                            //申請人身份為「登記名義人本人」,須帶入統編,不可更改 2013-11-20
+                    //                            ApplyForm.INPUT_015.value = CertID;
+                    //                            ApplyForm.INPUT_015.disabled = true;
+                    //                        } else if (ApplyForm.UserApplyType.value == "2") {
+                    //                            //申請人身份為「登記名義人代理人」,不要帶憑證上的統編，可修改 2014-02-11
+                    //                            ApplyForm.INPUT_015.value = "";
+                    //                        }
+                    //                    }
+                }
+            }
+
+        },
+        REF: {
+            CHECK: 'N',
+            REF_CNT: '0',
+            validate: function (parent) {
+                var _msg = '';
+                if (this.CHECK == 'Y') {
+                    if (parent.AA49.length == 0 && parent.AA49_1.length == 0)
+                        _msg += '<li>請輸入地號或建號 </li>';
+                    else {
+                        if (parent.AA49.length != 0) {
+                            var _chkmsg = '';
+                            _chkmsg = CheckInputLB1(parent.AA49, 'L');
+                            if (_chkmsg != '')
+                                _msg += '<li>' + _chkmsg + '</li>';
+                        }
+                        if (parent.AA49_1.length != 0) {
+                            var _chkmsg = '';
+                            _chkmsg = CheckInputLB1(parent.AA49_1, 'B');
+                            if (_chkmsg != '')
+                                _msg += '<li>' + _chkmsg + '</li>';
+                        }
+                    }
+
+                    if (parent.OWNAME.length != 0 && NameRgexp(parent.OWNAME))
+                        _msg += '<li>姓名內不可輸入&#符號</li>';
+
+                    if (_msg.length > 0)
+                        _msg = '<li>土地建物參考資訊</li><ol>' + _msg + "</ol>";
+                }
+                return _msg;
+            },
+            toXML: function () {
+                var _xml = '';
+                if (this.CHECK == 'Y') {
+                    _xml =
+						'   [REF CHECK="Y"]\n' +
+						'      [CNT]1[/CNT]\n' +
+						'   [/REF]\n';
+                }
+                return _xml;
+            },
+            getFromDocument: function () {
+                this.CHECK = getVal($('input[name="INPUT_081"]:checked'), 'N');
+                this.REF_CNT = getVal($('input[name="REF_CNT"]'));
+            },
+            setToDocument: function () {
+                $('input[name="INPUT_081"]').selectCheckBox(this.CHECK);
+                $('input[name="REF_CNT"]').val(this.REF_CNT);
+            }
+        },
+        msg: '',
+        status: '',
+        normalIR49: function (_ir00, _ir49) {
+            var list = _ir49.split(',');
+            var item = '';
+            for (var i = 0; i < list.length; i++) {
+                item = list[i].split('-');
+                if (_ir00 == 'C') {
+                    while (item[0].length < 4)
+                        item[0] = '0' + item[0];
+                } else {
+                    while (item[0].length < 5)
+                        item[0] = '0' + item[0];
+                }
+                if (item.length > 1) {
+                    if (_ir00 == 'C') {
+                        while (item[1].length < 4)
+                            item[1] = '0' + item[1];
+                    } else {
+                        while (item[1].length < 3)
+                            item[1] = '0' + item[1];
+                    }
+                    list[i] = item[0] + item[1];
+                } else {
+                    while (item[0].length < 8)
+                        item[0] = item[0] + '0';
+                    list[i] = item[0];
+                }
+            }
+            return list;
+        },
+        equals: function (_data) {
+            var _equ = false;
+            var thisIR49 = null;
+            var dataIR49 = null;
+            if (this.CITYID == _data.CITYID && this.AREAID == _data.AREAID && this.AA48 == _data.AA48) {
+                if (this.AA49.length > 0) {
+                    thisIR49 = this.normalIR49('C', this.AA49);
+                    dataIR49 = this.normalIR49('C', _data.AA49);
+                    for (var i = 0; i < thisIR49.length; i++) {
+                        for (var j = 0; j < dataIR49.length; j++) {
+                            if (thisIR49[i] == dataIR49[j]) {
+                                _equ = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!_equ && this.AA49_1.length > 0) {
+                    thisIR49 = this.normalIR49('F', this.AA49_1);
+                    dataIR49 = this.normalIR49('F', _data.AA49_1);
+                    for (var i = 0; i < thisIR49.length; i++) {
+                        for (var j = 0; j < dataIR49.length; j++) {
+                            if (thisIR49[i] == dataIR49[j]) {
+                                _equ = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                //                if (!_equ && this.IDX.CHECK == 'Y' && _data.IDX.CHECK == 'Y'
+                //					&& this.IDX.ISTYPE == '0' && _data.IDX.ISTYPE == '0'
+                //					&& this.IDX.IS03 == _data.IDX.IS03
+                //					&& this.IDX.IS04_1 == _data.IDX.IS04_1
+                //					&& this.IDX.IS04_2 == _data.IDX.IS04_2) {
+                //                    _equ = true;
+                //                }
+                if (!_equ && this.IDR.CHECK == 'Y' && _data.IDR.CHECK == 'Y'
+                	&& this.IDR.IS03 == _data.IDR.IS03) {
+                    if (this.IDR.ISKIND == '0') {
+                        if (this.IDR.IS04_1 == _data.IDR.IS04_1 && this.IDR.IS04_2 == _data.IDR.IS04_2)
+                            _equ = true;
+                    } else if (this.IDR.ISKIND == '1') {
+                        if (this.IDR.IS04_1_2 == _data.IDR.IS04_1_2 && this.IDR.IS04_2 == _data.IDR.IS04_2)
+                            _equ = true;
+                    }
+                }
+            }
+            return _equ;
+        },
+        isVaild: function (applyMode) {
+            var _msg = this.validate();
+            if (_msg.replace(new RegExp('\n', 'gm'), '').length > 0) {
+                this.msg = _msg;
+                return false;
+            } else {
+                return true;
+            }
+        },
+        validate: function (parent) {
+            var _msg = '';
+            _msg = this.validateBasic() +
+				this.REG.validate(this) +
+				this.PRC.validate(this) +
+				this.PIC1.validate(this) +
+				this.PIC2.validate(this) +
+				this.IDX.validate(this) +
+				this.IDR.validate(this) +
+				this.REF.validate(this);
+            // 驗證謄本種類與地建關係
+            //            if (this.REG.CHECK != 'Y') {
+            //                alert("沒有reg");
+            //                var AA49N = 0;
+            //                var AA49_1N = 0;
+            //                if (this.PRC.CHECK == 'Y') AA49N++;  ////地價謄本
+            //                if (this.PIC1.CHECK == 'Y') AA49N++;  ////地籍圖謄本
+            //                if (this.PIC2.CHECK == 'Y') AA49_1N++;  ////建物測量成果圖謄本
+            //                if (this.IDX.CHECK == 'Y') {  ////異動索引
+            //                    if (this.IDX.ISTYPE == '2' || this.IDX.ISTYPE == '4' || this.IDX.ISTYPE == '6' || this.IDX.ISTYPE == '8') {
+            //                        AA49N++;
+            //                    } else if (this.IDX.ISTYPE == '3' || this.IDX.ISTYPE == '5' || this.IDX.ISTYPE == '7' || this.IDX.ISTYPE == '9') {
+            //                        AA49_1N++;
+            //                    }
+            //                }
+            //                if (this.AA49.length > 0 && AA49N == 0)
+            //                    _msg += '<li>請選擇登記或地籍圖或地價或異動索引地號相關謄本</li>';
+            //                if (this.AA49_1.length > 0 && AA49_1N == 0)
+            //                    _msg += '<li>請選擇登記或建物測量成果圖或異動索引建號相關謄本</li>';
+            //            }
+            //            if (_msg.length > 0)
+            //                _msg = '<ol>' + _msg + '</ol>';
+            return _msg;
+        },
+        validateBasic: function () {
+            var _msg = '';
+            if (this.CITYID.length == 0)
+                _msg += '<li>請選擇縣市資料</li>';
+            if (this.AREAID.length == 0)
+                _msg += '<li>請選擇鄉鎮市區資料</li>';
+            if (this.REG.CHECK == 'Y' || this.PRC.CHECK == 'Y'
+				|| this.PIC1.CHECK == 'Y' || this.PIC2.CHECK == 'Y'
+				|| (this.IDX.CHECK == 'Y' && this.IDX.ISTYPE > 0)) {
+                if (this.AA48.length == 0)
+                    _msg += '<li>請選擇段小段資料</li>';
+            }
+            if (!(this.REG.CHECK == 'Y' || this.PRC.CHECK == 'Y'
+				|| this.PIC1.CHECK == 'Y' || this.PIC2.CHECK == 'Y'
+				|| this.IDX.CHECK == 'Y' || this.IDR.CHECK == 'Y'
+				|| this.REF.CHECK == 'Y'))
+                _msg += '<li>請申請任一謄本項目</li>';
+            if (this.AA48C == null || this.AA48C.length == 0 || this.AA48C == '' || this.AA48C == ' ')
+                _msg += '<li>無法取得段中文資料</li>';
+            return _msg;
+        },
+        //        vaildateExist: function (applyMode) {
+        //            var el = this;
+        //            var rsp = false;
+        //            var xmlstr = '[REQUEST]\n' + this.toXML() + '[/REQUEST]';
+        //            el.status = '';
+        //            $.ajax({
+        //                url: 'APP_01040.jsp',
+        //                type: 'POST',
+        //                data: { applyMode: applyMode, toxml: xmlstr },
+        //                async: false,
+        //                success: function (data) {
+        //                    var _msg = $.trim(data);
+        //                    rsp = (_msg.length > 0);
+        //                    if (rsp) {
+        //                        el.status = 'E';
+        //                        $('#msg_dialog').html(_msg).dialog('option', 'title', '如果不想申請【已存在】或【警示】的謄本, 請修改或刪除後再送出').dialog('open');
+        //                    }
+        //                },
+        //                error: function (xhr, ajaxOptions, thrownError) {
+        //                    alert(xhr.status + ', ' + xhr.statusText + ' : ' + thrownError);
+        //                }
+        //            });
+        //            return rsp;
+        //        },
+        toXML: function () {
+            var _xml =
+					'[DATA NO="' + this.NO + '"]\n' +
+                    '   [COMMON]\n' +
+                    '       [REGTYPE]' + this.REGTYPE + '[/REGTYPE]\n' + //20140814田提出民眾端data區增加REGTYPE
+					'       [AA48]' + this.AA48 + '[/AA48]\n' +
+					'       [AA48C]' + this.AA48C + '[/AA48C]\n' +
+					'       [AA49]' + this.AA49 + '[/AA49]\n' +
+					'       [AA49_1]' + this.AA49_1 + '[/AA49_1]\n' +
+					'       [LIDN]' + this.LIDN + '[/LIDN]\n';
+            if (Applyform == "Y")
+                _xml = _xml + '       [OWNAME]' + this.OWNAME + '[/OWNAME]\n';  //所有權人姓名			
+
+            _xml = _xml +
+					'       [LN]' + this.LN + '[/LN]\n' +
+					'       [AREA]' + this.AREAID + '[/AREA]\n' +
+                    '       [CITYID]' + this.CITYID + '[/CITYID]\n' +
+                    '       [CITYNAME]' + this.CITYNAME + '[/CITYNAME]\n' +
+                    '   [/COMMON]\n' +
+					    this.REG.toXML() +
+					    this.PRC.toXML() +
+					    this.PIC1.toXML() +
+					    this.PIC2.toXML() +
+					    this.IDX.toXML() +
+					    this.IDR.toXML() +
+					    this.REF.toXML() +
+					'[/DATA]\n';
+            return _xml;
+        },
+        getFromDocument: function () {
+            this.CITYID = getVal($('input[name="CityID"]'));
+            this.CITYNAME = getVal($('input[name="CityName"]'));
+            this.AREAID = getVal($('input[name="AreaID"]'));
+            this.AREANAME = $('select#area_id option:selected').text();
+            this.LN = getVal($('input[name="LN"]'));
+            this.AA48 = getVal($('input[name="INPUT_011"]'));
+            this.AA48C = getVal($('input[name="S_Name"]')); //難字
+            //this.AA48C = $('select#Show_land_num option:selected').text();//難字
+            this.AA49 = getVal($('input[name="INPUT_013"]'));
+            this.AA49_1 = getVal($('input[name="INPUT_014"]'));
+            this.LIDN = getVal($('input[name="INPUT_015"]'));
+            this.OWNAME = getVal($('input[name="INPUT_019"]'));
+            this.SAVE_P00 = getVal($('input[name="INPUT_025"]:checked'), 'N');
+            this.REG.getFromDocument();
+            this.PRC.getFromDocument();
+            this.PIC1.getFromDocument();
+            this.PIC2.getFromDocument();
+            this.IDX.getFromDocument();
+            this.IDR.getFromDocument();
+            this.REF.getFromDocument();
+            this.REGTYPE = getVal($('select[name="REGTYPE"]'));
+        },
+        setToDocument: function () {
+            //$('#city_id').changeCityOption(this.CITYID, this.LN, this.AREAID, this.AA48);
+            $('input[name="INPUT_011"]').val(this.AA48);
+            $('input[name="INPUT_013"]').val(this.AA49);
+            $('input[name="INPUT_014"]').val(this.AA49_1);
+            $('input[name="INPUT_015"]').val(this.LIDN);
+            $('input[name="INPUT_019"]').val(this.OWNAME);
+
+            //難字
+            //            for (var tempi = 0; tempi < ApplyForm.Show_land_num.options.length; tempi++)
+            //                if (ApplyForm.Show_land_num.options[tempi].value == ApplyForm.INPUT_011.value)
+            //                    ApplyForm.Show_land_num.selectedIndex = tempi;            
+            //難字
+            //難字
+            var selected_session = document.getElementById(ApplyForm.INPUT_011.value);
+            var session_value = selected_session.innerHTML;
+            var session_title = document.getElementById("session_title");
+            session_title.innerText = session_value;
+            $("#session_title").html(session_value);
+            session_title.title = ApplyForm.INPUT_011.value;
+            document.getElementById("LN").value = $(selected_session).attr("title");
+            document.getElementById("S_Name").value = $(selected_session).attr("name");
+            //難字
+
+
+            //$('input[name="INPUT_025"]').selectCheckBox(this.SAVE_P00);
+            this.REG.setToDocument();
+            this.PRC.setToDocument();
+            this.PIC1.setToDocument();
+            this.PIC2.setToDocument();
+            this.IDX.setToDocument();
+            this.IDR.setToDocument();
+            this.REF.setToDocument();
+        }
+    }
+    return eval(_data);
+};
+
+function check_number0331(obj) {
+	
+    if (isNaN(obj)) {
+        alert("比例尺只能輸入數字 !\n");		
+		ApplyForm.INPUT_0331.value="";
+		setTimeout(function() {ApplyForm.INPUT_0331.focus();ApplyForm.INPUT_0331.value = obj ; }, 0);
+        //ApplyForm.INPUT_0331.focus();
+        return (false);
+    }
+    if (parseInt(obj, 10) < 100) {
+        alert("指定比例尺請輸入100單位以上 !\n");
+        ApplyForm.INPUT_0331.value="";
+		setTimeout(function() {ApplyForm.INPUT_0331.focus();ApplyForm.INPUT_0331.value = obj ; }, 0);
+        return (false);
+    }
+}
+
+//填入比例尺數字時, 自動選取指定比例尺
+function check_radio_033(s_value) {
+    if (s_value == '2') {
+        ApplyForm.INPUT_033[2].checked = true;
+    }
+}
+
+function key_send_data(event) {
+    if (event && event.keyCode == 13) {
+        obj = (event.srcElement ? event.srcElement : event.target);
+        obj.onblur();
+    }
+}
+
+function controldisabledstatu(type) {
+    if (type == 1) {
+        //勾選登記謄本
+        for (var i = 0; i < ApplyForm.INPUT_023.length; i++) {
+            ApplyForm.INPUT_023[i].disabled = !ApplyForm.INPUT_021.checked;
+            ApplyForm.INPUT_023[i].checked = false;
+        }
+        ApplyForm.INPUT_022.disabled = !ApplyForm.INPUT_021.checked;
+        ApplyForm.INPUT_022.checked = ApplyForm.INPUT_021.checked;
+        ApplyForm.INPUT_024.disabled = !ApplyForm.INPUT_021.checked;
+        ApplyForm.INPUT_025.disabled = !ApplyForm.INPUT_021.checked;
+        ApplyForm.INPUT_023[0].checked = ApplyForm.INPUT_021.checked;
+    } else if (type == 2) {
+        //勾選地籍圖謄本
+        ApplyForm.INPUT_032.disabled = !ApplyForm.INPUT_031.checked;
+        ApplyForm.INPUT_032.checked = false;
+        for (var i = 0; i < ApplyForm.INPUT_033.length; i++) {
+            ApplyForm.INPUT_033[i].disabled = !ApplyForm.INPUT_031.checked;
+            ApplyForm.INPUT_033[i].checked = false;
+        }
+        ApplyForm.INPUT_033[0].checked = ApplyForm.INPUT_031.checked;
+        ApplyForm.INPUT_0331.disabled = !ApplyForm.INPUT_033[2].checked;
+        ApplyForm.INPUT_0331.value = "";
+    } else if (type == 3) {
+        //勾選數值區列印界址點及坐標表
+    } else if (type == 4) {
+        /*****************************************
+        ☆當點選地價謄本(INPUT_051)時的顯示控制
+        ☆打勾時,預設勾選公告現值(INPUT_053)和當期(INPUT_056[0])
+        *****************************************/
+        ApplyForm.INPUT_052.disabled = !ApplyForm.INPUT_051.checked;
+        ApplyForm.INPUT_052.checked = false;
+        //---------------------公告現值---------------------------
+        ApplyForm.INPUT_053.disabled = !ApplyForm.INPUT_051.checked;
+        ApplyForm.INPUT_053.checked = ApplyForm.INPUT_051.checked;
+        //--------------------------------------------------------
+        ApplyForm.INPUT_054.disabled = !ApplyForm.INPUT_051.checked;
+        ApplyForm.INPUT_054.checked = false;
+        ApplyForm.INPUT_055.disabled = !ApplyForm.INPUT_051.checked;
+        ApplyForm.INPUT_055.checked = false;
+        for (var i = 0; i < ApplyForm.INPUT_056.length; i++) {
+            ApplyForm.INPUT_056[i].disabled = true;
+            ApplyForm.INPUT_056[i].checked = false;
+        }
+        for (var i = 0; i < ApplyForm.INPUT_057.length; i++) {
+            ApplyForm.INPUT_057[i].disabled = true;
+            ApplyForm.INPUT_057[i].checked = false;
+        }
+        ApplyForm.INPUT_0561.disabled = true;
+        ApplyForm.INPUT_0561.value = "";
+        ApplyForm.INPUT_0562.disabled = true;
+        ApplyForm.INPUT_0562.value = "";
+        ApplyForm.INPUT_0571.disabled = true;
+        ApplyForm.INPUT_0571.value = "";
+        ApplyForm.INPUT_0572.disabled = true;
+        ApplyForm.INPUT_0572.value = "";
+        for (var i = 0; i < ApplyForm.INPUT_058.length; i++) {
+            ApplyForm.INPUT_058[i].disabled = !ApplyForm.INPUT_051.checked;
+            ApplyForm.INPUT_058[i].checked = false;
+        }
+        ApplyForm.INPUT_058[0].checked = ApplyForm.INPUT_051.checked;
+        controldisabledstatu(5);
+    } else if (type == 5) {
+        //勾選公告現值
+        for (var i = 0; i < ApplyForm.INPUT_056.length; i++) {
+            ApplyForm.INPUT_056[i].disabled = !ApplyForm.INPUT_053.checked;
+            ApplyForm.INPUT_056[i].checked = false;
+        }
+        //ApplyForm.INPUT_056[0].checked=((ApplyForm.INPUT_052.checked==false)&&(ApplyForm.INPUT_053.checked));
+        ApplyForm.INPUT_056[0].disabled = !((ApplyForm.INPUT_052.checked == false) && (ApplyForm.INPUT_053.checked));
+        ApplyForm.INPUT_056[1].checked = ((ApplyForm.INPUT_052.checked) && (ApplyForm.INPUT_053.checked));
+        ApplyForm.INPUT_0561.disabled = !((ApplyForm.INPUT_052.checked) && (ApplyForm.INPUT_053.checked));
+        ApplyForm.INPUT_0561.value = "";
+        ApplyForm.INPUT_0562.disabled = !((ApplyForm.INPUT_052.checked) && (ApplyForm.INPUT_053.checked));
+        ApplyForm.INPUT_0562.value = "";
+        if ((ApplyForm.INPUT_053.checked == true) && (ApplyForm.INPUT_056[0].checked == false) && (ApplyForm.INPUT_056[1].checked == false)) {
+            //當期和歷年未都勾選
+            if (ApplyForm.INPUT_056[0].disabled == false)
+                ApplyForm.INPUT_056[0].checked = true;
+            else
+                ApplyForm.INPUT_056[1].checked = true;
+        }
+    } else if (type == 6) {
+        //勾選申報地價(INPUT_054)
+        for (var i = 0; i < ApplyForm.INPUT_057.length; i++) {
+            ApplyForm.INPUT_057[i].disabled = !ApplyForm.INPUT_054.checked;
+            ApplyForm.INPUT_057[i].checked = false;
+        }
+        ApplyForm.INPUT_057[0].disabled = !((ApplyForm.INPUT_052.checked == false) && (ApplyForm.INPUT_054.checked));
+        ApplyForm.INPUT_057[1].checked = ((ApplyForm.INPUT_052.checked) && (ApplyForm.INPUT_054.checked));
+        ApplyForm.INPUT_0571.disabled = !((ApplyForm.INPUT_052.checked) && (ApplyForm.INPUT_054.checked));
+        ApplyForm.INPUT_0571.value = "";
+        ApplyForm.INPUT_0572.disabled = !((ApplyForm.INPUT_052.checked) && (ApplyForm.INPUT_054.checked));
+        ApplyForm.INPUT_0572.value = "";
+        if ((ApplyForm.INPUT_054.checked == true) && (ApplyForm.INPUT_057[0].checked == false) && (ApplyForm.INPUT_057[1].checked == false)) {
+            //當期和歷年未都勾選
+            if (ApplyForm.INPUT_057[0].disabled == false)
+                ApplyForm.INPUT_057[0].checked = true;
+            else
+                ApplyForm.INPUT_057[1].checked = true;
+        }
+        for (var i = 0; i < ApplyForm.INPUT_058.length; i++) {
+            ApplyForm.INPUT_058[i].disabled = !ApplyForm.INPUT_051.checked;
+            ApplyForm.INPUT_058[i].checked = false;
+        }
+        ApplyForm.INPUT_058[0].checked = ApplyForm.INPUT_051.checked;
+    } else if (type == 7) {
+        //點選當期或歷年
+        ApplyForm.INPUT_0561.disabled = !ApplyForm.INPUT_056[1].checked;
+        ApplyForm.INPUT_0561.value = "";
+        ApplyForm.INPUT_0562.disabled = !ApplyForm.INPUT_056[1].checked;
+        ApplyForm.INPUT_0562.value = "";
+        if (ApplyForm.INPUT_056[1].checked)
+            ApplyForm.INPUT_0561.focus();
+    } else if (type == 8) {
+        //點選當期或歷年
+        ApplyForm.INPUT_0571.disabled = !ApplyForm.INPUT_057[1].checked;
+        ApplyForm.INPUT_0571.value = "";
+        ApplyForm.INPUT_0572.disabled = !ApplyForm.INPUT_057[1].checked;
+        ApplyForm.INPUT_0572.value = "";
+        if (ApplyForm.INPUT_057[1].checked)
+            ApplyForm.INPUT_0571.focus();
+    } else if (type == 9) {
+        //點選比例尺
+        //ApplyForm.INPUT_0331.disabled=(ApplyForm.INPUT_033[0].checked||ApplyForm.INPUT_033[1].checked);
+        if (ApplyForm.INPUT_033[0].checked == true || ApplyForm.INPUT_033[1].checked == true) {
+            ApplyForm.INPUT_0331.value = "";
+            ApplyForm.INPUT_0331.disabled = true;
+        } else if (ApplyForm.INPUT_033[2].checked == true) {
+            ApplyForm.INPUT_0331.disabled = false;
+        }
+    } else if (type == 10) {
+        //重測前
+        if (ApplyForm.INPUT_053.checked) {
+            ApplyForm.INPUT_056[0].checked = ((ApplyForm.INPUT_052.checked == false) && (ApplyForm.INPUT_053.checked));
+            ApplyForm.INPUT_056[0].disabled = !((ApplyForm.INPUT_052.checked == false) && (ApplyForm.INPUT_053.checked));
+            ApplyForm.INPUT_056[1].checked = ((ApplyForm.INPUT_052.checked) && (ApplyForm.INPUT_053.checked));
+            ApplyForm.INPUT_0561.disabled = !((ApplyForm.INPUT_052.checked) && (ApplyForm.INPUT_053.checked));
+            ApplyForm.INPUT_0561.value = "";
+            ApplyForm.INPUT_0562.disabled = !((ApplyForm.INPUT_052.checked) && (ApplyForm.INPUT_053.checked));
+            ApplyForm.INPUT_0562.value = "";
+        }
+        if (ApplyForm.INPUT_054.checked) {
+            ApplyForm.INPUT_057[0].checked = ((ApplyForm.INPUT_052.checked == false) && (ApplyForm.INPUT_054.checked));
+            ApplyForm.INPUT_057[0].disabled = !((ApplyForm.INPUT_052.checked == false) && (ApplyForm.INPUT_054.checked));
+            ApplyForm.INPUT_057[1].checked = ((ApplyForm.INPUT_052.checked) && (ApplyForm.INPUT_054.checked));
+            ApplyForm.INPUT_0571.disabled = !((ApplyForm.INPUT_052.checked) && (ApplyForm.INPUT_054.checked));
+            ApplyForm.INPUT_0571.value = "";
+            ApplyForm.INPUT_0572.disabled = !((ApplyForm.INPUT_052.checked) && (ApplyForm.INPUT_054.checked));
+            ApplyForm.INPUT_0572.value = "";
+        }
+        ApplyForm.INPUT_055.disabled = ApplyForm.INPUT_052.checked;
+        ApplyForm.INPUT_055.checked = false;
+    } else if (type == 11) {
+        //點選公告現值當期
+        if ((ApplyForm.INPUT_056[0].checked == false) && (ApplyForm.INPUT_056[1].checked == false))
+            ApplyForm.INPUT_056[1].checked = true;
+        ApplyForm.INPUT_0561.disabled = !ApplyForm.INPUT_056[1].checked;
+        ApplyForm.INPUT_0562.disabled = !ApplyForm.INPUT_056[1].checked;
+        if (ApplyForm.INPUT_056[1].checked) {
+            ApplyForm.INPUT_0561.value = "";
+            ApplyForm.INPUT_0562.value = "";
+            ApplyForm.INPUT_0561.focus();
+        } else {
+            ApplyForm.INPUT_0561.value = "";
+            ApplyForm.INPUT_0562.value = "";
+        }
+    } else if (type == 12) {
+        //點選公告現值歷年
+        if ((ApplyForm.INPUT_056[0].checked == false) && (ApplyForm.INPUT_056[1].checked == false)) {
+            if (ApplyForm.INPUT_056[0].disabled == false)
+                ApplyForm.INPUT_056[0].checked = true;
+            else
+                ApplyForm.INPUT_056[1].checked = true;
+        }
+        ApplyForm.INPUT_0561.disabled = !ApplyForm.INPUT_056[1].checked;
+        ApplyForm.INPUT_0561.value = "";
+        ApplyForm.INPUT_0562.disabled = !ApplyForm.INPUT_056[1].checked;
+        ApplyForm.INPUT_0562.value = "";
+        if (ApplyForm.INPUT_056[1].checked) {
+            ApplyForm.INPUT_0561.value = "";
+            ApplyForm.INPUT_0562.value = "";
+            ApplyForm.INPUT_0561.focus();
+        } else {
+            ApplyForm.INPUT_0561.value = "";
+            ApplyForm.INPUT_0562.value = "";
+        }
+    } else if (type == 13) {
+        //點選申報地價當期
+        if ((ApplyForm.INPUT_057[0].checked == false) && (ApplyForm.INPUT_057[1].checked == false))
+            ApplyForm.INPUT_057[1].checked = true;
+        ApplyForm.INPUT_0571.disabled = !ApplyForm.INPUT_057[1].checked;
+        ApplyForm.INPUT_0572.disabled = !ApplyForm.INPUT_057[1].checked;
+        if (ApplyForm.INPUT_057[1].checked) {
+            ApplyForm.INPUT_0571.value = "";
+            ApplyForm.INPUT_0572.value = "";
+            ApplyForm.INPUT_0571.focus();
+        } else {
+            ApplyForm.INPUT_0571.value = "";
+            ApplyForm.INPUT_0572.value = "";
+        }
+    } else if (type == 14) {
+        //點選申報地價歷年
+        if ((ApplyForm.INPUT_057[0].checked == false) && (ApplyForm.INPUT_057[1].checked == false))
+            ApplyForm.INPUT_057[0].checked = true;
+        ApplyForm.INPUT_0571.disabled = !ApplyForm.INPUT_057[1].checked;
+        ApplyForm.INPUT_0572.disabled = !ApplyForm.INPUT_057[1].checked;
+        if (ApplyForm.INPUT_057[1].checked) {
+            ApplyForm.INPUT_0571.value = "";
+            ApplyForm.INPUT_0572.value = "";
+            ApplyForm.INPUT_0571.focus();
+        } else {
+            ApplyForm.INPUT_0571.value = "";
+            ApplyForm.INPUT_0572.value = "";
+        }
+    } else if (type == 15) {
+        //點選異動索引
+        ApplyForm.INPUT_061.disabled = false;
+        with (ApplyForm) {
+            for (var i = 0; i < INPUT_062.length; i++) {
+                INPUT_062[i].disabled = !INPUT_061.checked;
+                INPUT_062[i].checked = false;
+            }
+            INPUT_0612.selectedIndex = 0;
+            INPUT_0615.selectedIndex = 0;
+            INPUT_062[5].checked = INPUT_061.checked;
+            INPUT_0611.disabled = !INPUT_062[0].checked;
+            INPUT_0612.disabled = !INPUT_062[0].checked;
+            INPUT_0613.disabled = !INPUT_062[0].checked;
+            INPUT_0614.disabled = !((INPUT_062[2].checked == true) || (INPUT_062[7].checked == true));
+            INPUT_0615.disabled = !((INPUT_062[3].checked == true) || (INPUT_062[8].checked == true));
+            if (INPUT_062[0].checked == true) {
+                INPUT_0611.value = "";
+                INPUT_0613.value = "";
+            }
+            INPUT_0614.value = "";
+        }
+    } else if (type == 16) {
+        //點選異動索引類型
+        with (ApplyForm) {
+            if (INPUT_062[0].checked == true) {
+                INPUT_0611.disabled = false;
+                INPUT_0612.disabled = false;
+                INPUT_0613.disabled = false;
+                INPUT_0614.disabled = true;
+                INPUT_0615.disabled = true;
+            } else if ((INPUT_062[2].checked == true) || (INPUT_062[6].checked == true)) {
+                INPUT_0611.disabled = true;
+                INPUT_0612.disabled = true;
+                INPUT_0613.disabled = true;
+                INPUT_0614.disabled = false;
+                INPUT_0615.disabled = true;
+            } else if ((INPUT_062[3].checked == true) || (INPUT_062[7].checked == true)) {
+                INPUT_0611.disabled = true;
+                INPUT_0612.disabled = true;
+                INPUT_0613.disabled = true;
+                INPUT_0614.disabled = true;
+                INPUT_0615.disabled = false;
+                if (INPUT_062[3].checked == true) {
+                    reNowINPUT_0615('C');
+                } else if (INPUT_062[7].checked == true) {
+                    reNowINPUT_0615('F');
+                }
+            } else {
+                INPUT_0611.disabled = true;
+                INPUT_0612.disabled = true;
+                INPUT_0613.disabled = true;
+                INPUT_0614.disabled = true;
+                INPUT_0615.disabled = true;
+            }
+            INPUT_0611.value = "";
+            INPUT_0613.value = "";
+            INPUT_0614.value = "";
+            INPUT_0612.selectedIndex = 0;
+            INPUT_0615.selectedIndex = 0;
+        }
+    } else if (type == 17) {
+        //電子地圖 / 已不使用
+    } else if (type == 18) {
+        //      //點選異動清冊
+        ApplyForm.INPUT_071.disabled = false;
+        ApplyForm.INPUT_0732.selectedIndex = 0;
+        ApplyForm.INPUT_07321.selectedIndex = 0;
+        ApplyForm.INPUT_07322.selectedIndex = 0;
+        ApplyForm.INPUT_0731.disabled = !ApplyForm.INPUT_071.checked;
+        ApplyForm.INPUT_0732.disabled = !ApplyForm.INPUT_071.checked;
+        ApplyForm.INPUT_07321.disabled = !(ApplyForm.INPUT_0731_A.value == "1");
+        ApplyForm.INPUT_07322.disabled = !ApplyForm.INPUT_071.checked;
+        ApplyForm.INPUT_0733.disabled = !ApplyForm.INPUT_071.checked;
+        if (ApplyForm.INPUT_0731.disabled)
+            ApplyForm.INPUT_0731.value = "";
+        if (ApplyForm.INPUT_0733.disabled)
+            ApplyForm.INPUT_0733.value = "";
+    } else if (type == 19) {
+        //土地/建物參考資訊 謄本選項, 目前無相關設定
+    } else {
+        //none
+    }
+    show_other_disabled();
+}
+
+//對於異動索引選取 地號+部別 或 建號+部別 時部別選單內容只代同類型選項
+function reNowINPUT_0615(sType) {
+    var itemtext;
+    var itemid;
+    if (sType == "C") {
+        itemtext = new Array("土地標示部", "土地所有部", "土地他項權利部");
+        itemid = new Array("A", "B", "C");
+    } else if (sType == "F") {
+        itemtext = new Array("建物標示部", "建物所有部", "建物他項權利部");
+        itemid = new Array("D", "E", "F");
+    }
+    for (var i = 0; i < ApplyForm.INPUT_0615.length; i++) {
+        ApplyForm.INPUT_0615.options[i] = null;
+    }
+    for (var j = 0; j < itemid.length; j++) {
+        ApplyForm.INPUT_0615.options[j] = new Option(itemtext[j], itemid[j]);
+    }
+}
+
+function show_other_disabled() {
+    show_other_disabled_de(ApplyForm.INPUT_0331);
+    show_other_disabled_de(ApplyForm.INPUT_0561);
+    show_other_disabled_de(ApplyForm.INPUT_0562);
+    show_other_disabled_de(ApplyForm.INPUT_0571);
+    show_other_disabled_de(ApplyForm.INPUT_0572);
+    show_other_disabled_de(ApplyForm.INPUT_0611);
+    show_other_disabled_de(ApplyForm.INPUT_0613);
+    show_other_disabled_de(ApplyForm.INPUT_0614);
+    show_other_disabled_de(ApplyForm.INPUT_0711);
+    show_other_disabled_de(ApplyForm.INPUT_0713);
+}
+
+function show_other_disabled_de(objname) {
+    if (!objname) return;
+    if (objname.disabled == true) {
+        objname.className = "inputtext_disabled";
+    } else {
+        objname.className = "inputtext";
+    }
+}
+
+function spanclickcheck(obj) {
+    if (obj.type == "radio") {
+        if (obj.disabled == false)
+            obj.checked = true;
+    } else {
+        if (obj.disabled == false)
+            obj.checked = !obj.checked;
+    }
+}
+
+//地建自動補零和檢查
+//aln=總長度
+function autosupplyzero(obj, col) {
+    var num = obj.value;
+    if (num.length > 0) {
+        var pos = num.indexOf("-");
+        if (checkFormat('NumberDash', num) == false) {
+            alert(col + "只能輸入數字或 \"-\"!!");
+            obj.focus();
+            return (null);
+        }
+        var s
+        var a1, a2
+        s = num.split(",");
+        for (var i = 0; i < s.length; i++) {
+            if (s[i].indexOf("~") > -1) {
+                pos = s[i].indexOf("~");
+                a1 = s[i].substring(0, pos);
+                a2 = s[i].substring(pos + 1, s[i].length);
+                if ((isNaN(parseInt(a1)) == false) && (isNaN(parseInt(a2)) == false)) {
+                    if ((a2 - a1) >= 50) {
+                        alert("為考量檔案傳輸負荷，申請連續地建號超過50筆,請拆件申請!!");
+                        return (null);
+                    }
+                } else {
+                    alert(col + "輸入格式有誤!!");
+                    return (null);
+                }
+            }
+        }
+    }
+    return ("");
+}
+
+
+//日期自動補零和檢查
+//aln=總長度
+function autosupplyzero_date(obj, aln, col) {
+    var num = obj.value;
+    if (num.length > 0) {
+        if (checkFormat('Number', num) == false) {
+            alert(col + " 只能輸入數字!!\n");
+            obj.value = "";
+            setTimeout(function() {obj.focus();obj.value = num ; }, 0);
+            return (null);
+        }
+        while (num.length < aln)
+            num = "0" + num;
+        obj.value = num;
+        if (obj.name.substring(6, 10) == "0561")
+            ApplyForm.INPUT_0562.focus();
+        else if (obj.name.substring(6, 10) == "0571")
+            ApplyForm.INPUT_0572.focus();
+    }
+    return ("");
+}
+
+//日期自動補零和檢查
+//aln=總長度
+function autosupplyzero_date1(obj, aln, col, datetype) {
+    var num = obj.value;
+    if (num.length > 0) {
+        if (checkFormat('Number', num) == false) {
+            alert(col + " 只能輸入數字!!\n");
+            obj.value = "";
+            setTimeout(function() {obj.focus();obj.value = num ; }, 0);
+            return (null);
+        }
+        if (checkDate(datetype, num) == false) {
+            alert(col + " 請輸入正確的數字!!\n");
+            obj.value = "";
+            setTimeout(function() {obj.focus();obj.value = num ; }, 0);
+            return (null);
+        }
+        while (num.length < aln)
+            num = "0" + num;
+        obj.value = num;
+    }
+    return ("");
+}
+
+function checkDate(datetype, num) {
+    if (datetype == "Y")//年
+    {
+        var d = new Date();
+        var n = d.getFullYear() - 1911;
+        if (num > n || num == 0)
+            return false;
+    } else if (datetype == "M")//月
+    {
+        if (num > 12 || num == 0)
+            return false;
+    } else if (datetype == "D")//日
+    {
+        if (num > 31 || num == 0)
+            return false;
+    } else
+        return false
+    return true;
+}
+
+//登記次序自動補零和檢查
+//aln=總長度
+function autosupplyzero1(obj, col) {
+    var num = obj.value;
+    if (num.length > 0) {
+        var pos = num.indexOf("-");
+        if (checkFormat('NumberDash', num) == false) {
+            alert(col + "只能輸入數字或 \"-\" !!\n且不能有空白!!");
+            obj.value = "";
+            setTimeout(function() {obj.focus();obj.value = num ; }, 0);
+            return (null);
+        }
+        var s
+        var a1, a2
+        s = num.split("-");
+        if (s.length > 2) {
+            alert(col + "輸入格式有誤!!");
+            return (null);
+        }
+        if (num.indexOf("-") > -1) {
+            pos = num.indexOf("-");
+            a1 = num.substring(0, pos);
+            a2 = num.substring(pos + 1, num.length);
+            while (a1.length < 4)
+                a1 = "0" + a1;
+            while (a2.length < 3)
+                a2 = "0" + a2;
+            obj.value = a1 + "-" + a2;
+        } else {
+            while (num.length < 4)
+                num = "0" + num;
+            obj.value = num;
+        }
+    }
+    return ("");
+}
+
+
+//檢查所有權人統編的function
+function check_id_num(obj) {
+    var str = obj.value;
+    if (str.length > 0 ) {
+        var err = FastCheckOwn(str);
+        if (err != '') {
+            alert(err);
+            return ("");
+        }
+        obj.value = str.toUpperCase();
+    }
+    return ("");
+}
+
+function setReceId(v) {
+    clearReceId();
+    if (v.length == 0)
+        return;
+    var sv0612 = null, sv0712 = null;
+    if (eApply) {
+        var curr = eApply.getCurrentMainData();
+        if (curr != null) {
+            sv0612 = curr.IDX.IS04_1;
+            sv0712 = curr.IDR.IS04_1;
+        }
+    }
+    var _idx0612 = 0, _idx0712 = 0;
+    for (var i = 0, j = 0; i < orgid.length; i++) {
+        if (orgid[i] == v) {
+            ApplyForm.INPUT_0612.options[j] = new Option(recename[i], receid[i]);
+            ApplyForm.INPUT_0712.options[j] = new Option(recename[i], receid[i]);
+            if (sv0612 != null && sv0612 == receid[i])
+                _idx0612 = j;
+            if (sv0712 != null && sv0712 == receid[i])
+                _idx0712 = j;
+            j++;
+        }
+    }
+    if (j > 0) {
+        ApplyForm.INPUT_0612.options[_idx0612].selected = true;
+        ApplyForm.INPUT_0712.options[_idx0712].selected = true;
+    }
+}
+
+function clearReceId() {
+    $('#INPUT_0612').removeOption(/./);
+    $('#INPUT_0712').removeOption(/./);
+}
+
+
+function CheckInputLB1(val, stype) {
+    if (stype == 'L')
+        var SetChar = '地號';
+    else if (stype == 'B')
+        var SetChar = '建號';
+
+    for (var i = 0; i < val.length; i++) {
+        if (!(((val.charAt(i) >= '0') && (val.charAt(i) <= '9')) || (val.charAt(i) == '-') || (val.charAt(i) == ',') || (val.charAt(i) == '~')))
+            return ("地/建號只能輸入數字888或 \"-\" 或 \",\" 或 \"~\" !!\n且不能有空白!!");
+    }
+
+    var aryInputStr = val.split(",");
+    var rtnStr = '';
+    for (var i = 0; i < aryInputStr.length; i++) {
+        var rtnmsg = '';
+        rtnmsg = CheckFormat1(aryInputStr[i], SetChar);
+        if (rtnmsg != '')
+            return (rtnmsg);
+
+        if (aryInputStr[i].indexOf('~') != -1) {
+            var aryStr = aryInputStr[i].split("~");
+            aryStr[0] = CheckString(aryStr[0], stype);
+            aryStr[1] = CheckString(aryStr[1], stype);
+            if ((aryStr[0].length > 9) || (aryStr[1].length > 9))
+                return (SetChar + '輸入格式錯誤:' + aryInputStr[i]);
+
+            aryInputStr[i] = aryStr[0] + '~' + aryStr[1];
+        } else {
+            aryInputStr[i] = CheckString(aryInputStr[i], stype);
+            if (aryInputStr[i].length > 9) {
+                if (stype == 'L')
+                    return (SetChar + '輸入格式錯誤(例:1234-5678)');
+                else if (stype == 'B')
+                    return (SetChar + '輸入格式錯誤(例:12345-678)');
+            }
+        }
+        rtnStr += ',' + aryInputStr[i];
+    }
+
+    rtnStr = rtnStr.substr(1);
+    if (rtnStr.length > 500)
+        return (SetChar + '輸入過長，請縮小範圍或拆件申請!!');
+
+    return ('');
+}
+
+function CheckFormat1(str, s) {
+    if (str.indexOf(' ') != -1)
+        return (s + '不能有空白:' + str);
+
+    if ((str.indexOf('~~') != -1) || (str.indexOf('--') != -1) || (str.indexOf('~-') != -1) || (str.indexOf('-~') != -1))
+        return (s + '輸入格式錯誤:' + str);
+
+    if ((str.substr(0, 1) == '') || (str.substr(0, 1) == '-') || (str.substr(0, 1) == '~') || (str.substr(str.length - 1, 1) == '~') ||
+    (str.substr(str.length - 1, 1) == '-') || (str.substr(str.length - 1, 1) == '')) {
+        return (s + '輸入格式錯誤:' + str);
+    }
+    return '';
+}
+
+function TestRgexp(s) {
+    var re = /^[0-9]*[1-9][0-9]*$/;
+    return re.test(s)
+} 
+
+function NameRgexp(str) 
+{
+    var re = new RegExp(/&#.{5};/); //字串中有「&#+五個字元+;」
+    return re.test(str);
+}
+
+function Rechar(sendData, kind, v1, child) {
+    $.ajax({
+        url: '../EpaperApply/GetRechar',
+        type: 'POST',
+        dataType: 'json',
+        data: sendData,
+        success: function (data) {
+            var options = clearList(child);
+            $.each(data, function (order, object) {
+                options[options.length] = new Option(object.Text, object.Value);
+            });
+
+            if (kind == 0) { //暫存區
+                if (child == "INPUT_07322") {
+                    for (var tempi = 0; tempi < ApplyForm.INPUT_07322.options.length; tempi++) {
+                        if (ApplyForm.INPUT_07322.options[tempi].value == v1)
+                            ApplyForm.INPUT_07322.selectedIndex = tempi;
+                    }
+                    ApplyForm.INPUT_07342.value = v1;
+                } else if (child == "INPUT_06122") {
+                    for (var tempi = 0; tempi < ApplyForm.INPUT_06122.options.length; tempi++) {
+                        if (ApplyForm.INPUT_06122.options[tempi].value == v1)
+                            ApplyForm.INPUT_06122.selectedIndex = tempi;
+                    }
+                    ApplyForm.INPUT_06162.value = v1;
+
+                }
+            } else if (kind == 1) //初始
+            {
+                if (child == "INPUT_07322") {
+                    ApplyForm.INPUT_07322.value = "";
+                    ApplyForm.INPUT_07342.value = "";
+                } else if (child == "INPUT_06122") {
+                    ApplyForm.INPUT_06122.value = "";
+                    ApplyForm.INPUT_06162.value = "";
+                }
+            } else if (kind == 2) //下拉選單
+            {
+                if (child == "INPUT_07322") {
+                    var tal = ApplyForm.INPUT_07322.options[0].value;
+                    ApplyForm.INPUT_07342.value = tal;
+                } else if (child == "INPUT_06122") {
+                    var tal = ApplyForm.INPUT_06122.options[0].value;
+                    ApplyForm.INPUT_06162.value = tal;
+                }
+            }
+        },
+        error: function (msg) {
+            alert("Error" + msg.responseText);
+        }
+    });
+}
+
+function clearList(id) {
+    var select = $('#' + id);
+    if (select.prop) {
+        var options = select.prop('options');
+    }
+    else {
+        var options = select.attr('options');
+    }
+    $('option', select).remove();
+    return options;
+}
+
+function clearList2(id, defaultItem) {
+    var select = $('#' + id);
+    if (select.prop) {
+        var options = select.prop('options');
+    }
+    else {
+        var options = select.attr('options');
+    }
+    $('option', select).remove();
+    options[0] = new Option(defaultItem, 0);
+    return options;
+}

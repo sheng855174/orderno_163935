@@ -1,0 +1,572 @@
+﻿
+function mm_openbrwindow ( theurl, winname, features )
+{
+    window.open( theurl, winname, features );
+}
+
+function check_empty ( column, name )
+{
+    if( column.length == 0 )
+        return(name + "不可以空白 !\n");
+    return ("");
+}
+
+function check_number ( column, name )
+{
+    for(var i=0; i < column.length; i++ ){
+      if (!( column.charAt(i) >= '0' && column.charAt(i) <= '9' ))
+        return(name + "只能輸入數字 !\n");
+	}	
+    return ("");
+}
+
+
+function check_select ( select, name )
+{
+    if( select.options[0].selected == true )
+        return name + "必須選擇 !\n";
+    return "";
+}
+
+function check_radio ( radio, name )
+{
+    var error = true;
+    for( i=0; i < radio.length; i++ )
+        if( radio[i].checked == true ) {
+            error = false;
+            break;
+        }
+    if( error == true )
+        return name + "必須選擇 !\n";
+    return "";
+}
+
+function check_date( sDate,obj,name )
+{   
+    //將得到的民國格式日期轉成西元格式存入obj,並檢查是否正確
+    
+  
+    if (sDate.length==0)
+      return ("輸入的"+ name +"格式不正確! !\n");
+      
+    var yy,mm,dd,sday,locate,idx;
+    locate=sDate.indexOf('/');
+      
+    if (locate==-1)
+      return ("輸入的"+ name +"格式不正確! !\n"); 
+    
+    yy=sDate.substring(0,locate);
+    sday=sDate.substr(locate+1);
+    
+    locate=sday.indexOf('/');
+    if (locate==-1)
+      return ("輸入的"+ name +"格式不正確! !\n"); 
+      
+    mm=sday.substring(0,locate);
+    dd=sday.substr(locate+1);
+    
+    if (( yy.length > 3 )|| ( yy.length == 0 )|| ( mm.length > 2 ) || (mm.length==0) || ( dd.length > 2 ) || (dd.length==0))
+        return ("輸入的"+ name +"格式不正確! !\n"); 
+        
+    for( idx = 0 ; idx < yy.length ; idx++ ) {
+        if( !(( yy.charAt(idx) >= '0') && (yy.charAt(idx) <= '9')) )
+            return ("您輸入的"+ name +"的年必須是數字 !\n");
+        if (!((parseInt(yy,10) >= 0) && (parseInt(yy,10) <= 8088)))
+            return ("您輸入的"+ name +"的年範圍不正確(0-8088) !\n");
+    }
+    for( idx = 0 ; idx < mm.length ; idx++ ) {
+        if( !(( mm.charAt(idx) >= '0') && (mm.charAt(idx) <= '9')))
+            return ("您輸入的"+ name +"的月份必須是數字 !\n");
+        if (!((parseInt(mm,10) >= 1) && (parseInt(mm,10) <= 12)))
+            return ("您輸入的"+ name +"的月份範圍不正確(1~12) !\n");
+    }
+    for( idx = 0 ; idx < dd.length ; idx++ ) {
+        if( !(( dd.charAt(idx) >= '0') && (dd.charAt(idx) <= '9')))
+            return ("您輸入的"+ name +"的日必須是數字 !\n");
+        if( !((parseInt(dd,10) >= 1) && (parseInt(dd,10) <= 31)))
+            return ("您輸入的"+ name +"的日範圍不正確(1~31) !\n");
+    }
+    yy=(parseInt(yy,10)+1911).toString(10);
+    if (mm.length < 2)
+      mm='0'+ mm;
+    if (dd.length < 2)
+      dd='0'+ dd;
+      
+    obj.value=yy + "/" + mm + "/" + dd;
+    return ("");
+}
+
+function Check_ROCDate( sDate)
+{   
+    //檢查7位民國格式日期
+  var yy,mm,dd,idx;
+  var tempstr=  sDate.value;
+  if (sDate.value.length==0)
+    return(null);
+  if (sDate.value.length<7){	
+    alert("輸入的日期格式(民國年月日)不正確<異動索引日期範圍>!!");
+	sDate.value="";
+	setTimeout(function() {sDate.focus();sDate.value = tempstr ; }, 0);    
+    return(null);    
+  }	
+  
+  for( idx = 0 ; idx < sDate.value.length ; idx++ ) {
+    if( !(( sDate.value.charAt(idx) >= '0') && (sDate.value.charAt(idx) <= '9'))){
+       alert("只能輸入數字(民國年月日)不正確<異動索引日期範圍>!!");
+       sDate.value="";
+	   setTimeout(function() {sDate.focus();sDate.value = tempstr ; }, 0);  
+       return(null);
+       break;
+    }
+  }
+   
+  yy=sDate.value.substring(0,3);
+  mm=sDate.value.substring(3,5);
+  dd=sDate.value.substring(5,7);
+  if (!((parseInt(yy,10) >= 0) && (parseInt(yy,10) <= 999))){
+    alert("您輸入的民國年範圍不正確<異動索引日期範圍>!!");
+    sDate.value="";
+	setTimeout(function() {sDate.focus();sDate.value = tempstr ; }, 0);  
+    return(null);
+  }
+  if (!((parseInt(mm,10) >= 1) && (parseInt(mm,10) <= 12))){
+    alert("您輸入的月份不正確<異動索引日期範圍>!!");
+    sDate.value="";
+	setTimeout(function() {sDate.focus();sDate.value = tempstr ; }, 0);  
+    return (null);
+  }
+  if( !((parseInt(dd,10) >= 1) && (parseInt(dd,10) <= 31))){
+    alert("您輸入的日不正確<異動索引日期範圍>!!");
+    sDate.value="";
+	setTimeout(function() {sDate.focus();sDate.value = tempstr ; }, 0);  ;
+    return (null);
+  }
+}
+function autosupplyzero(obj,col){
+  //地建自動補零和檢查
+  //aln=總長度
+  
+  var num=obj.value;
+  if (num.length>0){
+    //檢查輸入字元
+    if (check_number1(num)==false){
+      alert(col+"只能輸入數字或 \"-\" 或 \",\" 或 \"~\" !!\n且不能有空白!!");  
+  	  //alert(col+"只能輸入數字或 \"-\" 或 \",\"!!\n且不能有空白!!");  
+ 	 // alert(col+"只能輸入數字和 \"-\"(只能輸入單筆地/建號) !!\n且不能有空白!!");  
+	  obj.focus();
+	  return(null);    
+    }
+  
+  }
+  return("");
+}
+
+function autosupplyzero_date(obj,aln,col){
+  //日期自動補零和檢查
+  //aln=總長度
+  
+  var num=obj.value;
+  
+  if (num.length>0){
+    if (check_number2(num)==false){
+      alert(col+" 只能輸入數字!!\n");  
+	  obj.focus();
+  	  return(null);    
+    }
+    while (num.length<aln)
+	  num="0"+num;
+    obj.value=num;
+    if (obj.name.substring(6,10)=="0561")
+      ApplyForm.INPUT_0562.focus();
+    else if (obj.name.substring(6,10)=="0571")
+      ApplyForm.INPUT_0572.focus();	
+  }
+  
+  return("");
+}
+
+
+function autosupplyzero1(obj,col){
+  //登記次序自動補零和檢查
+  //aln=總長度
+  
+  var num=obj.value;
+  if (num.length>0){
+  var pos=num.indexOf("-");
+  if (check_number3(num)==false){
+    alert(col+"只能輸入數字或 \"-\" !!\n且不能有空白!!");  
+	//alert(col+"只能輸入數字或 \"-\" 或 \",\"!!\n且不能有空白!!");  
+	obj.focus();
+	return(null);    
+  }
+  var s
+  var a1,a2
+  s=num.split("-");
+  if (s.length > 2){
+     alert(col+"輸入格式有誤!!");  
+     return(null); 
+  }
+  if (num.indexOf("-")>-1){
+    pos=num.indexOf("-");
+    a1=num.substring(0,pos);
+    a2=num.substring(pos+1,num.length);
+    while (a1.length<4) 
+	  a1="0" + a1;
+    while (a2.length<3) 
+	  a2="0" + a2;
+	obj.value=a1+"-"+a2;  
+  }else{
+    while (num.length<4) 
+	  num="0" + num;
+	obj.value=num;  
+  }
+  }
+  return("");
+}
+
+function check_number1 ( ss ){
+   for( var i=0; i < ss.length; i++ ){
+    //if (!(( ss.charAt(i) >= '0') && (ss.charAt(i) <= '9' )||(ss.charAt(i) == '-' )))
+	if (!((( ss.charAt(i) >= '0') && (ss.charAt(i) <= '9' )) ||(ss.charAt(i) == '-' ) ||(ss.charAt(i) == ',' )||(ss.charAt(i) == '~' )))
+	//if (!((( ss.charAt(i) >= '0') && (ss.charAt(i) <= '9' )) ||(ss.charAt(i) == '-' ) ||(ss.charAt(i) == ',' )))
+        return(false);
+   }	
+}
+
+function check_snumber ( ss ){
+   for( var i=0; i < ss.length; i++ ){
+	if (ss.charAt(i) == '~' )
+        return(false);
+   }	
+}
+
+function check_number2 ( ss ){
+   for( var i=0; i < ss.length; i++ ){
+    if (!(( ss.charAt(i) >= '0') && (ss.charAt(i) <= '9' )))
+        return(false);
+   }	
+}
+function check_number3 ( ss ){
+   for( var i=0; i < ss.length; i++ ){
+	if (!((( ss.charAt(i) >= '0') && (ss.charAt(i) <= '9' )) ||(ss.charAt(i) == '-' )))
+        return(false);
+   }	
+}
+
+function check_land_num(obj, aln, col) {
+    if (obj.value != "") {
+        if (autosupplyzero_date(obj, aln, col) != null) {
+            for (var i = 0; i < ApplyForm.Show_land_num.options.length; i++) {
+                if (ApplyForm.Show_land_num.options[i].value == obj.value) {
+                    ApplyForm.Show_land_num.selectedIndex = i;
+                    ApplyForm.LN.value = ApplyForm.Show_land_num.options[i].title;
+                    ApplyForm.INPUT_013.focus();
+                    return ("");
+                }
+            }
+            obj.value = "";
+            obj.focus();
+        }
+    }
+}
+
+
+
+
+function check_land_num2(obj, aln, col)
+{
+    if (obj.value != "")
+    {
+        if (autosupplyzero_date(obj, aln, col) != null)
+        {
+            var selected_session = document.getElementById(obj.value);
+            if (selected_session == null) {
+                obj.value = "";
+                obj.focus();
+                return ("");
+            }
+            var session_value = selected_session.innerHTML;
+            var session_title = document.getElementById("session_title");
+            session_title.innerText = session_value;
+            $("#session_title").html(session_value);
+            session_title.title = obj.value;
+            document.getElementById("LN").value = $(selected_session).attr("title"); 
+            document.getElementById("S_Name").value = $(selected_session).attr("name");
+            
+          }
+     }
+}
+
+
+//人工謄本送件區使用“地所”送件
+function check_land_num3(obj, aln, col) {
+    if (obj.value != "") {
+        if (autosupplyzero_date(obj, aln, col) != null) {
+            var selected_session = document.getElementById(obj.value);
+            if (selected_session == null) {
+                obj.value = "";
+                obj.focus();
+                return ("");
+            }
+            var session_value = selected_session.innerHTML;
+            var session_title = document.getElementById("session_title");
+            session_title.innerText = session_value;
+            $("#session_title").html(session_value);
+            session_title.title = obj.value;
+            var title1 =  $(selected_session).attr("title");
+            if (title1.length > 1) {
+                var area = title1.split("-");
+                document.getElementById("AreaID").value = area[0];
+                document.getElementById("AreaName").value = area[1];
+            }
+            document.getElementById("S_Name").value = $(selected_session).attr("name");
+
+        }
+    }
+}
+
+
+function check_land_docid(obj, aln, col, type)
+{
+    if (obj.value != "")
+    {
+        var num=obj.value.toUpperCase(); 
+        while (num.length<aln)
+	        num="0"+num;
+        obj.value=num;
+        if (type == "1") 
+        {
+            for (var i = 0; i < ApplyForm.INPUT_0612.options.length; i++)
+            {
+                if (ApplyForm.INPUT_0612.options[i].value == obj.value)
+                {
+			        ApplyForm.INPUT_0612.selectedIndex=i;
+				    return("");
+			    }
+			}
+        } else if (type == "2") 
+        {
+            for (var i = 0; i < ApplyForm.INPUT_0732.options.length; i++)
+            {
+                if (ApplyForm.INPUT_0732.options[i].value == obj.value)
+                {
+			        ApplyForm.INPUT_0732.selectedIndex=i;
+			        return("");
+			    }
+			}
+		} else if (type == "3") 
+        {
+            for (var i = 0; i < ApplyForm.INPUT_07322.options.length; i++)
+            {
+                if (ApplyForm.INPUT_07322.options[i].value == obj.value)
+                {
+			        ApplyForm.INPUT_07322.selectedIndex=i;
+			        return("");
+			    }
+			}
+		} else if (type == "4") 
+        {
+            for (var i = 0; i < ApplyForm.INPUT_06122.options.length; i++)
+            {
+                if (ApplyForm.INPUT_06122.options[i].value == obj.value)
+                {
+			        ApplyForm.INPUT_06122.selectedIndex=i;
+			        return("");
+			    }
+			}
+		}
+		obj.value="";
+		obj.focus();
+	 
+  }
+}
+
+
+
+function check_id_num(obj){
+  var num=obj.value;
+  if (num.length > 0)
+   {
+      if (!FastCheckOwn(num))
+          return ("");
+        obj.value=obj.value.toUpperCase();
+	 //ApplyForm.INPUT_021.focus();     
+  }
+  
+  return("");
+
+}
+
+function check_apply_number(obj){
+  var num=obj.value;
+  
+  msg=check_number(num,"申請份數");
+  if (msg!=""){
+    alert(msg);
+	event.srcElement.select();
+    event.srcElement.focus();
+	return(null);
+  }
+  return("");
+  
+}
+
+function DateTrun(){
+   var yy,mm,dd,hh,mi,ss,d;
+   d = new Date();
+   yy=(parseInt(d.getFullYear(),10)-1911).toString();
+   mm=(d.getMonth()+1).toString();
+   dd=(d.getDate()).toString();
+   while (yy.length<3)
+      yy = "0" + yy;
+   if (mm.length<2)
+     mm = "0" + mm;
+   if (dd.length<2)
+     dd = "0" + dd;
+   return(yy+mm+dd);
+}
+
+function TimeTrun(){
+   var hh,mi,ss,d;
+   d = new Date();
+   hh=(d.getHours()).toString();
+   mi=(d.getMinutes()).toString();
+   ss=(d.getSeconds()).toString();
+   if (hh.length<2)
+     hh = "0" + hh;
+   if (mi.length<2)
+     mi = "0" + mi;
+   if (ss.length<2)
+     ss = "0" + ss;
+   return(hh+mi+ss);
+}
+
+function checkmaxpage(obj){
+  var num=obj.value;
+  if (num==''){
+    alert('請輸入限制張數!!');
+	obj.value = "100";
+    setTimeout(function() {event.srcElement.focus(); }, 0);
+	//event.srcElement.select();
+   // event.srcElement.focus();
+	return(null);
+  }
+  msg=check_number(num,"限制張數");
+  if (msg!=""){
+    alert(msg);
+	obj.value = "";
+    setTimeout(function() {obj.focus();obj.value = num ; }, 0);
+	//event.srcElement.select();
+   // event.srcElement.focus();
+	return(null);
+  }
+  if (num>9999){
+    alert('最大張數為9999!!');
+	obj.value = "";
+     setTimeout(function() {obj.focus();obj.value = num ; }, 0);
+	//event.srcElement.select();
+   // event.srcElement.focus();
+	return(null);
+  }
+  return("");
+  
+}
+
+function checkcnt(obj,cntmsg){
+  var num=obj.value;
+  msg=check_number(num,cntmsg);
+  
+  if (msg!=""){
+    alert(msg);
+	obj.value = "";
+    setTimeout(function() {obj.focus();obj.value = num ; }, 0);
+   // event.srcElement.select();
+    //event.srcElement.focus();
+	return(null);
+  }
+   
+}
+
+
+
+function isvalidchar(idobj){
+
+  var idx=0;
+  var str1="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var str2="0123456789";
+  var code=0;
+
+  if (idobj.value.length != 10)
+    return false;//身分證字號長度為10個字元
+  else if ((idobj.value.charAt(1)>'2')||(idobj.value.charAt(1)<'1'))
+    return false;//第二個字元須為1或2
+  else if (str1.indexOf(idobj.value.charAt(idx++))==-1) {//第一個字元必須是英文字母
+    return false;
+  }
+  while (idx < idobj.value.length) {// 第二至九個字元必須是阿拉伯數字
+    if (str2.indexOf(idobj.value.charAt(idx++))==-1) {
+      return false;
+    }
+  }
+
+  //以下是身分證字號的檢驗公式
+  str1 = idobj.value.charAt(0);
+  if(str1=='A')code=10
+  else if (str1=='B')code=11
+  else if (str1=='C')code=12
+  else if (str1=='D')code=13
+  else if (str1=='E')code=14
+  else if (str1=='F')code=15
+  else if (str1=='G')code=16
+  else if (str1=='H')code=17
+  else if (str1=='J')code=18
+  else if (str1=='K')code=19
+  else if (str1=='L')code=20
+  else if (str1=='M')code=21
+  else if (str1=='N')code=22
+  else if (str1=='P')code=23
+  else if (str1=='Q')code=24
+  else if (str1=='R')code=25
+  else if (str1=='S')code=26
+  else if (str1=='T')code=27
+  else if (str1=='U')code=28
+  else if (str1=='V')code=29
+  else if (str1=='X')code=30
+  else if (str1=='Y')code=31
+  else if (str1=='W')code=32
+  else if (str1=='Z')code=33
+  else if (str1=='I')code=34
+  else if (str1=='O')code=35 ;
+  code = Math.floor(code/10) + (code%10)*9 +
+  parseInt(idobj.value.charAt(1))*8 +
+  parseInt(idobj.value.charAt(2))*7 +
+  parseInt(idobj.value.charAt(3))*6 +
+  parseInt(idobj.value.charAt(4))*5 +
+  parseInt(idobj.value.charAt(5))*4 +
+  parseInt(idobj.value.charAt(6))*3 +
+  parseInt(idobj.value.charAt(7))*2 +
+  parseInt(idobj.value.charAt(8)) +
+  parseInt(idobj.value.charAt(9)) ;
+  code = code % 10 ;
+  if (code != 0)
+    return false;
+  return true;
+}
+function CheckID(obj){
+  while (obj.value.charAt(0)==" ")
+    obj.value=obj.value.substr(1);
+     
+	
+  if (obj.value.length==0)
+    return true
+  
+
+  obj.value = obj.value.toUpperCase(); //變更為大寫 英文字母
+  /*
+  if (!isvalidchar(obj)){
+    alert('您的身分證字號不正確。');
+    obj.focus();
+	return false;
+  }
+  */
+}

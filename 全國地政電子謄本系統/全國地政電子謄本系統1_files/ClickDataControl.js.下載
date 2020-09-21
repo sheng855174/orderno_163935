@@ -1,0 +1,685 @@
+﻿
+
+  /*****************************************
+  ☆當使用者點選項目時的控制顯示和預設值
+  *****************************************/
+
+function REG_Click(){
+  
+  /*****************************************
+  ☆當點選登記謄本(INPUT_21)時的顯示控制
+  ☆打勾時,預設勾選無需列印地上建物建號和部份(個人全部) 
+  *****************************************/
+  for (var i=0;i<ApplyForm.INPUT_023.length;i++){
+    ApplyForm.INPUT_023[i].disabled=!ApplyForm.INPUT_021.checked;
+    ApplyForm.INPUT_023[i].checked=false;
+  }  
+  ApplyForm.INPUT_022.disabled=!ApplyForm.INPUT_021.checked;
+  ApplyForm.INPUT_022.checked=ApplyForm.INPUT_021.checked;
+  ApplyForm.INPUT_024.disabled = !ApplyForm.INPUT_021.checked;
+  ApplyForm.INPUT_024.checked = false;
+  ApplyForm.INPUT_025.disabled = !ApplyForm.INPUT_021.checked;
+  ApplyForm.INPUT_025.checked = false;
+  ApplyForm.INPUT_023[0].checked=ApplyForm.INPUT_021.checked;
+  ApplyForm.REG_CNT.disabled=!ApplyForm.INPUT_021.checked;
+
+  if (ApplyForm.INPUT_021.checked) {
+    ApplyForm.REG_CNT.className="";
+    //ApplyForm.REG_CNT.value = "1";
+  }else{
+    //ApplyForm.REG_CNT.value="";
+    ApplyForm.REG_CNT.className = "inputtext_disabled";
+  }
+
+
+}
+
+function PIC1_Click(){
+  /*****************************************
+  ☆當點選地籍圖謄本(INPUT_31)時的顯示控制
+  ☆打勾時,預設勾選自動計算比例尺(建議)
+  *****************************************/
+  ApplyForm.INPUT_032.disabled=!ApplyForm.INPUT_031.checked;
+  ApplyForm.PIC1_CNT.disabled=!ApplyForm.INPUT_031.checked;
+
+  if (ApplyForm.INPUT_031.checked){
+    ApplyForm.PIC1_CNT.className="";
+    //ApplyForm.PIC1_CNT.value="1";
+  }else{
+    //ApplyForm.PIC1_CNT.value="";
+    ApplyForm.PIC1_CNT.className="inputtext_disabled";
+  }
+
+
+  ApplyForm.INPUT_032.checked=false;
+  for (var i=0;i<ApplyForm.INPUT_033.length;i++){
+  	ApplyForm.INPUT_033[i].disabled=!ApplyForm.INPUT_031.checked;
+  	ApplyForm.INPUT_033[i].checked=false;
+  }  
+  
+  ApplyForm.INPUT_033[0].checked=ApplyForm.INPUT_031.checked;
+ 
+  P2_Click()
+}
+
+function P2_Click(){
+	
+  /*****************************************
+  ☆當點選地籍圖謄本選擇比例尺時的顯示控制
+  *****************************************/
+  ApplyForm.INPUT_0331.value="";
+  if (ApplyForm.INPUT_033[2].checked){
+    ApplyForm.INPUT_0331.disabled=false;
+    ApplyForm.INPUT_0331.className="";
+    ApplyForm.INPUT_0331.focus();
+  }else{
+    ApplyForm.INPUT_0331.disabled=true;
+    ApplyForm.INPUT_0331.className="inputtext_disabled";
+  }
+}
+
+function PRC_Click(){
+	
+  /*****************************************
+  ☆當點選地價謄本(INPUT_051)時的顯示控制
+  ☆打勾時,預設勾選公告現值和當期
+  *****************************************/
+  //重測前
+  ApplyForm.INPUT_052.disabled=!ApplyForm.INPUT_051.checked;
+  ApplyForm.INPUT_052.checked=false;	
+  
+  //份數
+  ApplyForm.PRC_CNT.disabled=!ApplyForm.INPUT_051.checked;
+  if (ApplyForm.INPUT_051.checked){
+    ApplyForm.PRC_CNT.className="";
+    //ApplyForm.PRC_CNT.value="1";
+
+  }else{
+     //ApplyForm.PRC_CNT.value=" ";
+    ApplyForm.PRC_CNT.className="inputtext_disabled";
+  }
+  //公告現值
+  ApplyForm.INPUT_053.disabled=!ApplyForm.INPUT_051.checked;
+  ApplyForm.INPUT_053.checked=ApplyForm.INPUT_051.checked;	
+  //申報地價
+  ApplyForm.INPUT_054.disabled=!ApplyForm.INPUT_051.checked;
+  ApplyForm.INPUT_054.checked=false;
+  //前次移轉現值	
+  ApplyForm.INPUT_055.disabled=!ApplyForm.INPUT_051.checked;
+  ApplyForm.INPUT_055.checked=false;	
+
+  for (var i=0;i<ApplyForm.INPUT_058.length;i++){
+  	ApplyForm.INPUT_058[i].disabled=!ApplyForm.INPUT_051.checked;
+  	ApplyForm.INPUT_058[i].checked=false;
+  }  
+  ApplyForm.INPUT_058[0].checked=ApplyForm.INPUT_051.checked;
+
+
+  AA16_CHECK_Click();
+  BB21_CHECK_Click();  
+}
+
+function AA16_CHECK_Click(){
+  /*****************************************
+  ☆當點選地價謄本--公告現值(INPUT_053)時的顯示控制
+  ☆打勾時,預設勾選當期
+  *****************************************/
+  if (CheckRPCItem()==null)
+    return (null);
+  ApplyForm.INPUT_056[0].disabled=((!ApplyForm.INPUT_053.checked) || (ApplyForm.INPUT_052.checked));
+  ApplyForm.INPUT_056[1].disabled=!ApplyForm.INPUT_053.checked;
+  ApplyForm.INPUT_056[0].checked=((ApplyForm.INPUT_053.checked) && (!ApplyForm.INPUT_052.checked));
+  ApplyForm.INPUT_056[1].checked=((ApplyForm.INPUT_053.checked) && (ApplyForm.INPUT_052.checked));;
+
+  AA16_TYPE_Click();
+}
+
+function AA16_TYPE_Click(){
+	
+  /*****************************************
+  ☆當點選地價謄本--點選公告現值--當期/歷年時的顯示控制
+  *****************************************/
+  
+  if ((ApplyForm.INPUT_053.checked) && (ApplyForm.INPUT_056[0].checked==false)&&(ApplyForm.INPUT_056[1].checked==false)){
+    //重測前如果有勾選只能選擇歷年
+    if (ApplyForm.INPUT_056[0].disabled)
+      ApplyForm.INPUT_056[1].checked=true;
+    else if (event.srcElement.value=="0")
+      ApplyForm.INPUT_056[1].checked=true;
+    else
+      ApplyForm.INPUT_056[0].checked=true;
+  }
+
+  ApplyForm.INPUT_0561.value="";
+  ApplyForm.INPUT_0562.value="";
+  
+  if (ApplyForm.INPUT_056[1].checked){
+    ApplyForm.INPUT_0561.disabled=false;
+    ApplyForm.INPUT_0561.className="";
+    ApplyForm.INPUT_0562.disabled=false;
+    ApplyForm.INPUT_0562.className="";
+    ApplyForm.INPUT_0561.focus();
+  }else{
+    ApplyForm.INPUT_0561.disabled=true;
+    ApplyForm.INPUT_0561.className="inputtext_disabled";
+    ApplyForm.INPUT_0562.disabled=true;
+    ApplyForm.INPUT_0562.className="inputtext_disabled";
+  }
+  
+}
+
+function BB21_CHECK_Click(){
+  
+  /*****************************************
+  ☆當點選地價謄本--申報地價(INPUT_054)時的顯示控制
+  ☆打勾時,預設勾選當期
+  *****************************************/
+  if (CheckRPCItem()==null)
+    return (null);
+
+  ApplyForm.INPUT_057[0].disabled=((!ApplyForm.INPUT_054.checked) || (ApplyForm.INPUT_052.checked));
+  ApplyForm.INPUT_057[1].disabled=!ApplyForm.INPUT_054.checked;
+  ApplyForm.INPUT_057[0].checked=((ApplyForm.INPUT_054.checked) && (!ApplyForm.INPUT_052.checked));
+  ApplyForm.INPUT_057[1].checked=((ApplyForm.INPUT_054.checked) && (ApplyForm.INPUT_052.checked));;
+
+  BB21_TYPE_Click();
+}
+
+function BB21_TYPE_Click(){
+	
+  /*****************************************
+  ☆當點選地價謄本--點選申報地價--當期/歷年時的顯示控制
+  *****************************************/
+  
+  if ((ApplyForm.INPUT_054.checked) && (ApplyForm.INPUT_057[0].checked==false)&&(ApplyForm.INPUT_057[1].checked==false)){
+    //重測前如果有勾選只能選擇歷年
+    if (ApplyForm.INPUT_057[0].disabled)
+      ApplyForm.INPUT_057[1].checked=true;
+    else if (event.srcElement.value=="0")
+      ApplyForm.INPUT_057[1].checked=true;
+    else
+      ApplyForm.INPUT_057[0].checked=true;
+  }
+
+  ApplyForm.INPUT_0571.value="";
+  ApplyForm.INPUT_0572.value="";
+  
+  if (ApplyForm.INPUT_057[1].checked){
+    ApplyForm.INPUT_0571.disabled=false;
+    ApplyForm.INPUT_0571.className="";
+    ApplyForm.INPUT_0572.disabled=false;
+    ApplyForm.INPUT_0572.className="";
+    ApplyForm.INPUT_0571.focus();
+  }else{
+    ApplyForm.INPUT_0571.disabled=true;
+    ApplyForm.INPUT_0571.className="inputtext_disabled";
+    ApplyForm.INPUT_0572.disabled=true;
+    ApplyForm.INPUT_0572.className="inputtext_disabled";
+  }
+  
+}
+
+
+function SRPRCE_Click(){
+  /*****************************************
+  ☆當點選地價謄本--重測前時的顯示控制
+  *****************************************/
+  if (ApplyForm.INPUT_052.checked && ApplyForm.INPUT_051.checked && ApplyForm.INPUT_055.checked){
+    alert('勾選重測前無法選擇前次移轉現值，請至少需勾選一項地價謄本其他申請項目');
+    event.srcElement.checked=(!event.srcElement.checked);
+    return false;
+  }
+  AA16_CHECK_Click();
+  BB21_CHECK_Click();    
+  ApplyForm.INPUT_055.disabled=ApplyForm.INPUT_052.checked;
+  ApplyForm.INPUT_055.checked=false;	
+}
+
+function CheckRPCItem(){
+
+  if ((ApplyForm.INPUT_051.checked) && (ApplyForm.INPUT_053.checked==false)&&(ApplyForm.INPUT_054.checked==false) && (ApplyForm.INPUT_055.checked==false)){
+    alert('至少需勾選一項地價謄本申請項目');
+    event.srcElement.checked=(!event.srcElement.checked);
+    return (null);
+  }
+    //20111220 修改顯示規則
+   if( ApplyForm.INPUT_054.checked||ApplyForm.INPUT_055.checked )
+        {
+	  ApplyForm.INPUT_058[0].disabled=false;
+	  ApplyForm.INPUT_058[1].disabled=false;
+	   if(! ApplyForm.INPUT_058[0].checked &&  !ApplyForm.INPUT_058[1].checked)  ApplyForm.INPUT_058[0].checked=true;
+	}
+	else
+        {
+	  ApplyForm.INPUT_058[0].disabled= true;
+	  ApplyForm.INPUT_058[1].disabled= true;
+	  ApplyForm.INPUT_058[0].checked= false;
+	  ApplyForm.INPUT_058[1].checked=false;
+
+	}
+  return (true);
+}
+
+function IDX_Click(){
+	
+  /*****************************************
+  ☆當點選異動索引時的顯示控制
+  *****************************************/
+  
+  //預設勾選收件年字號選項   
+
+  for (var i=0;i<ApplyForm.INPUT_062.length;i++){
+    ApplyForm.INPUT_062[i].disabled=!ApplyForm.INPUT_061.checked;
+    ApplyForm.INPUT_062[i].checked=ApplyForm.INPUT_061.checked;
+}
+
+  ApplyForm.INPUT_062[0].checked = ApplyForm.INPUT_061.checked;
+  ApplyForm.INPUT_063.disabled = (!ApplyForm.INPUT_061.checked || ApplyForm.INPUT_062[0].checked); // 異動日期範圍
+
+  ApplyForm.INPUT_063.checked = false;
+  if (ApplyForm.INPUT_061.checked && ApplyForm.CERT_TYPE1.value == 'Y' && ApplyForm.REGTYPE.value == "1")
+      ApplyForm.INPUT_0641.disabled = false; //含權利人完整姓名
+  else {
+      ApplyForm.INPUT_0641.disabled = true; //含權利人完整姓名
+  }
+  ApplyForm.INPUT_0641.checked = false;
+  ApplyForm.IDX_CNT.disabled=!ApplyForm.INPUT_061.checked;
+
+if (ApplyForm.INPUT_061.checked){
+    ApplyForm.IDX_CNT.className="";
+    //ApplyForm.IDX_CNT.value="1";
+  }else{
+    //ApplyForm.IDX_CNT.value="";
+    ApplyForm.IDX_CNT.className="inputtext_disabled";
+  }
+  ISTYPE_Click();
+  IS05_Click();
+}
+
+function ISTYPE_Click(){
+  /*****************************************
+  ☆當點選異動索引選項時的顯示控制
+  *****************************************/
+
+
+    for (var i = 0; i < ApplyForm.INPUT_065.length; i++) {
+        ApplyForm.INPUT_065[i].disabled = !ApplyForm.INPUT_062[0].checked;
+        ApplyForm.INPUT_065[i].checked = false;
+    }
+
+  
+    ApplyForm.INPUT_0611.value="";
+    ApplyForm.INPUT_0612.value="";
+    ApplyForm.INPUT_0613.value="";
+    ApplyForm.INPUT_0614.value="";
+    ApplyForm.INPUT_0615.value="";
+    ApplyForm.INPUT_0616.value="";
+
+  ApplyForm.INPUT_0611.disabled=(!ApplyForm.INPUT_062[0].checked);
+  ApplyForm.INPUT_0612.disabled = (!ApplyForm.INPUT_062[0].checked);
+  ApplyForm.INPUT_06122.disabled = (!ApplyForm.INPUT_062[0].checked)
+  ApplyForm.INPUT_0613.disabled=(!ApplyForm.INPUT_062[0].checked);
+  ApplyForm.INPUT_0614.disabled=((!ApplyForm.INPUT_062[2].checked) && (!ApplyForm.INPUT_062[7].checked));
+  ApplyForm.INPUT_0615.disabled=((!ApplyForm.INPUT_062[3].checked) && (!ApplyForm.INPUT_062[8].checked));
+  ApplyForm.INPUT_0616.disabled=(!ApplyForm.INPUT_062[0].checked);
+  ApplyForm.INPUT_06162.disabled = (!ApplyForm.INPUT_062[0].checked);
+  ApplyForm.INPUT_065[0].checked = ApplyForm.INPUT_062[0].checked; //勾選異動索引後預設為「本縣市」
+  ChangeINPUT_065();
+
+  if (ApplyForm.INPUT_062[0].checked) {
+      ApplyForm.INPUT_063.disabled = true;
+      ApplyForm.INPUT_063.checked = false;
+      ApplyForm.INPUT_0631.disabled = true;
+      ApplyForm.INPUT_0631.className = "inputtext_disabled";
+      ApplyForm.INPUT_0631.value = "";
+      ApplyForm.INPUT_0631Y.disabled = true;
+      ApplyForm.INPUT_0631Y.className = "inputtext_disabled";
+      ApplyForm.INPUT_0631Y.value = "";
+      ApplyForm.INPUT_0631M.disabled = true;
+      ApplyForm.INPUT_0631M.className = "inputtext_disabled";
+      ApplyForm.INPUT_0631M.value = "";
+      ApplyForm.INPUT_0631D.disabled = true;
+      ApplyForm.INPUT_0631D.className = "inputtext_disabled";
+      ApplyForm.INPUT_0631D.value = "";
+      ApplyForm.INPUT_0632.disabled = true;
+      ApplyForm.INPUT_0632.className = "inputtext_disabled";
+      ApplyForm.INPUT_0632.value = "";
+      ApplyForm.INPUT_0632Y.disabled = true;
+      ApplyForm.INPUT_0632Y.className = "inputtext_disabled";
+      ApplyForm.INPUT_0632Y.value = "";
+      ApplyForm.INPUT_0632M.disabled = true;
+      ApplyForm.INPUT_0632M.className = "inputtext_disabled";
+      ApplyForm.INPUT_0632M.value = "";
+      ApplyForm.INPUT_0632D.disabled = true;
+      ApplyForm.INPUT_0632D.className = "inputtext_disabled";
+      ApplyForm.INPUT_0632D.value = "";
+    ApplyForm.INPUT_0611.className="";
+    ApplyForm.INPUT_0612.selectedIndex = 0;
+    ApplyForm.INPUT_06121.selectedIndex = 0;
+    clearList2("INPUT_06122", "請選擇");
+    ApplyForm.INPUT_06162.value = "";
+//    var sendData = {
+//        city_id: getVal($('input[name="CityID"]')),
+//        area_id: getVal($('input[name="AreaID"]')),
+//        fromaddress: getVal($('input[name="CityID"]'))
+//    };
+//    Rechar(sendData, 2, "", "INPUT_06122");
+    //ApplyForm.INPUT_06122.selectedIndex = 0;
+    ApplyForm.INPUT_0613.className="";
+    ApplyForm.INPUT_0616.className="";
+    ApplyForm.INPUT_0616.value = ApplyForm.INPUT_0612.options[ApplyForm.INPUT_0612.selectedIndex].value;
+    ApplyForm.INPUT_06162.className = "";
+    //ApplyForm.INPUT_06162.value = ApplyForm.INPUT_06122.options[ApplyForm.INPUT_06122.selectedIndex].value;
+    ApplyForm.INPUT_0611.focus();
+} else {
+    ApplyForm.INPUT_063.disabled = !ApplyForm.INPUT_061.checked;
+    ApplyForm.INPUT_0611.className="inputtext_disabled";
+    ApplyForm.INPUT_0612.value = "";
+    ApplyForm.INPUT_06121.value = "";
+    ApplyForm.INPUT_06122.value = "";
+    ApplyForm.INPUT_0613.className="inputtext_disabled";
+    ApplyForm.INPUT_0616.value="";
+    ApplyForm.INPUT_0616.className = "inputtext_disabled";
+    ApplyForm.INPUT_06162.value = "";
+    ApplyForm.INPUT_06162.className = "inputtext_disabled";
+  }
+
+  if ((ApplyForm.INPUT_062[2].checked)||(ApplyForm.INPUT_062[7].checked)){
+    ApplyForm.INPUT_0614.className="";
+    ApplyForm.INPUT_0614.focus();
+  }else{
+    ApplyForm.INPUT_0614.className="inputtext_disabled";
+  }
+  if ((ApplyForm.INPUT_062[3].checked)||(ApplyForm.INPUT_062[8].checked)){
+    ApplyForm.INPUT_0615.selectedIndex=0;
+  }else{
+    ApplyForm.INPUT_0615.value="";
+  }
+}
+
+function INPUT0641_Click() {
+    ApplyForm.INPUT_062[0].checked = true;
+    ISTYPE_Click();
+
+    ApplyForm.INPUT_062[1].disabled = ApplyForm.INPUT_0641.checked;
+    ApplyForm.INPUT_062[2].disabled = ApplyForm.INPUT_0641.checked;
+    ApplyForm.INPUT_062[3].disabled = ApplyForm.INPUT_0641.checked;
+
+    ApplyForm.INPUT_062[5].disabled = ApplyForm.INPUT_0641.checked;
+    ApplyForm.INPUT_062[6].disabled = ApplyForm.INPUT_0641.checked;
+    ApplyForm.INPUT_062[7].disabled = ApplyForm.INPUT_0641.checked;
+    ApplyForm.INPUT_062[8].disabled = ApplyForm.INPUT_0641.checked;
+}
+
+function INPUT0641_Click2() {
+    if (ApplyForm.INPUT_0641.disabled && ApplyForm.INPUT_061.checked)
+        alert("「異動索引-含權利人完整姓名」需使用憑證登入方可勾選!");
+}
+
+function PIC2_Click(){
+  /*****************************************
+  ☆當點選建物測量圖時的顯示控制
+  *****************************************/
+  ApplyForm.PIC2_CNT.disabled=!ApplyForm.INPUT_041.checked;
+
+  if (ApplyForm.INPUT_041.checked){
+    ApplyForm.PIC2_CNT.className="";
+    //ApplyForm.PIC2_CNT.focus();
+   //ApplyForm.PIC2_CNT.value="1";
+
+  }else{
+    //ApplyForm.PIC2_CNT.value="";
+    ApplyForm.PIC2_CNT.className="inputtext_disabled";
+  }
+
+}
+
+
+function REF_Click(){
+  /*****************************************
+  ☆當點選土地參考資訊時的顯示控制
+  *****************************************/
+  ApplyForm.REF_CNT.disabled=!ApplyForm.INPUT_081.checked;
+
+  if (ApplyForm.INPUT_081.checked){
+    ApplyForm.REF_CNT.className="";
+    //ApplyForm.REF_CNT.focus();
+   //ApplyForm.REF_CNT.value="1";
+
+  }else{
+    //ApplyForm.REF_CNT.value="";
+    ApplyForm.REF_CNT.className="inputtext_disabled";
+  }
+
+}
+
+
+function IDR_Click() {
+
+    /*****************************************
+    ☆當點選異動清冊時的顯示控制
+    *****************************************/
+
+    //個資----------------------------------------------------------------------
+    for (var i = 0; i < ApplyForm.INPUT_0731_A.length; i++) {
+        ApplyForm.INPUT_0731_A[i].disabled = !ApplyForm.INPUT_071.checked;
+        ApplyForm.INPUT_0731_A[i].checked = false;
+    }
+
+    for (var i = 0; i < ApplyForm.INPUT_075.length; i++) {
+        ApplyForm.INPUT_075[i].disabled = !ApplyForm.INPUT_071.checked;
+        ApplyForm.INPUT_075[i].checked = false;
+    }
+
+
+    for (var i = 0; i < ApplyForm.INPUT_076.length; i++) {
+        ApplyForm.INPUT_076[i].disabled = !ApplyForm.INPUT_075[1].checked;
+        ApplyForm.INPUT_076[i].checked = false;
+    }
+
+//    ApplyForm.INPUT_077.disabled = !ApplyForm.INPUT_075[0].checked; //統編
+//    ApplyForm.INPUT_078.disabled = !ApplyForm.INPUT_075[1].checked; //登記次序
+//    ApplyForm.INPUT_079.disabled = !ApplyForm.INPUT_075[2].checked; //姓名
+    ApplyForm.INPUT_075[0].checked = ApplyForm.INPUT_071.checked; //勾選異動清冊後預設為「完整」
+    ApplyForm.INPUT_0731_A[0].checked = ApplyForm.INPUT_071.checked; //勾選異動清冊後預設為「本縣市」
+    ChangeINPUT_0731_A();
+
+    //------------------------------------------------------------------------個資
+
+
+    //預設勾選地號+統編選項   
+    ApplyForm.INPUT_0731.disabled = !ApplyForm.INPUT_071.checked;
+    ApplyForm.INPUT_0732.disabled = !ApplyForm.INPUT_071.checked;
+    ApplyForm.INPUT_07322.disabled = !ApplyForm.INPUT_071.checked;
+    ApplyForm.INPUT_0733.disabled = !ApplyForm.INPUT_071.checked;
+    ApplyForm.INPUT_0734.disabled = !ApplyForm.INPUT_071.checked;
+    ApplyForm.INPUT_07342.disabled = !ApplyForm.INPUT_071.checked;
+    ApplyForm.IDR_CNT.disabled=!ApplyForm.INPUT_071.checked;
+    var userapplytype = ApplyForm.UserApplyType.value;
+
+    if (ApplyForm.INPUT_071.checked) {
+        ApplyForm.INPUT_0731.className = "";
+        ApplyForm.INPUT_0732.selectedIndex = 0;
+        ApplyForm.INPUT_07321.selectedIndex = 0;
+        ApplyForm.INPUT_07322.selectedIndex = 0;
+        ApplyForm.INPUT_0733.className = "";
+        ApplyForm.INPUT_0731.focus();
+        ApplyForm.INPUT_0734.className = "";
+        ApplyForm.INPUT_0734.value = ApplyForm.INPUT_0732.options[ApplyForm.INPUT_0732.selectedIndex].value;
+        ApplyForm.INPUT_07342.className = "";
+        ApplyForm.INPUT_07342.value = ApplyForm.INPUT_07322.options[ApplyForm.INPUT_07322.selectedIndex].value;
+ 
+    ApplyForm.IDR_CNT.className="";
+    ApplyForm.IDR_CNT.value = "1";
+    if ( CertType == "Y") 
+    {//憑証登入
+		if (userapplytype == "1" )
+		{
+			//申請人身份為「登記名義人本人」,須帶入統編,不可更改 2014-02-11
+		    ApplyForm.INPUT_015.value = CertID;
+		    ApplyForm.INPUT_015.disabled = true;
+		} else if (userapplytype == "2") {
+		    //申請人身份為「登記名義人代理人」,不要帶憑證上的統編，可修改 2014-02-11
+		    //2014-08-04 申請人身份為「登記名義人代理人」,申請異動清冊時,要帶憑證上的統編
+		    //ApplyForm.INPUT_015.value = CertID;
+		}
+	 }	
+    } else {
+        ApplyForm.INPUT_0731.className = "inputtext_disabled";
+        ApplyForm.INPUT_0732.value = "";
+        ApplyForm.INPUT_07321.value = "";
+        ApplyForm.INPUT_07322.value = "";
+        ApplyForm.INPUT_0733.className = "inputtext_disabled";
+        ApplyForm.INPUT_0734.value = "";
+        ApplyForm.INPUT_0734.className = "inputtext_disabled";
+        ApplyForm.INPUT_07342.value = "";
+        ApplyForm.INPUT_07342.className = "inputtext_disabled";
+        ApplyForm.INPUT_077.className = "inputtext_disabled";
+        ApplyForm.INPUT_077.value = "";
+        ApplyForm.INPUT_078.className = "inputtext_disabled";
+        ApplyForm.INPUT_078.value = "";
+        ApplyForm.INPUT_079.className = "inputtext_disabled";
+        ApplyForm.INPUT_079.value = "";
+        //ApplyForm.IDR_CNT.value="";
+        ApplyForm.IDR_CNT.className = "inputtext_disabled";
+    if (CertType == "Y") 
+    {//憑証登入
+        //if (userapplytype == "1" || userapplytype == "2")
+        //{
+        if (userapplytype == "1") {//申請人身份為「登記名義人本人」
+                ApplyForm.INPUT_015.value = CertID;
+                ApplyForm.INPUT_015.disabled = true;
+            } else {
+                //2014-08-04 申請人身份為「登記名義人代理人」,申請異動清冊時,要帶憑證上的統編
+                //ApplyForm.INPUT_015.value = CertID;
+                ApplyForm.INPUT_015.disabled = false;
+
+            }
+        //}
+    }
+  }   
+    ApplyForm.INPUT_0731.value = "";
+    ApplyForm.INPUT_0733.value = "";
+
+
+}
+
+
+function IRSTYLE_Click() {
+    /*****************************************
+    ☆當點選異動清冊選項時的顯示控制
+    *****************************************/
+
+    //勾選異動清冊為「部份」
+    for (var i = 0; i < ApplyForm.INPUT_076.length; i++) {
+        ApplyForm.INPUT_076[i].disabled = !ApplyForm.INPUT_075[1].checked;
+        ApplyForm.INPUT_076[i].checked = false;
+    }
+    ApplyForm.INPUT_076[0].checked = ApplyForm.INPUT_075[1].checked; //選「部份」後預設為「統一编號」
+    ApplyForm.INPUT_077.disabled = !ApplyForm.INPUT_075[1].checked; //統編
+
+    if (ApplyForm.INPUT_075[1].checked) {
+        ApplyForm.INPUT_077.className = "";
+        ApplyForm.INPUT_077.value = "";
+    } else {
+        ApplyForm.INPUT_077.disabled = !ApplyForm.INPUT_075[1].checked; //統編
+        ApplyForm.INPUT_078.disabled = !ApplyForm.INPUT_075[1].checked; //
+        ApplyForm.INPUT_079.disabled = !ApplyForm.INPUT_075[1].checked; //
+        ApplyForm.INPUT_077.className = "inputtext_disabled";
+        ApplyForm.INPUT_077.value = "";
+        ApplyForm.INPUT_078.className = "inputtext_disabled";
+        ApplyForm.INPUT_078.value = "";
+        ApplyForm.INPUT_079.className = "inputtext_disabled";
+        ApplyForm.INPUT_079.value = "";
+    }
+
+    ApplyForm.INPUT_0731.focus();
+
+}
+
+
+function IRP_Click() {
+    /*****************************************
+    ☆當點選異動清冊的「部份」選項時的顯示控制
+    *****************************************/
+    ApplyForm.INPUT_077.disabled = !ApplyForm.INPUT_076[0].checked;
+    ApplyForm.INPUT_078.disabled = !ApplyForm.INPUT_076[1].checked;
+    ApplyForm.INPUT_079.disabled = !ApplyForm.INPUT_076[2].checked;
+    if (ApplyForm.INPUT_076[0].checked) {
+        ApplyForm.INPUT_077.className = "";
+        ApplyForm.INPUT_077.value = "";
+        ApplyForm.INPUT_078.className = "inputtext_disabled";
+        ApplyForm.INPUT_078.value = "";
+        ApplyForm.INPUT_079.className = "inputtext_disabled";
+        ApplyForm.INPUT_079.value = "";
+        ApplyForm.INPUT_077.focus();
+    } else if (ApplyForm.INPUT_076[1].checked) {
+        ApplyForm.INPUT_077.className = "inputtext_disabled";
+        ApplyForm.INPUT_077.value = "";
+        ApplyForm.INPUT_078.className = "";
+        ApplyForm.INPUT_078.value = "";
+        ApplyForm.INPUT_079.className = "inputtext_disabled";
+        ApplyForm.INPUT_079.value = "";
+        ApplyForm.INPUT_078.focus();
+    } else {
+        ApplyForm.INPUT_077.className = "inputtext_disabled";
+        ApplyForm.INPUT_077.value = "";
+        ApplyForm.INPUT_078.className = "inputtext_disabled";
+        ApplyForm.INPUT_078.value = "";
+        ApplyForm.INPUT_079.className = "";
+        ApplyForm.INPUT_079.value = "";
+        ApplyForm.INPUT_079.focus();
+    }
+
+}
+
+function IS05_Click(){
+	
+  /*****************************************
+  ☆當點選異動索引日期範圍時的顯示控制
+  *****************************************/
+  
+    //預設不勾選
+    ApplyForm.INPUT_0631.disabled = (!ApplyForm.INPUT_063.checked);
+    ApplyForm.INPUT_0631Y.disabled = (!ApplyForm.INPUT_063.checked);
+    ApplyForm.INPUT_0631M.disabled = (!ApplyForm.INPUT_063.checked);
+    ApplyForm.INPUT_0631D.disabled = (!ApplyForm.INPUT_063.checked);
+    ApplyForm.INPUT_0632.disabled = (!ApplyForm.INPUT_063.checked);
+    ApplyForm.INPUT_0632Y.disabled = (!ApplyForm.INPUT_063.checked);
+    ApplyForm.INPUT_0632M.disabled = (!ApplyForm.INPUT_063.checked);
+    ApplyForm.INPUT_0632D.disabled = (!ApplyForm.INPUT_063.checked);
+
+    if (ApplyForm.INPUT_063.checked)
+    {
+        ApplyForm.INPUT_0631.className = "";
+        ApplyForm.INPUT_0631Y.className = "";
+        ApplyForm.INPUT_0631M.className = "";
+        ApplyForm.INPUT_0631D.className = "";
+        ApplyForm.INPUT_0632.className = "";
+        ApplyForm.INPUT_0632Y.className = "";
+        ApplyForm.INPUT_0632M.className = "";
+        ApplyForm.INPUT_0632D.className = "";
+        ApplyForm.INPUT_0631.focus();
+    } else
+    {
+        ApplyForm.INPUT_0631.className = "inputtext_disabled";
+        ApplyForm.INPUT_0631Y.className = "inputtext_disabled";
+        ApplyForm.INPUT_0631M.className = "inputtext_disabled";
+        ApplyForm.INPUT_0631D.className = "inputtext_disabled";
+        ApplyForm.INPUT_0632.className = "inputtext_disabled";
+        ApplyForm.INPUT_0632Y.className = "inputtext_disabled";
+        ApplyForm.INPUT_0632M.className = "inputtext_disabled";
+        ApplyForm.INPUT_0632D.className = "inputtext_disabled";
+    }
+
+    ApplyForm.INPUT_0631.value = "";
+    ApplyForm.INPUT_0631Y.value = "";
+    ApplyForm.INPUT_0631M.value = "";
+    ApplyForm.INPUT_0631D.value = "";
+    ApplyForm.INPUT_0632.value = "";
+    ApplyForm.INPUT_0632Y.value = "";
+    ApplyForm.INPUT_0632M.value = "";
+    ApplyForm.INPUT_0632D.value = "";
+
+}
+

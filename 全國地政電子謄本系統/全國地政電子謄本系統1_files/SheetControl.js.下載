@@ -1,0 +1,572 @@
+﻿function ChangeFocusRowColor() {
+    //控制下方Grid顯示正確的顏色
+    var rows1 = document.getElementById("DataSheet").getElementsByTagName('tr');
+    var length1 = rows1.length;
+    for (var i = 1; i < length1; i++) {
+        var row = rows1[i];
+        var cell = row.cells[0];
+        if ((row.className == "error_row_select") || (row.className == "error_row_color")) {
+            if (cell.innerText == (FocusRowIndex.toString()) || cell.textContent == (FocusRowIndex.toString()))
+                row.className = "error_row_select";
+            else
+                row.className = "error_row_color";
+        } else {
+            if (cell.innerText == (FocusRowIndex.toString()) || cell.textContent == (FocusRowIndex.toString()))
+                row.className = "select_row";
+            else
+                row.className = "";
+        }
+    }
+}
+
+function ClearInputForm(){
+    for (var i = 0; i < ApplyForm.length; i++)
+	{
+        obj = document.forms("ApplyForm").elements[i];
+        if ((obj.name).indexOf("INPUT_") != -1) 
+		{
+            obj.disabled = false;
+            if ((obj.type == "radio") || (obj.type == "checkbox")) 
+			{
+                obj.checked = false;
+            } else if (obj.name != "INPUT_016") {
+                obj.value = "";
+            }
+        }
+    }
+    //ApplyForm.REG_CNT.value="";
+    //ApplyForm.PIC1_CNT.value="";
+    //ApplyForm.PIC2_CNT.value="";
+    //ApplyForm.PRC_CNT.value="";
+    //ApplyForm.IDX_CNT.value="";
+    //ApplyForm.IDR_CNT.value = "";
+    //ApplyForm.REF_CNT.value = "";
+}
+
+
+function LabelClick() {
+    //雙擊文字標籤
+    var oItem = event.srcElement.children;
+    if (oItem != null) {
+        for (i = 0; i < oItem.length; i++) {
+            if ((oItem.item(i).tagName == "INPUT") && ((oItem.item(i).type == "checkbox") || (oItem.item(i).type == "radio")))
+                oItem.item(i).click();
+        }
+    }
+}
+
+
+function ClearForm() {
+    ClearInputForm();
+    ShowValForm();
+}
+
+function ChangeFocusRow(intRowIndex) {
+    FocusRowIndex = intRowIndex;
+    ClearInputForm();
+    giverowvlaue(FocusRowIndex);
+    ShowValForm();
+    ChangeFocusRowColor();
+
+}
+
+function ChangeFocusRowColor() {
+    //alert("change focus1");
+    var rows1 = document.getElementById("DataSheet").getElementsByTagName('tr');
+    var length1 = rows1.length;
+    //控制下方Grid顯示正確的顏色 
+    for (var i = 1; i < length1; i++) {
+        var row = rows1[i];
+        var cell = row.cells[0];
+        if ((row.className == "error_row_select") || (row.className == "error_row_color")) {
+            //alert("ssssss");
+            if (cell.innerText == (FocusRowIndex.toString()) || cell.textContent == (FocusRowIndex.toString()))
+                row.className = "error_row_select";
+            else
+                row.className = "error_row_color";
+        } else {
+            //alert("fsgsdtttss");
+            if (cell.innerText == (FocusRowIndex.toString()) || cell.textContent == (FocusRowIndex.toString()))
+                row.className = "select_row";
+            else
+                row.className = "";
+        }
+    }
+}
+
+function ClearInputForm() {
+    //alert("sssss");
+    for (var i = 0; i < ApplyForm.length; i++) {
+        //alert("ffffsssss");
+        obj = document.forms["ApplyForm"].elements[i];
+        // alert("ttttsssss");
+        if ((obj.name).indexOf("INPUT_") != -1) {
+            obj.disabled = false;
+            if ((obj.type == "radio") || (obj.type == "checkbox")) {
+                obj.checked = false;
+            } else if (obj.name != "INPUT_016") {
+                obj.value = "";
+            }
+        }
+    }
+//ApplyForm.REG_CNT.value="";
+//ApplyForm.PIC1_CNT.value="";
+//ApplyForm.PIC2_CNT.value="";
+//ApplyForm.PRC_CNT.value="";
+//ApplyForm.IDX_CNT.value="";
+//ApplyForm.IDR_CNT.value="";
+//ApplyForm.REF_CNT.value="";
+
+}
+
+
+
+function ShowValForm() {
+    //由畫面上的值判斷項目是否顯示作用中
+    if (CertType == "Y")  
+    {
+  	    var userapplytype = ApplyForm.UserApplyType.value;
+	    if (userapplytype == "1")
+		    ApplyForm.INPUT_015.disabled=true;
+	}
+    //登記
+    for (var i = 0; i < ApplyForm.INPUT_023.length; i++) {
+        ApplyForm.INPUT_023[i].disabled = !ApplyForm.INPUT_021.checked;
+    }
+    ApplyForm.INPUT_022.disabled = !ApplyForm.INPUT_021.checked;
+    ApplyForm.INPUT_024.disabled = !ApplyForm.INPUT_021.checked;
+    ApplyForm.INPUT_025.disabled = !ApplyForm.INPUT_021.checked;
+
+  ApplyForm.REG_CNT.disabled=!ApplyForm.INPUT_021.checked;
+   
+    if (ApplyForm.INPUT_021.checked){
+    ApplyForm.REG_CNT.disabled=false;
+    ApplyForm.REG_CNT.className="";
+  }else{
+    ApplyForm.REG_CNT.disabled=true;
+    ApplyForm.REG_CNT.className="inputtext_disabled";
+  }
+
+    //地籍圖
+    for (var i = 0; i < ApplyForm.INPUT_033.length; i++) {
+        ApplyForm.INPUT_033[i].disabled = !ApplyForm.INPUT_031.checked;
+    }
+
+    ApplyForm.INPUT_032.disabled = !ApplyForm.INPUT_031.checked;
+    ApplyForm.INPUT_0331.disabled = !ApplyForm.INPUT_033[2].checked;
+    ApplyForm.PIC1_CNT.disabled=!ApplyForm.INPUT_031.checked;
+
+    if (ApplyForm.INPUT_033[2].checked) {
+        ApplyForm.INPUT_0331.disabled = false;
+        ApplyForm.INPUT_0331.className = "";
+    } else {
+        ApplyForm.INPUT_0331.disabled = true;
+        ApplyForm.INPUT_0331.className = "inputtext_disabled";
+    }
+
+    if (ApplyForm.INPUT_031.checked){
+    ApplyForm.PIC1_CNT.disabled=false;
+    ApplyForm.PIC1_CNT.className="";
+  }else{
+    ApplyForm.PIC1_CNT.disabled=true;
+    ApplyForm.PIC1_CNT.className="inputtext_disabled";
+  }
+
+    //建物測量圖
+  ApplyForm.PIC2_CNT.disabled=!ApplyForm.INPUT_041.checked;
+
+   if (ApplyForm.INPUT_041.checked){
+    ApplyForm.PIC2_CNT.disabled=false;
+    ApplyForm.PIC2_CNT.className="";
+  }else{
+    ApplyForm.PIC2_CNT.className="inputtext_disabled";
+    ApplyForm.PIC2_CNT.disabled=true;
+  }
+
+    //土地參考資訊
+  ApplyForm.REF_CNT.disabled=!ApplyForm.INPUT_081.checked;
+
+   if (ApplyForm.INPUT_081.checked){
+    ApplyForm.REF_CNT.disabled=false;
+    ApplyForm.REF_CNT.className="";
+  }else{
+    ApplyForm.REF_CNT.className="inputtext_disabled";
+    ApplyForm.REF_CNT.disabled=true;
+  }
+
+    //地價
+
+    ApplyForm.INPUT_052.disabled = !ApplyForm.INPUT_051.checked;
+    ApplyForm.INPUT_053.disabled = !ApplyForm.INPUT_051.checked;
+    ApplyForm.INPUT_054.disabled = !ApplyForm.INPUT_051.checked;
+    ApplyForm.INPUT_055.disabled = ((!ApplyForm.INPUT_051.checked) || (ApplyForm.INPUT_052.checked));
+    ApplyForm.PRC_CNT.disabled=!ApplyForm.INPUT_051.checked;
+
+
+    ApplyForm.INPUT_056[0].disabled = ((!ApplyForm.INPUT_053.checked) || (ApplyForm.INPUT_052.checked));
+    ApplyForm.INPUT_056[1].disabled = !ApplyForm.INPUT_053.checked;
+
+   if (ApplyForm.INPUT_051.checked){
+    ApplyForm.PRC_CNT.disabled=false;
+    ApplyForm.PRC_CNT.className="";
+   
+  }else{
+    ApplyForm.INPUT_0561.disabled=true;
+    ApplyForm.PRC_CNT.className="inputtext_disabled";
+    ApplyForm.PRC_CNT.disabled=true;
+  }
+
+    if (ApplyForm.INPUT_056[1].checked) {
+        ApplyForm.INPUT_0561.disabled = false;
+        ApplyForm.INPUT_0561.className = "";
+        ApplyForm.INPUT_0562.disabled = false;
+        ApplyForm.INPUT_0562.className = "";
+
+    } else {
+        ApplyForm.INPUT_0561.disabled = true;
+        ApplyForm.INPUT_0561.className = "inputtext_disabled";
+        ApplyForm.INPUT_0562.disabled = true;
+        ApplyForm.INPUT_0562.className = "inputtext_disabled";
+    }
+
+    ApplyForm.INPUT_057[0].disabled = ((!ApplyForm.INPUT_054.checked) || (ApplyForm.INPUT_052.checked));
+    ApplyForm.INPUT_057[1].disabled = !ApplyForm.INPUT_054.checked;
+
+    if (ApplyForm.INPUT_057[1].checked) {
+        ApplyForm.INPUT_0571.disabled = false;
+        ApplyForm.INPUT_0571.className = "";
+        ApplyForm.INPUT_0572.disabled = false;
+        ApplyForm.INPUT_0572.className = "";
+
+    } else {
+        ApplyForm.INPUT_0571.disabled = true;
+        ApplyForm.INPUT_0571.className = "inputtext_disabled";
+        ApplyForm.INPUT_0572.disabled = true;
+        ApplyForm.INPUT_0572.className = "inputtext_disabled";
+    }
+
+    //20111220規則修改 Kevin 要求 
+    //ApplyForm.INPUT_058[0].disabled=!ApplyForm.INPUT_051.checked;
+    //  ApplyForm.INPUT_058[1].disabled=!ApplyForm.INPUT_051.checked;
+
+    if (ApplyForm.INPUT_054.checked || ApplyForm.INPUT_055.checked) {
+        ApplyForm.INPUT_058[0].disabled = false;
+        ApplyForm.INPUT_058[1].disabled = false;
+    }
+    else {
+        ApplyForm.INPUT_058[0].disabled = true;
+        ApplyForm.INPUT_058[1].disabled = true;
+    }
+
+    //異動索引
+    for (var i = 0; i < ApplyForm.INPUT_062.length; i++) {
+        ApplyForm.INPUT_062[i].disabled = !ApplyForm.INPUT_061.checked;
+    }
+
+    for (var i = 0; i < ApplyForm.INPUT_065.length; i++) {
+        ApplyForm.INPUT_065[i].disabled = !ApplyForm.INPUT_062[0].checked;
+    }
+
+    if (ApplyForm.INPUT_062[0].checked) {
+        ApplyForm.INPUT_0611.disabled = false;
+        ApplyForm.INPUT_0611.className = "";
+        ApplyForm.INPUT_0612.disabled = false;
+        ApplyForm.INPUT_06121.disabled = false;
+        ApplyForm.INPUT_06122.disabled = false;
+        ApplyForm.INPUT_0613.disabled = false;
+        ApplyForm.INPUT_0613.className = "";
+        ApplyForm.INPUT_0616.disabled = false;
+        ApplyForm.INPUT_0616.className = "";
+        ApplyForm.INPUT_0616.value = ApplyForm.INPUT_0612.options[ApplyForm.INPUT_0612.selectedIndex].value;
+    ApplyForm.IDX_CNT.disabled=false;
+    ApplyForm.IDX_CNT.className="";
+
+    } else {
+        ApplyForm.INPUT_0611.disabled = true;
+        ApplyForm.INPUT_0611.className = "inputtext_disabled";
+        ApplyForm.INPUT_0612.disabled = true;
+        ApplyForm.INPUT_06121.disabled = true;
+        ApplyForm.INPUT_06122.disabled = true;
+        ApplyForm.INPUT_0613.disabled = true;
+        ApplyForm.INPUT_0613.className = "inputtext_disabled";
+        ApplyForm.INPUT_0616.disabled = true;
+        ApplyForm.INPUT_0616.className = "inputtext_disabled";
+
+    ApplyForm.IDX_CNT.disabled=true;
+    ApplyForm.IDX_CNT.className="inputtext_disabled";
+
+    }
+
+    if ((ApplyForm.INPUT_062[2].checked) || (ApplyForm.INPUT_062[7].checked)) {
+        ApplyForm.INPUT_0614.disabled = false;
+        ApplyForm.INPUT_0614.className = "";
+    } else {
+        ApplyForm.INPUT_0614.disabled = true;
+        ApplyForm.INPUT_0614.className = "inputtext_disabled";
+    }
+
+    if ((ApplyForm.INPUT_062[3].checked) || (ApplyForm.INPUT_062[8].checked)) {
+        ApplyForm.INPUT_0615.disabled = false;
+    } else {
+        ApplyForm.INPUT_0615.disabled = true;
+    }
+
+    ApplyForm.INPUT_063.disabled = !ApplyForm.INPUT_061.checked;
+    //ApplyForm.INPUT_0641.disabled = !ApplyForm.INPUT_061.checked;
+    //2014-11-13 惠琦改第二類不能勾選含權利人完整姓名
+    if (ApplyForm.INPUT_061.checked && ApplyForm.CERT_TYPE1.value == 'Y' && ApplyForm.REGTYPE.value == "1")
+        ApplyForm.INPUT_0641.disabled = false; //含權利人完整姓名
+    else
+        ApplyForm.INPUT_0641.disabled = true; //含權利人完整姓名
+
+    if (ApplyForm.INPUT_063.checked) {
+        ApplyForm.INPUT_0631.disabled = false;
+        ApplyForm.INPUT_0631Y.disabled = false;
+        ApplyForm.INPUT_0631M.disabled = false;
+        ApplyForm.INPUT_0631D.disabled = false;
+        ApplyForm.INPUT_0631.className = "";
+        ApplyForm.INPUT_0631Y.className = "";
+        ApplyForm.INPUT_0631M.className = "";
+        ApplyForm.INPUT_0631D.className = "";
+        ApplyForm.INPUT_0632.disabled = false;
+        ApplyForm.INPUT_0632Y.disabled = false;
+        ApplyForm.INPUT_0632M.disabled = false;
+        ApplyForm.INPUT_0632D.disabled = false;
+        ApplyForm.INPUT_0632.className = "";
+        ApplyForm.INPUT_0632Y.className = "";
+        ApplyForm.INPUT_0632M.className = "";
+        ApplyForm.INPUT_0632D.className = "";
+
+    } else {
+        ApplyForm.INPUT_0631.disabled = true;
+        ApplyForm.INPUT_0631Y.disabled = true;
+        ApplyForm.INPUT_0631M.disabled = true;
+        ApplyForm.INPUT_0631D.disabled = true;
+        ApplyForm.INPUT_0631.className = "inputtext_disabled";
+        ApplyForm.INPUT_0631Y.className = "inputtext_disabled";
+        ApplyForm.INPUT_0631M.className = "inputtext_disabled";
+        ApplyForm.INPUT_0631D.className = "inputtext_disabled";
+        ApplyForm.INPUT_0632.disabled = true;
+        ApplyForm.INPUT_0632Y.disabled = true;
+        ApplyForm.INPUT_0632M.disabled = true;
+        ApplyForm.INPUT_0632D.disabled = true;
+        ApplyForm.INPUT_0632.className = "inputtext_disabled";
+        ApplyForm.INPUT_0632Y.className = "inputtext_disabled";
+        ApplyForm.INPUT_0632M.className = "inputtext_disabled";
+        ApplyForm.INPUT_0632D.className = "inputtext_disabled";
+    }
+
+
+    if (ApplyForm.INPUT_063.checked) {
+        ApplyForm.INPUT_0631.disabled = false;
+        ApplyForm.INPUT_0631Y.disabled = false;
+        ApplyForm.INPUT_0631M.disabled = false;
+        ApplyForm.INPUT_0631D.disabled = false;
+        ApplyForm.INPUT_0631.className = "";
+        ApplyForm.INPUT_0631Y.className = "";
+        ApplyForm.INPUT_0631M.className = "";
+        ApplyForm.INPUT_0631D.className = "";
+        ApplyForm.INPUT_0632.disabled = false;
+        ApplyForm.INPUT_0632Y.disabled = false;
+        ApplyForm.INPUT_0632M.disabled = false;
+        ApplyForm.INPUT_0632D.disabled = false;
+        ApplyForm.INPUT_0632.className = "";
+        ApplyForm.INPUT_0632Y.className = "";
+        ApplyForm.INPUT_0632M.className = "";
+        ApplyForm.INPUT_0632D.className = "";
+    } else {
+        ApplyForm.INPUT_0631.disabled = true;
+        ApplyForm.INPUT_0631Y.disabled = true;
+        ApplyForm.INPUT_0631M.disabled = true;
+        ApplyForm.INPUT_0631D.disabled = true;
+        ApplyForm.INPUT_0631.className = "inputtext_disabled";
+        ApplyForm.INPUT_0631Y.className = "inputtext_disabled";
+        ApplyForm.INPUT_0631M.className = "inputtext_disabled";
+        ApplyForm.INPUT_0631D.className = "inputtext_disabled";
+        ApplyForm.INPUT_0632.disabled = true;
+        ApplyForm.INPUT_0632Y.disabled = true;
+        ApplyForm.INPUT_0632M.disabled = true;
+        ApplyForm.INPUT_0632D.disabled = true;
+        ApplyForm.INPUT_0632.className = "inputtext_disabled";
+        ApplyForm.INPUT_0632Y.className = "inputtext_disabled";
+        ApplyForm.INPUT_0632M.className = "inputtext_disabled";
+        ApplyForm.INPUT_0632D.className = "inputtext_disabled";
+    }
+
+    //異動清冊
+    if (ApplyForm.REGTYPE.value == "2") { //2013-11-26 ann異動清冊選擇申請類型為「第一類」時，才可讓使用者勾選
+        ApplyForm.INPUT_071.disabled = true;
+    }
+    for (var i = 0; i < ApplyForm.INPUT_0731_A.length; i++) {
+        ApplyForm.INPUT_0731_A[i].disabled = !ApplyForm.INPUT_071.checked;
+    }
+
+    for (var i = 0; i < ApplyForm.INPUT_075.length; i++) {
+        ApplyForm.INPUT_075[i].disabled = !ApplyForm.INPUT_071.checked;
+    }
+    for (var i = 0; i < ApplyForm.INPUT_076.length; i++) {
+        ApplyForm.INPUT_076[i].disabled = !ApplyForm.INPUT_075[1].checked;
+    }
+//    ApplyForm.INPUT_077.disabled = !ApplyForm.INPUT_076[0].checked;
+//    ApplyForm.INPUT_078.disabled = !ApplyForm.INPUT_076[1].checked;
+//    ApplyForm.INPUT_079.disabled = !ApplyForm.INPUT_076[2].checked;
+    if (ApplyForm.INPUT_076[0].checked)
+        ApplyForm.INPUT_077.className = "";
+    else
+        ApplyForm.INPUT_077.className = "inputtext_disabled";
+    if (ApplyForm.INPUT_076[1].checked)
+        ApplyForm.INPUT_078.className = "";
+    else
+        ApplyForm.INPUT_078.className = "inputtext_disabled";
+    if (ApplyForm.INPUT_076[2].checked)
+        ApplyForm.INPUT_079.className = "";
+    else
+        ApplyForm.INPUT_079.className = "inputtext_disabled";
+
+    if (ApplyForm.INPUT_071.checked) {
+        ApplyForm.INPUT_0731.disabled = false;
+        ApplyForm.INPUT_0731.className = "";
+        ApplyForm.INPUT_0732.disabled = false;
+        ApplyForm.INPUT_07321.disabled = false;
+        ApplyForm.INPUT_07322.disabled = false;
+        ApplyForm.INPUT_0733.disabled = false;
+        ApplyForm.INPUT_0733.className = "";
+        ApplyForm.INPUT_0734.className = "";
+        ApplyForm.INPUT_0734.value = ApplyForm.INPUT_0732.options[ApplyForm.INPUT_0732.selectedIndex].value;
+        ApplyForm.IDR_CNT.disabled=false;
+        ApplyForm.IDR_CNT.className="";
+        if (CertType == "Y")
+            ApplyForm.INPUT_015.disabled = true;
+
+    } else {
+        ApplyForm.INPUT_0731.disabled = true;
+        ApplyForm.INPUT_0731.className = "inputtext_disabled";
+        ApplyForm.INPUT_0732.disabled = true;
+        ApplyForm.INPUT_07321.disabled = true
+        ApplyForm.INPUT_07322.disabled = true
+        ApplyForm.INPUT_0733.disabled = true;
+        ApplyForm.INPUT_0733.className = "inputtext_disabled";
+        ApplyForm.INPUT_0734.disabled = true;
+        ApplyForm.INPUT_0734.className = "inputtext_disabled";
+        ApplyForm.IDR_CNT.disabled=true;
+        ApplyForm.IDR_CNT.className="inputtext_disabled";
+
+    }
+
+
+    //同筆案件申請類型和申請身份只能選擇一次
+    ApplyForm.REGTYPE.disabled = (document.getElementById("DataSheet").rows.length > 1);
+    ApplyForm.CERT_AGENT_TYPE.disabled = (document.getElementById("DataSheet").rows.length > 1);
+
+    if (document.getElementById("ErrorMsgText").innerText == "" || document.getElementById("ErrorMsgText").textContent == "")
+        document.getElementById("ErrorMsgArea").style.display = 'none';
+    else
+        document.getElementById("ErrorMsgArea").style.display = 'inline';
+}
+
+function LabelClick(e) 
+{
+    if (!e)
+        e = window.event;
+    //雙擊文字標籤
+    var oItem = (e.target == null) ? e.srcElement.children : e.target.children;
+    if (oItem != null) {
+        for (i = 0; i < oItem.length; i++) {
+            if ((oItem.item(i).tagName == "INPUT") && ((oItem.item(i).type == "checkbox") || (oItem.item(i).type == "radio")))
+                oItem.item(i).click();
+        }
+    }
+}
+
+function submitform() {
+    if (LoginType != "2") 
+	{
+        //第一類謄本，申請人一定要輸入     
+        if (ApplyForm.REGTYPE.selectedIndex == 0)
+		{
+            if (ApplyForm.CONSIGNOR_ID.value.length == 0) 
+			{
+                alert('請輸入申請人統編及姓名!!');
+                return (null);
+            }
+        }
+
+        //第二類謄本，申請人與代理人其中一項必須輸入
+        if (ApplyForm.REGTYPE.selectedIndex == 1) 
+		{
+            if ((ApplyForm.CONSIGNOR_ID.value.length == 0) && (ApplyForm.CONSIGNOR.value.length == 0) && (ApplyForm.APPLYUSER_LIDN1.value.length == 0) && (ApplyForm.APPLYUSER1.value.length == 0)) 
+			{
+                alert('請輸入申請人或代理人統編及姓名!!');
+                return (null);
+            }
+
+            if ((ApplyForm.CONSIGNOR_ID.value.length > 0) && (ApplyForm.CONSIGNOR.value.length == 0)) 
+			{
+                alert('請輸入申請人姓名!!');
+                return (null);
+            }
+
+            if ((ApplyForm.CONSIGNOR_ID.value.length == 0) && (ApplyForm.CONSIGNOR.value.length > 0)) 
+			{
+                alert('請輸入申請人統編!!');
+                return (null);
+            }
+
+            if ((ApplyForm.APPLYUSER_LIDN1.value.length > 0) && (ApplyForm.APPLYUSER1.value.length == 0)) 
+			{
+                alert('請輸入代理人姓名!!');
+                return (null);
+            }
+
+            if ((ApplyForm.APPLYUSER_LIDN1.value.length == 0) && (ApplyForm.APPLYUSER1.value.length > 0)) 
+			{
+                alert('請輸入代理人統編!!');
+                return (null);
+            }
+        }
+    }
+
+    if (ApplyForm.applyfor.selectedIndex == 0) 
+	{
+        alert('請選擇申請用途!!');
+        return (null);
+    } else {
+        INPUT_APPLYFOR = ApplyForm.applyfor.options[ApplyForm.applyfor.selectedIndex].value;
+        //將申請用途值寫入變數，以供combineXML用
+    }
+
+    if (ApplyForm.applyfor.selectedIndex == 4) 
+	{
+        if (ApplyForm.ReasonOrgId.selectedIndex == 0) 
+		{
+            alert('請選擇政府單位!!');
+            return (null);
+        } else {
+            INPUT_REASONORGID = ApplyForm.ReasonOrgId.options[ApplyForm.ReasonOrgId.selectedIndex].value;
+            //將申請用途值寫入變數，以供combineXML用
+        }
+    }
+
+    if (document.getElementById("DataSheet").rows.length < 2) {
+        alert("請點選新增資料後再按送出!!");
+        return ("");
+    }
+
+    var Rowid = 0;
+    for (var i = 1; i < document.getElementById("DataSheet").rows.length; i++) 
+	{
+        Rowid = parseInt((document.getElementById("DataSheet").rows(i).cells(0).innerText), 10);
+        if (Error_Message[Rowid] != "") {
+            alert("不能送出有錯誤的申請資料!!");
+            return (null);
+        }
+    }
+    var xmlstr = combinexml();
+
+    if (xmlstr != "") {
+        document.getElementById("BtnControlArea").style.display = 'none';
+        document.ApplyForm.SXML.value = xmlstr;
+        clientsubmitform();
+    }
+}
+

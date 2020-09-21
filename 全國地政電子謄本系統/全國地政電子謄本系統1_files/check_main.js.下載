@@ -1,0 +1,272 @@
+﻿
+function LimitRightClick(){
+  if ((event.srcElement.tagName!='INPUT') || (event.srcElement.disabled))
+   return false;
+}
+
+function check_number0331(obj)
+{
+    if (obj.length==0)
+	  return(null);
+    for(var i=0; i < obj.length; i++ ){
+      if (!( obj.charAt(i) >= '0' && obj.charAt(i) <= '9' )){
+        alert("比例尺只能輸入數字 !\n");
+		ApplyForm.INPUT_0331.focus();
+		return(false);
+	  }	
+	  if (obj<100){
+	    alert("指定比例尺請輸入100單位以上 !\n");
+		ApplyForm.INPUT_0331.focus();
+		return(false);
+	  }
+	}	
+
+}
+
+
+function MM_reloadPage(init) {  //reloads the window if Nav4 resized
+  if (init==true) with (navigator) {if ((appName=="Netscape")&&(parseInt(appVersion)==4)) {
+    document.MM_pgW=innerWidth; document.MM_pgH=innerHeight; onresize=MM_reloadPage; }}
+  else if (innerWidth!=document.MM_pgW || innerHeight!=document.MM_pgH) location.reload();
+}
+MM_reloadPage(true);
+
+
+
+function formbtn_enable(s){
+  if (s==1)
+   ApplyForm.btnclear.disabled=true;
+  else
+   ApplyForm.btnclear.disabled=false;
+   
+  ApplyForm.btnnew.disabled=ApplyForm.btnclear.disabled;
+  ApplyForm.btnmodify.disabled=ApplyForm.btnclear.disabled;
+  ApplyForm.btndel.disabled=ApplyForm.btnclear.disabled;
+  ApplyForm.btnsend.disabled=ApplyForm.btnclear.disabled;
+}
+
+function returnerr_value(i,str){
+    //回傳錯誤訊息的顯示
+    // var ErrRowNo = parseInt(document.all.DataSheet.rows(i + 1).cells(0).innerText, 10);
+    //Error_Message[ErrRowNo] = Error_Message[ErrRowNo] + str;
+    var rows1 = document.getElementById("DataSheet").getElementsByTagName('tr');
+    rows1[i + 1].className = "error_row_color";        
+    //alert(Error_Message[ErrRowNo]);
+    //document.all.DataSheet.rows(i + 1).className = "error_row_color";
+    ChangeFocusRowColor();
+    //ChangeFocusRow(ErrRowNo);
+}
+
+
+function key_send_data(){
+   //alert(event.keycode);
+   if (event.keyCode==13){
+     event.srcElement.onblur();
+   }
+}
+
+function ChangeREGTYPE() {
+    if (CertType =="Y")  //憑証登入
+    {
+        var userapplytype = ApplyForm.UserApplyType.value;
+        if ((ApplyForm.REGTYPE.value == "1" || ApplyForm.REGTYPE.value == "2") && userapplytype == "1")
+	    {
+		    //申請人身份為「本人」,申請第一、二類謄本時,須帶入統編,不可更改
+	        ApplyForm.INPUT_015.value = CertID;
+	        ApplyForm.INPUT_015.disabled = true;
+	    }
+	    //2014-12-11 惠琦提選「登記名義人代理人」時統編都不要帶入
+//        else if (userapplytype == "2" && ApplyForm.INPUT_071.checked) 
+//        {
+//            //申請人身份為「登記名義人代理人」,申請異動清冊時,不要帶憑證上的統編，可修改2014-02-11
+//            //2014-08-04 申請人身份為「登記名義人代理人」,申請異動清冊時,要帶憑證上的統編
+//            //ApplyForm.INPUT_015.value = "";
+//            ApplyForm.INPUT_015.value = CertID;
+//            ApplyForm.INPUT_015.disabled = false;
+//	    } else if ((ApplyForm.REGTYPE.value == "1" || ApplyForm.REGTYPE.value == "2") && userapplytype == "2")
+//	    {
+//		    //申請人身份為「登記名義人代理人」,申請第一類謄本時,須帶入統編,可更改
+//	        ApplyForm.INPUT_015.value = CertID;
+//		} 
+	    else
+	    {
+	        ApplyForm.INPUT_015.value = '';
+	        ApplyForm.INPUT_015.disabled = false;
+	    }
+	}
+
+
+	//2014-02-21異動清冊」只有「登記名義人本人」、「登記名義人代理人」「第一類」可申請
+	if (ApplyForm.REGTYPE.value == "2") {
+	    //異動索引
+        //2014-11-13 惠琦改第二類不能勾選含權利人完整姓名
+	    ApplyForm.INPUT_0641.disabled = true; //含權利人完整姓名
+	    ApplyForm.INPUT_0641.checked = false;
+	    ApplyForm.INPUT_062[1].disabled = !ApplyForm.INPUT_061.checked || ApplyForm.INPUT_0641.checked;
+	    ApplyForm.INPUT_062[2].disabled = !ApplyForm.INPUT_061.checked || ApplyForm.INPUT_0641.checked;
+	    ApplyForm.INPUT_062[3].disabled = !ApplyForm.INPUT_061.checked || ApplyForm.INPUT_0641.checked;
+	    ApplyForm.INPUT_062[5].disabled = !ApplyForm.INPUT_061.checked || ApplyForm.INPUT_0641.checked;
+	    ApplyForm.INPUT_062[6].disabled = !ApplyForm.INPUT_061.checked || ApplyForm.INPUT_0641.checked;
+	    ApplyForm.INPUT_062[7].disabled = !ApplyForm.INPUT_061.checked || ApplyForm.INPUT_0641.checked;
+	    ApplyForm.INPUT_062[8].disabled = !ApplyForm.INPUT_061.checked || ApplyForm.INPUT_0641.checked;
+	    //異動清冊
+	    ApplyForm.INPUT_071.disabled = true;
+	    ApplyForm.INPUT_071.checked = false;
+	    ApplyForm.INPUT_0731.value = "";
+	    ApplyForm.INPUT_0731.className = "inputtext_disabled";
+	    for (var i = 0; i < ApplyForm.INPUT_0731_A.length; i++) {
+	        ApplyForm.INPUT_0731_A[i].disabled = true;
+	        ApplyForm.INPUT_0731_A[i].checked = false;
+	    }
+
+	    ApplyForm.INPUT_0732.value = "";
+	    ApplyForm.INPUT_0732.disabled = true;
+	    ApplyForm.INPUT_07322.value = "";
+	    ApplyForm.INPUT_07322.disabled = true;
+	    ApplyForm.INPUT_07321.value = "";
+	    ApplyForm.INPUT_07321.disabled = true;
+	    ApplyForm.INPUT_0733.value = "";
+	    ApplyForm.INPUT_0733.className = "inputtext_disabled";
+	    ApplyForm.INPUT_0734.value = "";
+	    ApplyForm.INPUT_0734.className = "inputtext_disabled";
+	    ApplyForm.INPUT_07342.value = "";
+	    ApplyForm.INPUT_07342.className = "inputtext_disabled";
+	    ApplyForm.INPUT_07342.disabled = true;
+        for (var i = 0; i < ApplyForm.INPUT_075.length; i++) {
+            ApplyForm.INPUT_075[i].disabled = true;
+            ApplyForm.INPUT_075[i].checked = false;
+        }
+        for (var i = 0; i < ApplyForm.INPUT_076.length; i++) {
+            ApplyForm.INPUT_076[i].disabled = true;
+            ApplyForm.INPUT_076[i].checked = false;
+        }
+        ApplyForm.INPUT_077.value = "";
+        ApplyForm.INPUT_077.className = "inputtext_disabled";
+        ApplyForm.INPUT_077.disabled = true;
+        ApplyForm.INPUT_078.value = "";
+        ApplyForm.INPUT_078.className = "inputtext_disabled";
+        ApplyForm.INPUT_078.disabled = true;
+        ApplyForm.INPUT_079.value = "";
+        ApplyForm.INPUT_079.className = "inputtext_disabled";
+        ApplyForm.INPUT_079.disabled = true;
+    }
+    else { //一類
+        if (ApplyForm.INPUT_061.checked && ApplyForm.CERT_TYPE1.value == 'Y') {
+            ApplyForm.INPUT_0641.disabled = false; //含權利人完整姓名
+            ApplyForm.INPUT_062[1].disabled = false;
+            ApplyForm.INPUT_062[2].disabled = false;
+            ApplyForm.INPUT_062[3].disabled = false;
+                                              
+            ApplyForm.INPUT_062[5].disabled = false;
+            ApplyForm.INPUT_062[6].disabled = false;
+            ApplyForm.INPUT_062[7].disabled = false;
+            ApplyForm.INPUT_062[8].disabled = false;
+            if (ApplyForm.INPUT_062[0].checked) {
+                ApplyForm.INPUT_063.disabled = true; // 異動日期範圍
+                ApplyForm.INPUT_063.checked = false;
+                ApplyForm.INPUT_0631.disabled = true;
+                ApplyForm.INPUT_0631.className = "inputtext_disabled";
+                ApplyForm.INPUT_0631.value = "";
+                ApplyForm.INPUT_0631Y.disabled = true;
+                ApplyForm.INPUT_0631Y.className = "inputtext_disabled";
+                ApplyForm.INPUT_0631Y.value = "";
+                ApplyForm.INPUT_0631M.disabled = true;
+                ApplyForm.INPUT_0631M.className = "inputtext_disabled";
+                ApplyForm.INPUT_0631M.value = "";
+                ApplyForm.INPUT_0631D.disabled = true;
+                ApplyForm.INPUT_0631D.className = "inputtext_disabled";
+                ApplyForm.INPUT_0631D.value = "";
+                ApplyForm.INPUT_0632.disabled = true;
+                ApplyForm.INPUT_0632.className = "inputtext_disabled";
+                ApplyForm.INPUT_0632.value = "";
+                ApplyForm.INPUT_0632Y.disabled = true;
+                ApplyForm.INPUT_0632Y.className = "inputtext_disabled";
+                ApplyForm.INPUT_0632Y.value = "";
+                ApplyForm.INPUT_0632M.disabled = true;
+                ApplyForm.INPUT_0632M.className = "inputtext_disabled";
+                ApplyForm.INPUT_0632M.value = "";
+                ApplyForm.INPUT_0632D.disabled = true;
+                ApplyForm.INPUT_0632D.className = "inputtext_disabled";
+                ApplyForm.INPUT_0632D.value = "";
+            }
+        }
+        ApplyForm.INPUT_071.disabled = false;
+        if (ApplyForm.INPUT_071.checked) {
+            ApplyForm.INPUT_07321.selectedIndex = 0;
+//            var sendData = {
+//                city_id: getVal($('input[name="CityID"]')),
+//                area_id: getVal($('input[name="AreaID"]')),
+//                fromaddress: getVal($('input[name="CityID"]'))
+//            };
+            //            Rechar(sendData, 2, "", "INPUT_07322");
+            clearList2("INPUT_07322", "請選擇");
+            ApplyForm.INPUT_07342.value = "";
+        }
+    }
+}
+
+
+function ChangeApplyfor()
+{
+	if (ApplyForm.applyfor.selectedIndex==4)
+	{
+	ApplyForm.ReasonOrgId.style.display="inline";
+	}else{
+	ApplyForm.ReasonOrgId.style.display="none";
+	}
+}
+
+
+
+function toApplyAll() {
+    if (ApplyForm.Ver.value == "2") {
+        ApplyForm.PRC.style.display = "none";
+    }
+}
+
+function ChangeINPUT_0731_A() {
+    //異動清冊收件字號控制項
+    var INPUT_0731_A = getVal($('input[name="INPUT_0731_A"]:checked'));
+    if (INPUT_0731_A == "1") { //跨縣市
+        ApplyForm.INPUT_07322.style.display = "inline";
+        ApplyForm.INPUT_07342.style.display = "inline";
+        ApplyForm.INPUT_0734.style.display = "none";
+        ApplyForm.INPUT_0732.style.display = "none";
+        ApplyForm.INPUT_07321.disabled = false;
+        ApplyForm.INPUT_07321.selectedIndex = 0;
+        clearList2("INPUT_07322", "請選擇");
+        ApplyForm.INPUT_07342.value = "";
+    } else {//本縣市
+        ApplyForm.INPUT_07322.style.display = "none";
+        ApplyForm.INPUT_07342.style.display = "none";
+        ApplyForm.INPUT_0734.style.display = "inline";
+        ApplyForm.INPUT_0732.style.display = "inline";
+        ApplyForm.INPUT_07321.disabled = true; 
+        ApplyForm.INPUT_07321.selectedIndex = 0;
+    }
+
+}
+
+
+function ChangeINPUT_065() {
+    //異動清冊收件字號控制項
+    var INPUT_065 = getVal($('input[name="INPUT_065"]:checked'));
+    if (INPUT_065 == "1") { //跨縣市
+        ApplyForm.INPUT_06122.style.display = "inline";
+        ApplyForm.INPUT_06162.style.display = "inline";
+        ApplyForm.INPUT_0616.style.display = "none";
+        ApplyForm.INPUT_0612.style.display = "none";
+        ApplyForm.INPUT_06121.disabled = false;
+        ApplyForm.INPUT_06121.selectedIndex = 0;
+        clearList2("INPUT_06122", "請選擇");
+        ApplyForm.INPUT_06162.value = "";
+    } else {//本縣市
+        ApplyForm.INPUT_06122.style.display = "none";
+        ApplyForm.INPUT_06162.style.display = "none";
+        ApplyForm.INPUT_0616.style.display = "inline";
+        ApplyForm.INPUT_0612.style.display = "inline";
+        ApplyForm.INPUT_06121.disabled = true;
+        ApplyForm.INPUT_06121.selectedIndex = 0;
+    }
+
+}

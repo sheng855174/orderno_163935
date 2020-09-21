@@ -1,0 +1,188 @@
+﻿
+function CheckInputLB(obj, stype)
+{
+	
+    if (stype=='L'){
+        var SetChar='地號';
+    }else if (stype=='B'){
+        var SetChar='建號';
+    }
+
+    var InputStr = obj.value;
+    if (InputStr.length==0)
+        return(false);
+    
+    if (FastCheckFormat(InputStr)==false){
+        //修改Chrome 57版 Onblur自動重送問題
+		obj.value = "";
+        setTimeout(function() {obj.focus();obj.value = InputStr ; }, 0);
+	    return(false);
+    }
+  
+    var aryInputStr = InputStr.split(",");
+    var rtnStr = '';
+    for (var i = 0; i < aryInputStr.length; i++) 
+    {
+        if (CheckFormat(aryInputStr[i], SetChar) == false)
+        {
+            obj.value = "";
+            setTimeout(function() {obj.focus();obj.value = InputStr ; }, 0);
+            return(false);
+        }
+
+//        if (aryInputStr[i].length == 8)
+//        {
+//        } else 
+        if (aryInputStr[i].indexOf('~') != -1) 
+        {
+            var aryStr = aryInputStr[i].split("~");
+            aryStr[0]=CheckString(aryStr[0],stype);
+            aryStr[1]=CheckString(aryStr[1],stype);
+            if ((aryStr[0].length > 9) || (aryStr[1].length > 9))
+            {
+                alert(SetChar+'輸入格式錯誤:'+aryInputStr[i]);  
+                obj.value = "";
+                setTimeout(function() {obj.focus();obj.value = InputStr ; }, 0);
+                return(false);
+            }
+            aryInputStr[i]=aryStr[0] + '~' + aryStr[1];
+        } else 
+        {
+            aryInputStr[i]=CheckString(aryInputStr[i],stype);
+            if (aryInputStr[i].length > 9)
+            {
+                if (stype == 'L')
+                    alert(SetChar + '輸入格式錯誤(例:1234-5678)');  
+                else if (stype == 'B')
+                    alert(SetChar + '輸入格式錯誤(例:12345-678)');  
+                
+                obj.value = "";
+                setTimeout(function() {obj.focus();obj.value = InputStr ; }, 0);
+                return(false);
+            }
+        }
+        rtnStr+=','+ aryInputStr[i];
+    }
+  
+    rtnStr=rtnStr.substr(1);
+    if (rtnStr.length > 500)
+    {
+        alert(SetChar+'輸入過長，請縮小範圍或拆件申請!!');    
+        obj.value = "";
+        setTimeout(function() {obj.focus();obj.value = InputStr ; }, 0);
+        return(false);
+    }
+    obj.value=rtnStr;
+}
+
+
+function CheckFormat(str, s)
+{
+    if (str.indexOf(' ')!=-1){
+        alert(s+'不能有空白:'+str);
+        return(false);
+    }
+
+    if ((str.indexOf('~~') != -1) || (str.indexOf('--') != -1) || (str.indexOf('~-') != -1) || (str.indexOf('-~') != -1))
+    {
+        alert(s+'輸入格式錯誤:'+str);      
+        return(false);
+    }
+
+    if ((str.substr(0, 1) == '') || (str.substr(0, 1) == '-') || (str.substr(0, 1) == '~') || (str.substr(str.length - 1, 1) == '~') ||
+    (str.substr(str.length - 1, 1) == '-') || (str.substr(str.length - 1, 1) == ''))
+    {
+        alert(s+'輸入格式錯誤:'+str);
+        return(false);
+    }
+}
+
+
+function FormatString(fStr,stype){
+  var aryStr = fStr.split('-');
+  if (stype=='L'){
+      aryStr[0] = FillZero(aryStr[0], 4);
+    aryStr[1]=FillZero(aryStr[1],4);
+  }else if (stype=='B'){
+    aryStr[0]=FillZero(aryStr[0],5);
+    aryStr[1]=FillZero(aryStr[1],3);
+  }
+  return(aryStr[0]+'-'+aryStr[1]);
+}
+
+
+function FillZero(zStr,maxn){
+  while (zStr.length<maxn) 
+    zStr = '0'+zStr; 
+  return(zStr);
+}
+
+function CheckString(tStr, stype)
+{
+    if (tStr.indexOf('-') != -1)
+    {
+        tStr=FormatString(tStr,stype);
+    } else 
+    {
+        if (stype == 'L') {
+            if (tStr.length <= 4)
+                tStr = tStr + '-0';
+            else
+                tStr = tStr.substring(0, 4) + "-" + tStr.substring(4);
+        } else if (stype == 'B') 
+        {
+            if (tStr.length <= 5)
+                tStr = tStr + '-0';
+            else
+                tStr = tStr.substring(0, 5) + "-" + tStr.substring(5);
+        }
+    //tStr=FormatString(tStr,stype);
+    }
+  return(tStr);
+}
+
+function FastCheckFormat(ss){
+   for( var i=0; i < ss.length; i++ ){
+      if (!((( ss.charAt(i) >= '0') && (ss.charAt(i) <= '9' )) ||(ss.charAt(i) == '-' ) ||(ss.charAt(i) == ',' )||(ss.charAt(i) == '~' ))){
+      //if (!((( ss.charAt(i) >= '0') && (ss.charAt(i) <= '9' )) ||(ss.charAt(i) == '-' ) ||(ss.charAt(i) == ',' )))
+        alert("地/建號只能輸入數字或 \"-\" 或 \",\" 或 \"~\" !!\n且不能有空白!!");  
+        return false;
+      }
+   }	
+   return(true);
+}
+
+function FastCheckOwn(ss) {
+    var aryInputStr = ss.split(",");
+    for (var i = 0; i < aryInputStr.length; i++) {
+        var rtnmsg = '';
+        rtnmsg = CheckFormat1(aryInputStr[i], "統一編號");
+        if (rtnmsg != '') {
+            return(rtnmsg);
+        }
+    }
+    /*   
+    for( var i=0; i < ss.length; i++ ){
+    if ((ss.charAt(i) == '-' ) || (ss.charAt(i) == ':' )||(ss.charAt(i) == '*' )||(ss.charAt(i) == '$' )||(ss.charAt(i) == '&' )||(ss.charAt(i) == ';' )||(ss.charAt(i) == '!' )){
+    alert("統一編號內有無效字元，請檢查！！");  
+    return(false);
+    }
+    }*/
+    return "";
+}
+
+function FastCheckOwn2(ss) {
+    var aryInputStr = ss.split(",");
+    for (var i = 0; i < aryInputStr.length; i++) {
+        var rtnmsg = '';
+        rtnmsg = CheckFormat1(aryInputStr[i], "統一編號");
+        if (rtnmsg != '') {
+            return (rtnmsg);
+        }
+        //20200714惠琦加,統編不能超過10碼
+        if (aryInputStr[i].length > 10)
+            return ("統一編號長度不可超過10碼")
+    }
+    return "";
+}
+

@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<!-- saved from url=(0042)https://ep.land.nat.gov.tw/EpaperApply/Map -->
+<html xmlns="http://www.w3.org/1999/xhtml" class="  ext-strict"><head id="Head1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge;IE=11;IE=10;IE=9;IE=EmulateIE9"><title>
+	
+            
+                全國地政電子謄本系統
+            
+</title><link href="./全國地政電子謄本系統1_files/pager.css" rel="stylesheet" type="text/css"><link href="./全國地政電子謄本系統1_files/bootstrap.min.css" rel="stylesheet" type="text/css"><link href="./全國地政電子謄本系統1_files/hall.css" rel="stylesheet" type="text/css">
+    <link href="./全國地政電子謄本系統1_files/jquery-ui-1.8.7.custom.css" rel="stylesheet" type="text/css">
+    <script src="./全國地政電子謄本系統1_files/jquery-3.4.1.js.下載" type="text/javascript"></script> 
+    <script src="./全國地政電子謄本系統1_files/InitVar.js.下載" type="text/javascript"></script>   
+    <script src="./全國地政電子謄本系統1_files/check_apply_data.js.下載" type="text/javascript"></script>   
+    <script src="./全國地政電子謄本系統1_files/check_main.js.下載" type="text/javascript"></script>   
+    <script src="./全國地政電子謄本系統1_files/CheckBeforeSave.js.下載" type="text/javascript"></script>   
+    <script src="./全國地政電子謄本系統1_files/CheckInputLB.js.下載" type="text/javascript"></script>   
+    <script src="./全國地政電子謄本系統1_files/ClickDataControl.js.下載" type="text/javascript"></script>   
+    <script src="./全國地政電子謄本系統1_files/CombineXML.js.下載" type="text/javascript"></script>   
+    <script src="./全國地政電子謄本系統1_files/SheetControl.js.下載" type="text/javascript"></script>   
+    <script src="./全國地政電子謄本系統1_files/ValueINOUT.js.下載" type="text/javascript"></script>   
+    <script src="./全國地政電子謄本系統1_files/ButtonLink.js.下載" type="text/javascript"></script>
+    <script src="./全國地政電子謄本系統1_files/secu.tools.js.下載" type="text/javascript"></script>   
+    <link href="./全國地政電子謄本系統1_files/jquery-ui.css" rel="stylesheet" type="text/css"> 
+    <script src="./全國地政電子謄本系統1_files/jquery-ui.js.下載" type="text/javascript"></script>
+    <script src="./全國地政電子謄本系統1_files/secu.edoc.js.下載" type="text/javascript"></script> 
+    <script src="./全國地政電子謄本系統1_files/jquery.validate.js.下載" type="text/javascript"></script> 
+    <link href="./全國地政電子謄本系統1_files/hall.css" rel="stylesheet" type="text/css">
+                     
+    <script type="text/javascript">
+        
+        var Applyform = '';
+        var FromASP = '';
+        var FromID = '104';
+        var CityID = '379160000A';
+        var AreaID = '16';
+        var CityName = '臺北市';
+        var APPLYUSER = '黃鑫達';
+        var APPLYUSERLIDN = '';
+        var SrDate = '1090911';
+        var SrTime = '180229';
+        var reciyear = '99';
+        var prcyear = '88';
+
+        
+        var LoginType = '2';
+        var UserName = '黃鑫達';
+        var UserID = '84657674';
+        var UserIP = '101.136.12.200';
+        var UserCityID = '';
+        var UserLN = '';
+        var UserAreaID = '';
+        var UserManager = '';
+        var UserLnName = '';
+
+           
+        var CertLoingType = '';
+        var CertType = 'N';
+        var CertName = '';
+        var CertAgentID = '';
+        var CertID = '';
+        var CertLoingType2 = '';
+
+        function MM_swapImage() { //v3.0
+            var i, j = 0, x, a = MM_swapImage.arguments; document.MM_sr = new Array; for (i = 0; i < (a.length - 2); i += 3)
+                if ((x = MM_findObj(a[i])) != null) { document.MM_sr[j++] = x; if (!x.oSrc) x.oSrc = x.src; x.src = a[i + 2]; }
+        }
+
+        function MM_swapImgRestore() { //v3.0
+            var i, x, a = document.MM_sr; for (i = 0; a && i < a.length && (x = a[i]) && x.oSrc; i++) x.src = x.oSrc;
+        }
+
+        function MM_findObj(n, d) { //v4.01
+            var p, i, x; if (!d) d = document; if ((p = n.indexOf("?")) > 0 && parent.frames.length) {
+                d = parent.frames[n.substring(p + 1)].document; n = n.substring(0, p);
+            }
+            if (!(x = d[n]) && d.all) x = d.all[n]; for (i = 0; !x && i < d.forms.length; i++) x = d.forms[i][n];
+            for (i = 0; !x && d.layers && i < d.layers.length; i++) x = MM_findObj(n, d.layers[i].document);
+            if (!x && d.getElementById) x = d.getElementById(n); return x;
+        }
+
+        function clickback() {
+           
+            document.ApplyForm.action = "Map";
+            document.ApplyForm.submit();
+        }
+
+        $(function () {
+            //須與form表單ID名稱相同
+            $("#CaptchaForm").validate();
+        });
+
+        function formclear() {
+            CaptchaForm.reset();
+        }
+
+        function clientsubmitform() {
+            var xmlstr = ApplyForm.SXML.value;
+            //alert(xmlstr);
+            document.getElementById("SendNowMsg").style.display = 'inline';
+            $.ajax({
+                type: 'POST',
+                url: "ApplyDoc",
+                data: {
+                    city: $("#CityID").val(),
+                    area: $("#AreaID").val(),
+                    Sxml: xmlstr,
+                    CName: $("#CityName").val(),
+                    AName: $("#AreaName").val()
+                }
+                //context: document.body
+            }).done(function (data) 
+            {
+                if (data.length > 0) 
+                {
+                    //alert("data=" + data);
+                    var msg = data.split("~~:");
+                    if (msg[0] == "0") 
+                    {
+                        
+                        document.getElementById("SendNowMsg").style.display = 'none';
+                        document.getElementById("SendNowMsg2").style.display = 'none';
+                        document.getElementById("ErrorMsgArea").style.display = 'inline';
+                        document.getElementById("ErrorMsgText").innerHTML = msg[1];
+                        document.getElementById("BtnControlArea").style.visibility = 'visible';
+                        //alert("錯誤行:" + msg[1]);
+                        var errline = msg[2].split("$");
+                        for (var i = 0; i < errline.length - 1; i++) {
+                            //alert("errline=" + errline[i]);
+                            returnerr_value(parseInt(errline[i]), '');
+                        }
+                        eApply.sel(document.getElementById("DataSheet").rows.length - 2);
+                        document.getElementById("CaptchaVer").style.display = 'none';
+                        document.getElementById("EdocQryArea").style.visibility = 'visible';
+                    }else if (msg[0] == "2") {
+                        document.ApplyForm.ApplyMsg.value = msg[1];
+                        document.ApplyForm.action = "ShowApplyCode";
+                        document.ApplyForm.submit();
+                    }else if (msg[0] == "-1") 
+                    {
+                        
+                        document.ApplyForm.action = '/Home/PubMsg2';
+                        document.ApplyForm.ApplyMsg.value = msg[1];
+                        document.ApplyForm.submit();
+                    }else if (msg[0] == "-2") 
+                    {
+                        
+                        document.getElementById("SendNowMsg").style.display = 'none';
+                        document.getElementById("SendNowMsg2").style.display = 'inline';
+                        CaptchaForm.imgCode.src = '../Content/ValidateNumber.ashx?' + Math.random();
+                        document.getElementById("CaptchaValue").value = "";
+                        document.getElementById("CaptchaVer").style.display = 'block';
+                        document.getElementById("EdocQryArea").style.visibility = 'hidden';
+                        document.getElementById("CaptchaCnt").innerHTML = msg[1];
+                    }
+                }
+            });
+        }
+
+
+        function captchasubmitform() {
+            if (CaptchaForm.CaptchaValue.value.length == 0) {
+                alert("請輸入圖片驗証碼");
+                return;
+            }
+            document.getElementById("SendNowMsg2").style.display = 'inline';
+            $.ajax({
+                type: 'POST',
+                url: "ApplyDoc_CaptchaVerify",
+                data: {
+                    CaptchaValue: CaptchaForm.CaptchaValue.value
+                }
+            }).done(function (data)
+            {
+                if (data.length > 0) 
+                {
+                    var msg = data.split("~~:");
+                    if (msg[0] == "0") 
+                    {
+                        
+                        alert("輸入圖片驗証碼錯誤!請重新輸入!");
+                        CaptchaForm.imgCode.src = '../Content/ValidateNumber.ashx?' + Math.random();
+                        document.getElementById("CaptchaCnt").innerHTML = msg[1];
+                    }
+                    if (msg[0] == "2") {
+                        alert("輸入圖片驗証碼正確!按下確定後開始送件!");
+                        clientsubmitform();
+                    }
+                    if (msg[0] == "-1") 
+                    {
+                        
+                        document.ApplyForm.action = '/Login/LoginOut';
+                        alert(msg[1]);
+                        document.ApplyForm.submit();
+                    }
+                }
+            });
+        }
+
+
+        function sesson_click(id, LN, SessionName) {
+            var selected_session = document.getElementById(id);
+            var session_value = selected_session.innerHTML;
+
+            var session_title = document.getElementById("session_title");
+            session_title.innerText = session_value;
+            $("#session_title").html(session_value);
+            session_title.title = id;
+            document.getElementById("INPUT_011").value = id;
+            document.getElementById("LN").value = LN;
+            document.getElementById("S_Name").value = SessionName;
+            $('.session_list').slideUp(300);
+        }
+
+        var isIE6 = function () {
+            var b = document.createElement('b')
+            b.innerHTML = '<!--[if IE 6]><i></i><![endif]-->'
+            return b.getElementsByTagName('i').length === 1
+        }
+
+        $(document).ready(function () {
+            $('.sessiondropdown').bind("click", function () {
+                if ($('.session_list').css('display') == 'none') {
+                    $('.session_list').show();
+                    if (isIE6()) {
+                        var count = $('.session_list').children("div").length;
+                        var hvalue = count * 23;
+                        $('.session_list').css({ left: 100, height: hvalue });
+                    }
+                    else {
+                        var target = $("#session_title");
+                        var offset = target.offset();
+                        var tvalue = offset.top + 18;
+                        $('.session_list').css({ left: offset.left, top: tvalue });
+                    }
+                } else {
+                    //$(".session_list").unbind();
+                    $('.session_list').slideUp();
+                }
+            });
+            $('.session_list').bind("click", function () {
+                $('.session_list').slideUp(300);
+            });
+
+            $('#INPUT_011').bind("click", function () {
+                $('.session_list').slideUp(300);
+            });
+        });
+  
+  
+        function makeSublist(parent, child, station) {
+            $("body").append("<select style='display:none'  id='" + parent + child + "'></select>");
+            $('#' + parent + child).html($("#" + child + " option"));
+            var parentValue = "379160000A";
+            var DefaultData = {
+                city_id: "379160000A",
+                area_id: "16",
+                fromaddress :  "379160000A"
+            };
+            Rechar(DefaultData, 1 , "" , child);
+           
+            $('#' + parent).change(function () {
+                parentValue = $('#' + parent).val();
+                var sendData = {
+                    city_id: "379160000A",
+                    area_id: "16",
+                    fromaddress :  $('#' + parent).val()
+                };
+
+                if (parentValue != 0) {
+                    Rechar(sendData, 2 , "", child);
+                    
+                } else {
+                    clearList2(child, "請選擇");
+                    if(child == 'INPUT_07322')
+                        ApplyForm.INPUT_07342.value = "";
+                    else if(child == 'INPUT_06122')
+                        ApplyForm.INPUT_06162.value = "";
+                }
+                $('#' + child ).val(0);
+                
+            });
+        }
+
+
+         
+    </script>
+
+    <style type="text/css">
+        .st2{font-size:9pt;
+          color: #004E9B;
+          font-weight: bold;
+          border:1 solid #000000;
+          background-color:#ECF1F4;}
+        .miti_rows_rect {
+	        position: static;
+	        visibility: visible;
+	        clip:      rect(   );
+	        left: 5px;
+	        height: 120px;
+	        width: 100%;
+	        overflow-x:auto;
+	        overflow-y:auto;
+            margin: 0px; 		
+            border: 1px #006699 solid;
+        }
+        .input_text_gray {  border: 1px #663300 solid}
+        .checkbox {  background-color: #999966}
+        .select_row {  background-color: #C8DAEC}
+        .unselect_row { background-color: #FFFFFF}
+        .inputtext { border: #663300; border-style: solid; border-top-width: 1px; border-right-width: 15px; border-bottom-width: 1px; border-left-width: 10px}
+        .inputtext_disabled { background-color: #CCCCCC; border: 1px #663300 solid}
+        .error_row_color {  background-color: #FF0000}
+        .error_row_select {  background-color: #CB638F}
+        .button {  background-color: #FFF3CC; font-weight: bold; color: #666666; font-size: 12px; height: 22px; width: 19%; border: 1.5px #FFFFFF outset; cursor: hand}
+        .button3 {  background-color: #FFF3CC;  color:#330000; font-size: 13px; height: 22px; width: 19%; border: 1.5px #FFFFFF outset; cursor: hand}
+        .linkbutton {  font-size: 12px; font-weight: bold; color: #FFFFFF; background-color: #8DBC8D; border: 1px #FFFFFF outset; cursor: hand}
+        .linkbutton2 { font-size: 12px; font-weight: bold; color: #FFFFCC; background-color: #FFCC33; border: 1px #FFFFFF outset; cursor: hand }
+        .button1 { background-color: #FFCC33; font-weight: bold; color: #B94946; font-size: 12px; height: 22px; width: 100%; border: 2px #FFFFFF outset; cursor: hand ; clip:   rect(   )}
+        .style2 {color: #006699}
+   
+        .sessiondropdown {  
+            border: solid;  
+            border-width: 0px;  
+            border-color: #12a3d3;  
+            width: 170px;  
+        } 
+         
+        .sessiondropdown .session_title{  
+            background-color: #DFEFFC;
+            width:170px;  
+            border:1px solid #6B2617;
+            text-align:left;
+        }  
+        .sessiondropdown .session_list 
+        {
+            position:absolute; 
+            width:170px;
+            height: 500px;
+            overflow: auto;            
+            background-color: white; 
+            border:1px solid grey;  
+            text-align:left;
+        }  
+        .sessiondropdown .session_name:hover{  
+            background-color: #DFEFFC; 
+        } 
+        form.CaptchaForm label.error, label.error {
+	        /* remove the next line when you have trouble in IE6 with labels in list */
+	        color: red;
+	        font-style: italic
+        } 
+        
+        ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+          color: #b2acac;
+          opacity: 1; /* Firefox */
+        }
+
+        :-ms-input-placeholder { /* Internet Explorer 10-11 */
+          color: #b2acac;
+        }
+
+        ::-ms-input-placeholder { /* Microsoft Edge */
+          color: #b2acac;
+        }           
+    </style>
+
+  
+            <script language="JavaScript" type="text/javascript">
+                document.oncontextmenu = function () { return false; } ////防止按滑鼠右鍵        
+                function form_submit() 
+                {
+                    if (check_data()) 
+                    {
+                        var thisForm = document.getElementById("logoutform");
+                        var key = CryptoJS.enc.Utf8.parse('8080808080808080');
+                        var iv = CryptoJS.enc.Utf8.parse('8080808080808080');
+                        var encryptedlogin = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(thisForm.ID.value), key,
+                                            {
+                                                keySize: 128 / 8,
+                                                iv: iv,
+                                                mode: CryptoJS.mode.CBC,
+                                                padding: CryptoJS.pad.Pkcs7
+                                            });
+                        var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(thisForm.PWD.value), key,
+                                                {
+                                                    keySize: 128 / 8,
+                                                    iv: iv,
+                                                    mode: CryptoJS.mode.CBC,
+                                                    padding: CryptoJS.pad.Pkcs7
+                                                });
+                        thisForm.ID.value = encryptedlogin;
+                        thisForm.PWD.value = encryptedpassword;
+                        document.logoutform.submit();
+                    }
+                }
+
+                function check_data() {
+                    var alertStr = '';
+                    var thisForm = document.getElementById("logoutform");
+
+                    if (alertStr == '') {
+                        alertStr = check_empty(thisForm.ID.value, "帳號");
+                    }
+                    if (alertStr == '')
+                        alertStr += check_empty(thisForm.PWD.value, "密碼");
+
+                    if (alertStr == '')
+                        alertStr = check_empty(thisForm.ID.value, "帳號");
+
+                    if ((alertStr == '') && ((thisForm.ID.value.length > 20) || (thisForm.PWD.value.length > 20)))
+                        alertStr = "帳號或密碼超過長度,請檢查!!";
+
+                    if (alertStr != '') {
+                        alert(alertStr);
+                        return (false);
+                    } else
+                        return (true);
+                }
+
+
+                function check_empty(column, name) {
+                    if (column.length == 0)
+                        return (name + "不可以空白 !\n");
+                    return ("");
+                }
+
+                function openwin(src, w_name, w_width, w_height, w_opt) {
+                    if (!w_opt) w_opt = 'resizable=1,scrollbars=1';
+                    if (!w_width) w_width = 700;
+                    if (!w_height) w_height = 500;
+
+                    w_opt += ',width=' + w_width + ',height=' + w_height;
+
+                    if (typeof (screen) != 'undefined') {
+                        w_left = parseInt((screen.width - w_width) / 2);
+                        w_top = parseInt((screen.height - w_height) / 2);
+                        w_opt += ',left=' + w_left + ',top=' + w_top;
+                    }
+
+                    wobj = window.open(src, w_name, w_opt);
+                    wobj.focus();
+                    return wobj;
+                }
+
+                function LoginOut() {
+                    if (confirm("您確定要登出嗎?")) {
+                        document.logoutform.action = '../login/LoginOut';
+                        document.logoutform.submit();
+                    } else {
+                        return (false);
+                    }
+                }
+                function MM_preloadImages() { //v3.0
+                    var d = document; if (d.images) {
+                        if (!d.MM_p) d.MM_p = new Array();
+                        var i, j = d.MM_p.length, a = MM_preloadImages.arguments; for (i = 0; i < a.length; i++)
+                            if (a[i].indexOf("#") != 0) { d.MM_p[j] = new Image; d.MM_p[j++].src = a[i]; }
+                    }
+                }
+
+                function MM_findObj(n, d) { //v4.01
+                    var p, i, x; if (!d) d = document; if ((p = n.indexOf("?")) > 0 && parent.frames.length) {
+                        d = parent.frames[n.substring(p + 1)].document; n = n.substring(0, p);
+                    }
+                    if (!(x = d[n]) && d.all) x = d.all[n]; for (i = 0; !x && i < d.forms.length; i++) x = d.forms[i][n];
+                    for (i = 0; !x && d.layers && i < d.layers.length; i++) x = MM_findObj(n, d.layers[i].document);
+                    if (!x && d.getElementById) x = d.getElementById(n); return x;
+                }
+
+                function MM_swapImgRestore() { //v3.0
+                    var i, x, a = document.MM_sr; for (i = 0; a && i < a.length && (x = a[i]) && x.oSrc; i++) x.src = x.oSrc;
+                }
+
+                function MM_swapImage() { //v3.0
+                    var i, j = 0, x, a = MM_swapImage.arguments; document.MM_sr = new Array; for (i = 0; i < (a.length - 2); i += 3)
+                        if ((x = MM_findObj(a[i])) != null) { document.MM_sr[j++] = x; if (!x.oSrc) x.oSrc = x.src; x.src = a[i + 2]; }
+                }
+
+            </script>
+
+            
+                <script language="JavaScript" type="text/javascript">
+                    var sessionTimeout =  '21' ;
+                    var tempTimeout = '21';
+                    var meter1;
+                    function DisplaySessionTimeout(i) {
+                        if (sessionTimeout > 0) {
+                            sessionTimeout = i - 1;
+                            meter1 = window.setTimeout("DisplaySessionTimeout(sessionTimeout)", 60000);
+                        }
+                        else {
+                            alert("閒置時間過久，請重新登入網頁");
+                            document.location.href = '../login/LoginOut';
+                        }
+                            
+                                document.getElementById('sessiontime1').innerText = "登出時間：" + sessionTimeout + "  分後";
+                                document.getElementById('sessiontime1').textContent = "登出時間：" + sessionTimeout + "  分後";
+                            
+                    }   
+                    function SetSessionTime() 
+                    {
+                        clearTimeout(meter1);
+                        DisplaySessionTimeout(tempTimeout);
+                    }                            
+                </script>
+            </head>
+
+
+    <body class=" ext-webkit ext-chrome" id="syno-nsc-ext-gen3">  
+        
+            <form name="logoutform" id="logoutform" method="post"></form>                    
+            <table id="table1" height="91px" border="0" cellspacing="0" cellpadding="0">
+                <tbody><tr>
+	                <td colspan="10" class="header" valign="top"><img src="./全國地政電子謄本系統1_files/header.jpg"></td>
+                </tr>
+                <tr height="31px">
+	                <td width="30px" height="31px" align="center" valign="middle" background="./全國地政電子謄本系統1_files/menu-bg.jpg"></td>
+	                <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統1_files/menu-bg(1).jpg"><a href="http://mobile.ep.land.nat.gov.tw/" target="blank" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image11&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-1_f2.jpg&#39;,1)"><img src="./全國地政電子謄本系統1_files/menu-1.jpg" name="Image11" border="0"></a></td>
+                    <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統1_files/menu-bg(1).jpg"><a href="https://ep.land.nat.gov.tw/Home/EpaperManual1" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image10&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-2_f2.jpg&#39;,1)"><img src="./全國地政電子謄本系統1_files/menu-2.jpg" name="Image10" border="0"></a></td>
+	                <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統1_files/menu-bg(1).jpg"><a href="https://ep.land.nat.gov.tw/Home/DownloadCenter1" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image9&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-3_f2.jpg&#39;,1)"><img src="./全國地政電子謄本系統1_files/menu-3.jpg" name="Image9" border="0"></a></td>
+                    <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統1_files/menu-bg(1).jpg"><a href="https://ep.land.nat.gov.tw/Home/QA" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image6&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-4_f2.jpg&#39;,1)"><img src="./全國地政電子謄本系統1_files/menu-4.jpg" name="Image6" border="0"></a></td>
+	                <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統1_files/menu-bg(1).jpg"><a href="https://ep.land.nat.gov.tw/Home/EpaperForum" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image8&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-5_f2.jpg&#39;,1)"><img src="./全國地政電子謄本系統1_files/menu-5.jpg" name="Image8" border="0"></a></td>
+	                <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統1_files/menu-bg(1).jpg"><a href="https://ep.land.nat.gov.tw/Home/CallCenter" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image7&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-6_f2.jpg&#39;,1)"><img src="./全國地政電子謄本系統1_files/menu-6.jpg" name="Image7" border="0"></a></td>
+                    <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統1_files/menu-bg(1).jpg"><a href="https://ep.land.nat.gov.tw/Home/Index" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image3&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-7_f2.jpg&#39;,1)" target="_parent"><img src="./全國地政電子謄本系統1_files/menu-7.jpg" name="Image3" border="0"></a></td>
+                    <td height="31px" width="200px" background="./全國地政電子謄本系統1_files/menu-bg(1).jpg">
+                        <font size="2" color="#820000">104&nbsp;&nbsp;線上訪客</font><font size="2" color="#FF0000">0</font><font size="2" color="#820000">人</font> 　
+                    </td>
+                    <td height="31px" width="500px" background="./全國地政電子謄本系統1_files/menu-bg(1).jpg">
+                        <font size="2" color="#820000"><div id="sessiontime1">登出時間：20  分後</div></font>
+                    </td>
+                </tr>
+            </tbody></table>   
+            
+
+        <table border="0" cellspacing="5" cellpadding="0">
+            <tbody><tr>
+                <td background="./全國地政電子謄本系統1_files/bg.jpg" valign="top" align="left">
+                      
+    <form action="https://ep.land.nat.gov.tw/EpaperApply/ApplyDoc_CaptchaVerify" id="CaptchaForm" method="post" name="CaptchaForm" novalidate="novalidate">
+        <div id="CaptchaVer" style="display: none;">
+            請輸入圖片中的驗證碼 第 <span id="CaptchaCnt"></span> 次<br>
+            <font color="red">(注意：連續輸入錯誤超過10次將被強迫登出)</font><br>
+            <img src="./全國地政電子謄本系統1_files/ValidateNumber.ashx" alt="驗證碼" name="imgCode">
+            <input class="required" id="CaptchaValue" name="CaptchaValue" placeholder="請輸入驗證碼" type="text" value="" aria-required="true">
+            <input type="button" onclick="CaptchaForm.imgCode.src=&#39;../Content/ValidateNumber.ashx?&#39; + Math.random();" value="變更圖片">
+            <br>
+            <input type="button" name="Submit" value="確定" class="button_type1" onclick="captchasubmitform();">
+            <input type="button" name="clear" value="重填" class="button_type1" onclick="formclear();">
+        </div>
+    </form><form action="https://ep.land.nat.gov.tw/EpaperApply/Checkhidden" method="post" name="ApplyForm">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tbody><tr>
+            <td>
+                <table id="BtnControlArea" cellspacing="0" cellpadding="0" border="0">	
+                    <tbody><tr align="center"> 
+                        <td><input type="button" onmouseover="this.className=&#39;btn_02a&#39;" onmouseout="this.className=&#39;btn_02&#39;" name="btnclear" value="畫面清除" class="btn_02" onclick="JavaScript:eApply.clear();SetSessionTime();"></td>
+                        <td><input type="button" onmouseover="this.className=&#39;btn_02a&#39;" onmouseout="this.className=&#39;btn_02&#39;" name="btnnew" value="新增資料" class="btn_02" onclick="JavaScript:eApply.add();SetSessionTime();"></td>
+                        <td><input type="button" onmouseover="this.className=&#39;btn_02a&#39;" onmouseout="this.className=&#39;btn_02&#39;" name="btnmodify" value="修改後存檔" class="btn_02" onclick="JavaScript:eApply.edit();SetSessionTime();"></td>
+                        <td><input type="button" onmouseover="this.className=&#39;btn_02a&#39;" onmouseout="this.className=&#39;btn_02&#39;" name="btndel" value="刪      除" class="btn_02" onclick="JavaScript:eApply.del();SetSessionTime();"></td>
+                        <td><input type="button" onmouseover="this.className=&#39;btn_02a&#39;" onmouseout="this.className=&#39;btn_02&#39;" name="btnsend" value="送      出" class="btn_02" onclick="JavaScript:eApply.submit();SetSessionTime();"></td>
+                    </tr>
+                </tbody></table>    
+            </td>
+        </tr>        
+        <tr> 
+            <td>
+                <b><font color="#003399">地區：臺北市.北投區</font></b>
+                &nbsp;&nbsp;
+                <font color="#003399">
+                    申請角色：
+                    一般民眾
+                    <input type="hidden" name="UserApplyType" value="5">
+                </font>
+                <span id="EdocQryArea">
+                
+                        <a href="https://ep.land.nat.gov.tw/EpaperApply/Map#" onmouseover="MM_swapImage(&#39;b01&#39;,&#39;&#39;,&#39;../Images/pub/b01a.gif&#39;,1)" onmouseout="MM_swapImgRestore()" onclick="document.getElementById(&#39;targeturl&#39;).value=&#39;/EpaperApplyP/Owner_Query&#39;;ownerquery();">
+                            <img src="./全國地政電子謄本系統1_files/b01.gif" name="b01" width="95" height="36" border="0" id="Img2" alt="所有權人查詢">
+                        </a>
+                    
+                        <a href="https://ep.land.nat.gov.tw/EpaperApply/Map#" onmouseover="MM_swapImage(&#39;b02&#39;,&#39;&#39;,&#39;../Images/pub/b02a.gif&#39;,1)" onmouseout="MM_swapImgRestore()" onclick="document.getElementById(&#39;targeturl&#39;).value=&#39;/EpaperApplyP/ANO_Query&#39;;ano_query();">
+                            <img src="./全國地政電子謄本系統1_files/b02.gif" name="b02" width="104" height="36" border="0" id="Img3" alt="他項權利人查詢">
+                        </a>
+                    
+                        <a href="https://ep.land.nat.gov.tw/EpaperApply/Map#" onmouseover="MM_swapImage(&#39;b03&#39;,&#39;&#39;,&#39;../Images/pub/b03a.gif&#39;,1)" onmouseout="MM_swapImgRestore()" onclick="document.getElementById(&#39;targeturl&#39;).value=&#39;/EpaperApplyP/MGM_Query&#39;;mgm_query();">
+                            <img src="./全國地政電子謄本系統1_files/b03.gif" name="b03" width="78" height="36" border="0" id="Img4" alt="管理者查詢">
+                        </a>
+                    
+                    <a href="https://ep.land.nat.gov.tw/EpaperApply/Map#" onmouseover="MM_swapImage(&#39;b04&#39;,&#39;&#39;,&#39;../Images/pub/b04a.gif&#39;,1)" onmouseout="MM_swapImgRestore()" onclick="document.getElementById(&#39;targeturl&#39;).value=&#39;/EpaperApplyP/Build_Index1&#39;;ShowBuildWindow1();">
+                        <img src="./全國地政電子謄本系統1_files/b04.gif" name="b04" width="92" height="36" border="0" id="b04" alt="建物門牌查詢">
+                    </a>
+                
+                </span>
+                
+                    <a href="https://ep.land.nat.gov.tw/EpaperApply/Map#" onmouseover="MM_swapImage(&#39;b05&#39;,&#39;&#39;,&#39;../Images/pub/b05a.gif&#39;,1)" onmouseout="MM_swapImgRestore()" onclick="document.getElementById(&#39;targeturl&#39;).value=&#39;/EpaperApplyP/RVA_Input1&#39;;RVAquery1();">
+                        <img src="./全國地政電子謄本系統1_files/b05.gif" name="b05" width="128" height="36" border="0" id="b05" alt="新舊地建號對照查詢">
+                    </a>
+                
+                    <a href="https://ep.land.nat.gov.tw/EpaperApply/Map#" onmouseover="MM_swapImage(&#39;b06&#39;,&#39;&#39;,&#39;../Images/pub/b06a.gif&#39;,1)" onmouseout="MM_swapImgRestore()" onclick="document.getElementById(&#39;targeturl&#39;).value=&#39;/EpaperApplyP/NUM_Query&#39;;NUMquery()">
+                        <img src="./全國地政電子謄本系統1_files/b06.gif" name="b06" width="130" height="36" border="0" id="Img1" alt="數值區/數化區地段查詢">
+                    </a>
+                
+                <a href="https://ep.land.nat.gov.tw/EpaperApply/Map#" onmouseover="MM_swapImage(&#39;b07&#39;,&#39;&#39;,&#39;../Images/pub/b07a.gif&#39;,1)" onmouseout="MM_swapImgRestore()" onclick="clickback()">
+                    <img src="./全國地政電子謄本系統1_files/b07.gif" alt="回上頁" name="b07" width="57" height="36" border="0" id="b07">
+                </a>
+            </td>
+        </tr>
+    </tbody></table>
+
+    <div id="ErrorMsgArea" style="border: 1px none #000000; overflow: hidden; display: none">
+        <table width="100%" border="0" cellspacing="0" height="100%"> 
+            <tbody><tr>  
+                <td width="70px" nowrap="" style="background-color:white; color:red;font-weight:bolder;">錯誤訊息：</td>
+                <td align="left">
+                    <div id="ErrorMsgText" style="background-color:red; color:black; font-weight:normal; border: 1px none #000000;"></div>
+                </td> 
+            </tr> 
+        </tbody></table> 
+    </div> 
+
+    <table border="0" cellspacing="0" cellpadding="0"> 
+        
+        <tbody><tr>
+            <td width="40%" align="left" nowrap="" height="30px"> 
+                委託(申請)人統編: 
+                <input type="text" name="CONSIGNOR_ID" id="CONSIGNOR_ID" size="10" maxlength="50" class="input_text_gray" value="" onblur="CheckID(this);">
+                姓名: 
+                <input type="text" name="CONSIGNOR" id="CONSIGNOR" size="10" maxlength="100" class="input_text_gray" value="">
+                <input id="REG_CNT" name="REG_CNT" type="hidden" value="1" disabled="" class="inputtext_disabled">
+                <input id="PIC1_CNT" name="PIC1_CNT" type="hidden" value="1" disabled="" class="inputtext_disabled">
+                <input id="PIC2_CNT" name="PIC2_CNT" type="hidden" value="1" disabled="" class="inputtext_disabled">
+                <input id="PRC_CNT" name="PRC_CNT" type="hidden" value="1" disabled="" class="inputtext_disabled">
+                <input id="IDX_CNT" name="IDX_CNT" type="hidden" value="1" disabled="" class="inputtext_disabled">
+                <input id="IDR_CNT" name="IDR_CNT" type="hidden" value="1" disabled="" class="inputtext_disabled">
+                <input id="REF_CNT" name="REF_CNT" type="hidden" value="1" disabled="" class="inputtext_disabled">
+            </td> 
+        </tr>
+        
+    </tbody></table>  
+
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-size:14px;"> 	
+        <tbody><tr>
+            <td nowrap="" height="30px">
+				<font size="2">
+                申請類型:
+                <select name="REGTYPE" id="REGTYPE" onchange="ChangeREGTYPE();">
+                    <option value="2">第二類</option>
+                </select>
+                <input id="CERT_TYPE1" name="CERT_TYPE1" type="hidden" value="N">
+                <input id="CERT_AGENT_TYPE" name="CERT_AGENT_TYPE" type="hidden" value="1">
+                
+                申請用途:
+                <select name="applyfor" id="applyfor" onchange="ChangeApplyfor();">
+                    <option value="">請選擇申請用途</option>
+                    <option value="01">購屋、貸款使用</option>
+                    <option value="02">處理訴訟案件</option>
+                    <option value="03">自行參考</option>
+                    <option value="04">政府機關申請案或貸款案使用</option>
+                    <option value="06">其他</option>
+                </select>
+                <input type="text" name="REASON" id="REASON" maxlength="50" class="input_text_gray" value="" style="width: 200px;display:none;">
+                <select name="ReasonOrgId" id="ReasonOrgId" style="display:none;">
+                    <option value="">請選擇政府單位</option>
+                    <option value="30">(中央類)  內政部</option><option value="31">(中央類)  交通部</option><option value="32">(中央類)  經濟部</option><option value="33">(中央類)  法務部</option><option value="34">(中央類)  財政部</option><option value="35">(中央類)  國防部</option><option value="36">(中央類)  農委會</option><option value="37">(中央類)  海巡署</option><option value="38">(中央類)  退輔會</option><option value="39">(中央類)  司法院</option><option value="40">(中央類)  其他</option><option value="50">(地方類)  工務/建管/都計</option><option value="51">(地方類)  公所</option><option value="52">(地方類)  稅捐</option><option value="53">(地方類)  警政</option><option value="54">(地方類)  農業</option><option value="55">(地方類)  水利</option><option value="56">(地方類)  工商</option><option value="57">(地方類)  其他</option>
+                </select>               
+                限制張數 
+                <input type="text" name="MAXPAGE" size="3" class="input_text_gray" value="100" onblur="checkmaxpage(this);" maxlength="4">	     
+                
+				  申請人:
+				  
+                <font color="#003399">黃鑫達</font>
+                
+				</font>
+            </td>
+        </tr>
+    </tbody></table>
+
+    <div class="btMainData"> 
+    <table width="1080px" border="0" cellspacing="0" cellpadding="0">
+        <tbody><tr> 
+            <td align="center" nowrap="" width="83%" height="30px"> 
+				<div style="float:left">
+                    <font size="2">
+                        段小段 
+                        <input type="text" name="INPUT_011" id="INPUT_011" size="3" class="input_text_gray" maxlength="4" onblur="check_land_num2(this,4,&#39;段小段&#39;);" onfocus="JavaScript:this.select();" onkeydown="key_send_data();"> 
+                    </font>
+                    &nbsp;
+                </div>
+
+                <div class="sessiondropdown" style="float:left">  
+                    <input type="hidden" name="LN" id="LN" value="AE"><input type="hidden" name="S_Name" id="S_Name" value="八仙段一小段"><div class="session_title" id="session_title" title="0935">八仙段一小段</div><div class="session_list" style="display:none;" mce_style="display:none;"> <div class="session_name" onclick="sesson_click(&#39;0935&#39;,&#39;AE&#39;,&#39;八仙段一小段&#39;)" id="0935" name="八仙段一小段" title="AE">八仙段一小段</div><div class="session_name" onclick="sesson_click(&#39;0936&#39;,&#39;AE&#39;,&#39;八仙段二小段&#39;)" id="0936" name="八仙段二小段" title="AE">八仙段二小段</div><div class="session_name" onclick="sesson_click(&#39;1014&#39;,&#39;AE&#39;,&#39;三合段&#39;)" id="1014" name="三合段" title="AE">三合段</div><div class="session_name" onclick="sesson_click(&#39;0987&#39;,&#39;AE&#39;,&#39;大屯段一小段&#39;)" id="0987" name="大屯段一小段" title="AE">大屯段一小段</div><div class="session_name" onclick="sesson_click(&#39;0988&#39;,&#39;AE&#39;,&#39;大屯段二小段&#39;)" id="0988" name="大屯段二小段" title="AE">大屯段二小段</div><div class="session_name" onclick="sesson_click(&#39;0989&#39;,&#39;AE&#39;,&#39;大屯段三小段&#39;)" id="0989" name="大屯段三小段" title="AE">大屯段三小段</div><div class="session_name" onclick="sesson_click(&#39;0990&#39;,&#39;AE&#39;,&#39;大屯段四小段&#39;)" id="0990" name="大屯段四小段" title="AE">大屯段四小段</div><div class="session_name" onclick="sesson_click(&#39;0904&#39;,&#39;AE&#39;,&#39;大業段一小段&#39;)" id="0904" name="大業段一小段" title="AE">大業段一小段</div><div class="session_name" onclick="sesson_click(&#39;0905&#39;,&#39;AE&#39;,&#39;大業段二小段&#39;)" id="0905" name="大業段二小段" title="AE">大業段二小段</div><div class="session_name" onclick="sesson_click(&#39;0906&#39;,&#39;AE&#39;,&#39;大業段三小段&#39;)" id="0906" name="大業段三小段" title="AE">大業段三小段</div><div class="session_name" onclick="sesson_click(&#39;0952&#39;,&#39;AE&#39;,&#39;大業段五小段&#39;)" id="0952" name="大業段五小段" title="AE">大業段五小段</div><div class="session_name" onclick="sesson_click(&#39;0907&#39;,&#39;AE&#39;,&#39;大業段四小段&#39;)" id="0907" name="大業段四小段" title="AE">大業段四小段</div><div class="session_name" onclick="sesson_click(&#39;0887&#39;,&#39;AE&#39;,&#39;文林段一小段&#39;)" id="0887" name="文林段一小段" title="AE">文林段一小段</div><div class="session_name" onclick="sesson_click(&#39;0888&#39;,&#39;AE&#39;,&#39;文林段二小段&#39;)" id="0888" name="文林段二小段" title="AE">文林段二小段</div><div class="session_name" onclick="sesson_click(&#39;0889&#39;,&#39;AE&#39;,&#39;文林段三小段&#39;)" id="0889" name="文林段三小段" title="AE">文林段三小段</div><div class="session_name" onclick="sesson_click(&#39;0891&#39;,&#39;AE&#39;,&#39;文林段五小段&#39;)" id="0891" name="文林段五小段" title="AE">文林段五小段</div><div class="session_name" onclick="sesson_click(&#39;0890&#39;,&#39;AE&#39;,&#39;文林段四小段&#39;)" id="0890" name="文林段四小段" title="AE">文林段四小段</div><div class="session_name" onclick="sesson_click(&#39;0921&#39;,&#39;AE&#39;,&#39;北投段&#39;)" id="0921" name="北投段" title="AE">北投段</div><div class="session_name" onclick="sesson_click(&#39;0925&#39;,&#39;AE&#39;,&#39;石牌段&#39;)" id="0925" name="石牌段" title="AE">石牌段</div><div class="session_name" onclick="sesson_click(&#39;0892&#39;,&#39;AE&#39;,&#39;立農段一小段&#39;)" id="0892" name="立農段一小段" title="AE">立農段一小段</div><div class="session_name" onclick="sesson_click(&#39;0893&#39;,&#39;AE&#39;,&#39;立農段二小段&#39;)" id="0893" name="立農段二小段" title="AE">立農段二小段</div><div class="session_name" onclick="sesson_click(&#39;0894&#39;,&#39;AE&#39;,&#39;立農段三小段&#39;)" id="0894" name="立農段三小段" title="AE">立農段三小段</div><div class="session_name" onclick="sesson_click(&#39;0896&#39;,&#39;AE&#39;,&#39;立農段五小段&#39;)" id="0896" name="立農段五小段" title="AE">立農段五小段</div><div class="session_name" onclick="sesson_click(&#39;0895&#39;,&#39;AE&#39;,&#39;立農段四小段&#39;)" id="0895" name="立農段四小段" title="AE">立農段四小段</div><div class="session_name" onclick="sesson_click(&#39;0917&#39;,&#39;AE&#39;,&#39;竹子湖段&#39;)" id="0917" name="竹子湖段" title="AE">竹子湖段</div><div class="session_name" onclick="sesson_click(&#39;0975&#39;,&#39;AE&#39;,&#39;行義段一小段&#39;)" id="0975" name="行義段一小段" title="AE">行義段一小段</div><div class="session_name" onclick="sesson_click(&#39;0976&#39;,&#39;AE&#39;,&#39;行義段二小段&#39;)" id="0976" name="行義段二小段" title="AE">行義段二小段</div><div class="session_name" onclick="sesson_click(&#39;0977&#39;,&#39;AE&#39;,&#39;行義段三小段&#39;)" id="0977" name="行義段三小段" title="AE">行義段三小段</div><div class="session_name" onclick="sesson_click(&#39;0978&#39;,&#39;AE&#39;,&#39;行義段四小段&#39;)" id="0978" name="行義段四小段" title="AE">行義段四小段</div><div class="session_name" onclick="sesson_click(&#39;0929&#39;,&#39;AE&#39;,&#39;秀山段一小段&#39;)" id="0929" name="秀山段一小段" title="AE">秀山段一小段</div><div class="session_name" onclick="sesson_click(&#39;0930&#39;,&#39;AE&#39;,&#39;秀山段二小段&#39;)" id="0930" name="秀山段二小段" title="AE">秀山段二小段</div><div class="session_name" onclick="sesson_click(&#39;0931&#39;,&#39;AE&#39;,&#39;秀山段三小段&#39;)" id="0931" name="秀山段三小段" title="AE">秀山段三小段</div><div class="session_name" onclick="sesson_click(&#39;0912&#39;,&#39;AE&#39;,&#39;奇岩段一小段&#39;)" id="0912" name="奇岩段一小段" title="AE">奇岩段一小段</div><div class="session_name" onclick="sesson_click(&#39;0913&#39;,&#39;AE&#39;,&#39;奇岩段二小段&#39;)" id="0913" name="奇岩段二小段" title="AE">奇岩段二小段</div><div class="session_name" onclick="sesson_click(&#39;0914&#39;,&#39;AE&#39;,&#39;奇岩段三小段&#39;)" id="0914" name="奇岩段三小段" title="AE">奇岩段三小段</div><div class="session_name" onclick="sesson_click(&#39;0916&#39;,&#39;AE&#39;,&#39;奇岩段五小段&#39;)" id="0916" name="奇岩段五小段" title="AE">奇岩段五小段</div><div class="session_name" onclick="sesson_click(&#39;1012&#39;,&#39;AE&#39;,&#39;奇岩段六小段&#39;)" id="1012" name="奇岩段六小段" title="AE">奇岩段六小段</div><div class="session_name" onclick="sesson_click(&#39;0915&#39;,&#39;AE&#39;,&#39;奇岩段四小段&#39;)" id="0915" name="奇岩段四小段" title="AE">奇岩段四小段</div><div class="session_name" onclick="sesson_click(&#39;0983&#39;,&#39;AE&#39;,&#39;泉源段一小段&#39;)" id="0983" name="泉源段一小段" title="AE">泉源段一小段</div><div class="session_name" onclick="sesson_click(&#39;0984&#39;,&#39;AE&#39;,&#39;泉源段二小段&#39;)" id="0984" name="泉源段二小段" title="AE">泉源段二小段</div><div class="session_name" onclick="sesson_click(&#39;0985&#39;,&#39;AE&#39;,&#39;泉源段三小段&#39;)" id="0985" name="泉源段三小段" title="AE">泉源段三小段</div><div class="session_name" onclick="sesson_click(&#39;0986&#39;,&#39;AE&#39;,&#39;泉源段四小段&#39;)" id="0986" name="泉源段四小段" title="AE">泉源段四小段</div><div class="session_name" onclick="sesson_click(&#39;0941&#39;,&#39;AE&#39;,&#39;洲美段一小段&#39;)" id="0941" name="洲美段一小段" title="AE">洲美段一小段</div><div class="session_name" onclick="sesson_click(&#39;0942&#39;,&#39;AE&#39;,&#39;洲美段二小段&#39;)" id="0942" name="洲美段二小段" title="AE">洲美段二小段</div><div class="session_name" onclick="sesson_click(&#39;0883&#39;,&#39;AE&#39;,&#39;振興段一小段&#39;)" id="0883" name="振興段一小段" title="AE">振興段一小段</div><div class="session_name" onclick="sesson_click(&#39;0884&#39;,&#39;AE&#39;,&#39;振興段二小段&#39;)" id="0884" name="振興段二小段" title="AE">振興段二小段</div><div class="session_name" onclick="sesson_click(&#39;0885&#39;,&#39;AE&#39;,&#39;振興段三小段&#39;)" id="0885" name="振興段三小段" title="AE">振興段三小段</div><div class="session_name" onclick="sesson_click(&#39;0886&#39;,&#39;AE&#39;,&#39;振興段四小段&#39;)" id="0886" name="振興段四小段" title="AE">振興段四小段</div><div class="session_name" onclick="sesson_click(&#39;0926&#39;,&#39;AE&#39;,&#39;桃源段一小段&#39;)" id="0926" name="桃源段一小段" title="AE">桃源段一小段</div><div class="session_name" onclick="sesson_click(&#39;0927&#39;,&#39;AE&#39;,&#39;桃源段二小段&#39;)" id="0927" name="桃源段二小段" title="AE">桃源段二小段</div><div class="session_name" onclick="sesson_click(&#39;0928&#39;,&#39;AE&#39;,&#39;桃源段三小段&#39;)" id="0928" name="桃源段三小段" title="AE">桃源段三小段</div><div class="session_name" onclick="sesson_click(&#39;1001&#39;,&#39;AE&#39;,&#39;桃源段五小段&#39;)" id="1001" name="桃源段五小段" title="AE">桃源段五小段</div><div class="session_name" onclick="sesson_click(&#39;1000&#39;,&#39;AE&#39;,&#39;桃源段四小段&#39;)" id="1000" name="桃源段四小段" title="AE">桃源段四小段</div><div class="session_name" onclick="sesson_click(&#39;0979&#39;,&#39;AE&#39;,&#39;崇仰段一小段&#39;)" id="0979" name="崇仰段一小段" title="AE">崇仰段一小段</div><div class="session_name" onclick="sesson_click(&#39;0980&#39;,&#39;AE&#39;,&#39;崇仰段二小段&#39;)" id="0980" name="崇仰段二小段" title="AE">崇仰段二小段</div><div class="session_name" onclick="sesson_click(&#39;0981&#39;,&#39;AE&#39;,&#39;崇仰段三小段&#39;)" id="0981" name="崇仰段三小段" title="AE">崇仰段三小段</div><div class="session_name" onclick="sesson_click(&#39;0982&#39;,&#39;AE&#39;,&#39;崇仰段四小段&#39;)" id="0982" name="崇仰段四小段" title="AE">崇仰段四小段</div><div class="session_name" onclick="sesson_click(&#39;1016&#39;,&#39;AE&#39;,&#39;軟橋段&#39;)" id="1016" name="軟橋段" title="AE">軟橋段</div><div class="session_name" onclick="sesson_click(&#39;0919&#39;,&#39;AE&#39;,&#39;頂北投段十八分小段&#39;)" id="0919" name="頂北投段十八分小段" title="AE">頂北投段十八分小段</div><div class="session_name" onclick="sesson_click(&#39;0918&#39;,&#39;AE&#39;,&#39;頂北投段山小段&#39;)" id="0918" name="頂北投段山小段" title="AE">頂北投段山<img border="0" src="./全國地政電子謄本系統1_files/FC6B.Png" valign="bottom" width="12px" height="12px">小段</div><div class="session_name" onclick="sesson_click(&#39;0920&#39;,&#39;AE&#39;,&#39;頂北投段紗帽山小段&#39;)" id="0920" name="頂北投段紗帽山小段" title="AE">頂北投段紗帽山小段</div><div class="session_name" onclick="sesson_click(&#39;0922&#39;,&#39;AE&#39;,&#39;唭哩岸段&#39;)" id="0922" name="唭哩岸段" title="AE">唭哩岸段</div><div class="session_name" onclick="sesson_click(&#39;0991&#39;,&#39;AE&#39;,&#39;湖山段一小段&#39;)" id="0991" name="湖山段一小段" title="AE">湖山段一小段</div><div class="session_name" onclick="sesson_click(&#39;0992&#39;,&#39;AE&#39;,&#39;湖山段二小段&#39;)" id="0992" name="湖山段二小段" title="AE">湖山段二小段</div><div class="session_name" onclick="sesson_click(&#39;0993&#39;,&#39;AE&#39;,&#39;湖山段三小段&#39;)" id="0993" name="湖山段三小段" title="AE">湖山段三小段</div><div class="session_name" onclick="sesson_click(&#39;0994&#39;,&#39;AE&#39;,&#39;湖田段一小段&#39;)" id="0994" name="湖田段一小段" title="AE">湖田段一小段</div><div class="session_name" onclick="sesson_click(&#39;0995&#39;,&#39;AE&#39;,&#39;湖田段二小段&#39;)" id="0995" name="湖田段二小段" title="AE">湖田段二小段</div><div class="session_name" onclick="sesson_click(&#39;0901&#39;,&#39;AE&#39;,&#39;開明段一小段&#39;)" id="0901" name="開明段一小段" title="AE">開明段一小段</div><div class="session_name" onclick="sesson_click(&#39;0902&#39;,&#39;AE&#39;,&#39;開明段二小段&#39;)" id="0902" name="開明段二小段" title="AE">開明段二小段</div><div class="session_name" onclick="sesson_click(&#39;0903&#39;,&#39;AE&#39;,&#39;開明段三小段&#39;)" id="0903" name="開明段三小段" title="AE">開明段三小段</div><div class="session_name" onclick="sesson_click(&#39;0897&#39;,&#39;AE&#39;,&#39;新民段一小段&#39;)" id="0897" name="新民段一小段" title="AE">新民段一小段</div><div class="session_name" onclick="sesson_click(&#39;0898&#39;,&#39;AE&#39;,&#39;新民段二小段&#39;)" id="0898" name="新民段二小段" title="AE">新民段二小段</div><div class="session_name" onclick="sesson_click(&#39;0899&#39;,&#39;AE&#39;,&#39;新民段三小段&#39;)" id="0899" name="新民段三小段" title="AE">新民段三小段</div><div class="session_name" onclick="sesson_click(&#39;0900&#39;,&#39;AE&#39;,&#39;新民段四小段&#39;)" id="0900" name="新民段四小段" title="AE">新民段四小段</div><div class="session_name" onclick="sesson_click(&#39;1015&#39;,&#39;AE&#39;,&#39;新洲美段&#39;)" id="1015" name="新洲美段" title="AE">新洲美段</div><div class="session_name" onclick="sesson_click(&#39;0908&#39;,&#39;AE&#39;,&#39;溫泉段一小段&#39;)" id="0908" name="溫泉段一小段" title="AE">溫泉段一小段</div><div class="session_name" onclick="sesson_click(&#39;0909&#39;,&#39;AE&#39;,&#39;溫泉段二小段&#39;)" id="0909" name="溫泉段二小段" title="AE">溫泉段二小段</div><div class="session_name" onclick="sesson_click(&#39;0910&#39;,&#39;AE&#39;,&#39;溫泉段三小段&#39;)" id="0910" name="溫泉段三小段" title="AE">溫泉段三小段</div><div class="session_name" onclick="sesson_click(&#39;0911&#39;,&#39;AE&#39;,&#39;溫泉段四小段&#39;)" id="0911" name="溫泉段四小段" title="AE">溫泉段四小段</div><div class="session_name" onclick="sesson_click(&#39;0923&#39;,&#39;AE&#39;,&#39;嗄嘮別段嗄嘮別小段&#39;)" id="0923" name="嗄嘮別段嗄嘮別小段" title="AE">嗄嘮別段嗄嘮別小段</div><div class="session_name" onclick="sesson_click(&#39;0924&#39;,&#39;AE&#39;,&#39;嗄嘮別段關渡小段&#39;)" id="0924" name="嗄嘮別段關渡小段" title="AE">嗄嘮別段關渡小段</div><div class="session_name" onclick="sesson_click(&#39;0937&#39;,&#39;AE&#39;,&#39;豐年段一小段&#39;)" id="0937" name="豐年段一小段" title="AE">豐年段一小段</div><div class="session_name" onclick="sesson_click(&#39;0938&#39;,&#39;AE&#39;,&#39;豐年段二小段&#39;)" id="0938" name="豐年段二小段" title="AE">豐年段二小段</div><div class="session_name" onclick="sesson_click(&#39;0939&#39;,&#39;AE&#39;,&#39;豐年段三小段&#39;)" id="0939" name="豐年段三小段" title="AE">豐年段三小段</div><div class="session_name" onclick="sesson_click(&#39;0940&#39;,&#39;AE&#39;,&#39;豐年段四小段&#39;)" id="0940" name="豐年段四小段" title="AE">豐年段四小段</div><div class="session_name" onclick="sesson_click(&#39;0932&#39;,&#39;AE&#39;,&#39;關渡段一小段&#39;)" id="0932" name="關渡段一小段" title="AE">關渡段一小段</div><div class="session_name" onclick="sesson_click(&#39;0933&#39;,&#39;AE&#39;,&#39;關渡段二小段&#39;)" id="0933" name="關渡段二小段" title="AE">關渡段二小段</div><div class="session_name" onclick="sesson_click(&#39;0934&#39;,&#39;AE&#39;,&#39;關渡段三小段&#39;)" id="0934" name="關渡段三小段" title="AE">關渡段三小段</div></div> 
+                </div> 
+                <div style="float:left">
+                    <font size="2">
+                        &nbsp;
+                        地號 
+                        <input type="text" id="INPUT_013" name="INPUT_013" size="15" class="input_text_gray" onblur="CheckInputLB(this,&#39;L&#39;);" onfocus="JavaScript:this.select();" onkeydown="key_send_data();" style="ime-mode:disabled" maxlength="500">
+                        建號 
+                        <input type="text" id="INPUT_014" name="INPUT_014" size="15" class="input_text_gray" onblur="CheckInputLB(this,&#39;B&#39;);" onfocus="JavaScript:this.select();" onkeydown="key_send_data();" style="ime-mode:disabled" maxlength="500">
+                        <span title="輸入登記次序請在最前面加上「_」;或是用所有權人/他項權利人查詢功能帶入。">
+                            統一編號／登記次序 
+                            <input type="text" id="INPUT_015" name="INPUT_015" size="24" class="input_text_gray" onblur="check_id_num(this);" onfocus="JavaScript:this.select();" onkeydown="key_send_data();" style="ime-mode:disabled" placeholder="例如：A123456789/_0001">
+                        </span>
+                        
+	                        <input type="hidden" name="INPUT_019" value="">
+                        
+				    </font>
+                </div>
+            </td>
+        </tr>
+    </tbody></table> 
+    
+    <table width="100%" border="1" cellspacing="0" cellpadding="0" style=" border: 2px #CCCCCC solid; border-collapse:collapse; font-size:14px ">
+        <tbody><tr>  
+            <td>
+                <table border="0" cellspacing="0" cellpadding="0" width="731">
+                    <tbody><tr> 
+                        <td width="90" valign="top" nowrap="" class="applyitem">
+                            <span onclick="LabelClick(event);"> 
+                                <input type="checkbox" name="INPUT_021" value="Y" onclick="REG_Click();">
+                                登記謄本
+                            </span>
+                        </td>
+                        <td align="left" valign="top" nowrap=""> 
+                            <font color="#006699">
+                                <span onclick="LabelClick(event);">
+                                    <input type="checkbox" name="INPUT_022" value="N" disabled="">
+                                    無需列印地上建物建號
+                                </span><br>
+                                <span onclick="LabelClick(event);">
+                                    <input type="checkbox" name="INPUT_024" value="N" disabled="">
+                                    無需列印主建物附表
+                                </span><br>
+		                        <span onclick="LabelClick(event);">
+                                    <input type="checkbox" name="INPUT_025" value="N" disabled="">
+                                    無需列印前次移轉現值
+                                </span>
+                            </font>
+                        </td>
+                        <td nowrap=""></td>
+                        <td nowrap=""> 
+                            <font size="2"> 
+                                <span onclick="LabelClick(event);">
+                                    <input type="radio" name="INPUT_023" value="0" disabled="">
+                                    所有權個人全部
+                                    <a href="https://ep.land.nat.gov.tw/Content/Apply/REGB.pdf" target="_blank"><font color="#FF1515" size="2">(範例)</font></a>  
+                                </span> 
+                                <span onclick="LabelClick(event);" title="本項不包含「債務人及債務額比例」、「設定義務人」">
+                                    <input type="radio" name="INPUT_023" value="1" disabled="">
+                                    全部(土地/建物)
+                                    <a href="https://ep.land.nat.gov.tw/Content/Apply/REGA.pdf" target="_blank"><font color="#FF1515" size="2">(範例)</font></a>    
+                                </span>
+                                <span onclick="LabelClick(event);">
+                                    <input type="radio" name="INPUT_023" value="2" disabled="">
+                                    標示部
+                                    <a href="https://ep.land.nat.gov.tw/Content/Apply/REG3.pdf" target="_blank"><font color="#FF1515" size="2">(範例)</font></a> 
+                                </span> 
+		                        <br>
+                                <span onclick="LabelClick(event);">
+                                    <input type="radio" name="INPUT_023" value="9" disabled="">
+                                    他項權利個人全部
+                                    <a href="https://ep.land.nat.gov.tw/Content/Apply/REG9.pdf" target="_blank"><font color="#FF1515" size="2">(範例)</font></a>
+                                </span>&nbsp;
+  
+                                <span onclick="LabelClick(event);">     
+                                    <input type="radio" name="INPUT_023" value="6" disabled="">
+                                    標示部及所有權部
+                                    <a href="https://ep.land.nat.gov.tw/Content/Apply/REG7.pdf" target="_blank"><font color="#FF1515" size="2">(範例)</font></a>
+                                </span>
+                                <span onclick="LabelClick(event);">
+                                    <input type="radio" name="INPUT_023" value="7" disabled="">
+                                    標示部及他項權利部
+                                    <a href="https://ep.land.nat.gov.tw/Content/Apply/REG8.pdf" target="_blank"><font color="#FF1515" size="2">(範例)</font></a>
+                                </span>
+                            </font>
+                        </td>
+                    </tr>
+                </tbody></table>	
+            </td> 
+        </tr> 
+        <tr>
+            <td>
+                <table border="0" cellspacing="0" cellpadding="0" width="731">
+                    <tbody><tr> 
+                        <td width="100" valign="top" nowrap="" class="applyitem">
+                            <span onclick="LabelClick(event);">
+                                <input type="checkbox" name="INPUT_031" value="Y" onclick="PIC1_Click();">
+                                地籍圖謄本                  
+                            </span>                 
+                        </td>
+                        <td align="left" nowrap="">
+                            <font color="#006699">
+                                <span onclick="LabelClick(event);">
+                                    <input type="checkbox" name="INPUT_032" value="Y" disabled="">
+                                    數值區列印界址點及坐標表
+                                </span> 
+                            </font>
+                        </td>
+                        <td nowrap=""> 
+                            <span onclick="LabelClick(event);">
+                                <input type="radio" name="INPUT_033" value="-1" onclick="P2_Click();" disabled="">
+                                自動計算比例尺(建議)
+                            </span> 
+                            <span onclick="LabelClick(event);">
+                                <input type="radio" name="INPUT_033" value="0" onclick="P2_Click();" disabled="">
+                                原比例尺
+                            </span> 
+                            <span onclick="LabelClick(event);">
+                                <input type="radio" name="INPUT_033" value="2" onclick="P2_Click();" disabled="">
+                                指定比例尺
+                            </span> 
+                            1/ 
+                            <input type="text" name="INPUT_0331" size="10" class="inputtext_disabled" onblur="JavaScript:check_number0331(this.value);" style="ime-mode:disabled" disabled="">
+                            &nbsp;
+                        </td>
+                    </tr>
+                </tbody></table>	
+            </td> 
+        </tr> 
+        <tr>
+            <td>
+                <table border="0" cellspacing="0" cellpadding="0">
+                    <tbody><tr> 
+                        <td valign="top" nowrap="" class="applyitem"> 
+                            <span onclick="LabelClick(event);">
+                                <input type="checkbox" name="INPUT_041" value="Y" onclick="PIC2_Click();">
+                                建物測量成果圖謄本
+                            </span>
+                        </td>
+                        <td colspan="3"></td>
+                    </tr>
+                </tbody></table>	
+            </td> 
+        </tr> 
+        <tr>
+            <td>
+                <table border="0" cellpadding="0" cellspacing="0" width="900px">
+                    <tbody><tr> 
+                        <td width="90" valign="top" class="applyitem"> 
+                            <span onclick="LabelClick(event);">
+                                <input type="checkbox" name="INPUT_051" value="Y" onclick="PRC_Click();">
+                                地價謄本
+                            </span>
+                        </td>
+                        <td rowspan="2" valign="top" nowrap="">
+                            <span onclick="LabelClick(event);">
+                                <input type="radio" name="INPUT_058" value="0" disabled="">
+                                個人
+                            </span>
+                            <br>
+                            <span onclick="LabelClick(event);">
+                                <input type="radio" name="INPUT_058" value="1" disabled="">
+                                全部
+                            </span>
+                        </td>
+                        <td rowspan="2" valign="top" nowrap=""> 
+                            <font color="#000099"> 
+                                <span onclick="LabelClick(event);">
+                                    <input type="checkbox" name="INPUT_053" value="Y" onclick="AA16_CHECK_Click();" disabled="">
+                                    公告現值                  
+                                </span>
+                            </font> 
+                        </td>
+                        <td rowspan="2">
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+                                <tbody><tr> 
+                                    <td colspan="2"> 
+                                        <span onclick="LabelClick(event);">
+                                            <input type="checkbox" name="INPUT_056" value="0" onclick="AA16_TYPE_Click();" disabled="">
+                                            當期
+                                        </span> 
+                                    </td>
+                                </tr>
+                                <tr> 
+                                    <td width="30%" nowrap=""> 
+                                        <span onclick="LabelClick(event);">
+                                            <input type="checkbox" name="INPUT_056" value="1" onclick="AA16_TYPE_Click();" disabled="">
+                                            歷年
+                                        </span> 
+                                    </td>
+                                    <td width="70%" nowrap=""> 
+                                        <input type="text" name="INPUT_0561" maxlength="3" size="3" class="inputtext_disabled" onblur="autosupplyzero_date(this,3,&#39;歷年(起)&#39;);" onkeydown="key_send_data();" disabled="">
+                                        年起 
+                                        <input type="text" name="INPUT_0562" maxlength="3" size="3" class="inputtext_disabled" onblur="autosupplyzero_date(this,3,&#39;歷年(迄)&#39;);" onkeydown="key_send_data();" disabled="">
+                                        年迄
+                                        &nbsp; 
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                        </td>
+                        <td rowspan="2" valign="top" nowrap=""> 
+                            <font color="#000099"> 
+                                <span onclick="LabelClick(event);">
+                                    <input type="checkbox" name="INPUT_054" value="Y" onclick="BB21_CHECK_Click();" disabled="">
+                                    申報地價                  
+                                </span>
+                            </font>
+                        </td>
+                        <td rowspan="2">
+                            <table width="90%" border="0" cellspacing="0" cellpadding="0" align="center">
+                                <tbody><tr> 
+                                    <td colspan="2"> 
+                                        <span onclick="LabelClick(event);">
+                                            <input type="checkbox" name="INPUT_057" value="0" onclick="BB21_TYPE_Click();" disabled="">
+                                            當期
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr> 
+                                    <td width="30%" nowrap=""> 
+                                        <span onclick="LabelClick(event);">
+                                            <input type="checkbox" name="INPUT_057" value="1" onclick="BB21_TYPE_Click();" disabled="">
+                                            歷年
+                                        </span>
+                                    </td>
+                                    <td width="70%" nowrap="">
+                                        <input type="text" name="INPUT_0571" maxlength="3" size="3" class="inputtext_disabled" onblur="autosupplyzero_date(this,3,&#39;歷年(起)&#39;);" onkeydown="key_send_data();" disabled="">
+                                        年起 
+                                        <input type="text" name="INPUT_0572" maxlength="3" size="3" class="inputtext_disabled" onblur="autosupplyzero_date(this,3,&#39;歷年(迄)&#39;);" onkeydown="key_send_data();" disabled="">
+                                        年迄
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                        </td>
+                        <td rowspan="2" valign="top" nowrap="">
+                            <font color="#000099"> 
+                                <span onclick="LabelClick(event);">
+                                    <input type="checkbox" name="INPUT_055" value="Y" onclick="CheckRPCItem();" disabled="">
+                                    前次移轉現值                  
+                                </span>
+                            </font>
+                        </td>
+                    </tr>
+                    <tr> 
+                        <td align="left"> 
+                            <font color="#006699"> &nbsp;&nbsp;&nbsp;&nbsp; 
+                                <span onclick="LabelClick(event);">
+                                    <input type="checkbox" name="INPUT_052" value="Y" onclick="SRPRCE_Click();" disabled="">
+                                    重測前
+                                </span>
+	                        </font>
+                        </td>
+                    </tr>
+                </tbody></table>	
+            </td> 
+        </tr> 
+        <tr>
+            <td>			  
+                <table border="0" cellpadding="0" cellspacing="0" bordercolor="#CCCCCC">
+                    <tbody><tr> 
+                        <td width="170" align="left" valign="top" nowrap="" class="applyitem"> 
+                            <table border="0">
+                                <tbody><tr>
+                                    <td>                            
+                                        <span onclick="LabelClick(event);">
+                                            <input type="checkbox" name="INPUT_061" value="Y" onclick="IDX_Click();">
+                                            異動索引
+                                        </span> 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span onclick="LabelClick(event); INPUT0641_Click2();">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="INPUT_0641" value="A" onclick="INPUT0641_Click();" disabled="">
+                                            含權利人<font color="red">完整</font>姓名
+                                        </span>  
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <font size="1">
+                                            <a href="https://ep.land.nat.gov.tw/EpaperApply/Map#" onclick="document.getElementById(&#39;targeturl&#39;).value=&#39;/EpaperApplyP/Vold_Rechar&#39;;VoldRecharQry()" style="color:Red">收件字使用期間表</a>
+                                        </font>
+                                    </td>
+                                </tr>
+                            </tbody></table>                                                                         
+                        </td>
+                        <td>
+                            <table border="0" cellspacing="0" width="850px">
+                                <tbody><tr>
+                                    <td colspan="5">
+                                        <table border="0" cellpadding="0" cellspacing="0">
+                                            <tbody><tr>
+                                                <td>
+                                                    <span class="style2">
+                                                       若下列條件有需要限制產製的異動日期（收件年字號選項除外），請在此處輸入起迄年月日
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span onclick="LabelClick(event);">                      
+                                                        <input name="INPUT_063" type="checkbox" id="INPUT_063" value="Y" onclick="IS05_Click();" disabled="">
+                                                        異動日期範圍
+                                                    </span>
+                                                    <input name="INPUT_0631" type="hidden" id="INPUT_0631" class="inputtext_disabled" onfocus="JavaScript:this.select();" onblur="Check_ROCDate(this);" onkeydown="key_send_data();" size="6" maxlength="7" value="" disabled="">
+                                                    <input name="INPUT_0631Y" type="text" id="INPUT_0631Y" class="inputtext_disabled" onfocus="JavaScript:this.select();" onblur="autosupplyzero_date1(this,3,&#39;異動年&#39;,&#39;Y&#39;);" onkeydown="key_send_data();" size="2" maxlength="3" disabled="">年
+                                                    <input name="INPUT_0631M" type="text" id="INPUT_0631M" class="inputtext_disabled" onfocus="JavaScript:this.select();" onblur="autosupplyzero_date1(this,2,&#39;異動月&#39;,&#39;M&#39;);" onkeydown="key_send_data();" size="2" maxlength="2" disabled="">月
+                                                    <input name="INPUT_0631D" type="text" id="INPUT_0631D" class="inputtext_disabled" onfocus="JavaScript:this.select();" onblur="autosupplyzero_date1(this,2,&#39;異動日&#39;,&#39;D&#39;);" onkeydown="key_send_data();" size="2" maxlength="2" disabled="">日
+                                                    至
+                                                    <input name="INPUT_0632" type="hidden" id="INPUT_0632" class="inputtext_disabled" onfocus="JavaScript:this.select();" onblur="Check_ROCDate(this);" onkeydown="key_send_data();" size="6" maxlength="7" value="" disabled="">
+                                                    <input name="INPUT_0632Y" type="text" id="INPUT_0632Y" class="inputtext_disabled" onfocus="JavaScript:this.select();" onblur="autosupplyzero_date1(this,3,&#39;異動年&#39;,&#39;Y&#39;);" onkeydown="key_send_data();" size="2" maxlength="3" disabled="">年
+                                                    <input name="INPUT_0632M" type="text" id="INPUT_0632M" class="inputtext_disabled" onfocus="JavaScript:this.select();" onblur="autosupplyzero_date1(this,2,&#39;異動月&#39;,&#39;M&#39;);" onkeydown="key_send_data();" size="2" maxlength="2" disabled="">月
+                                                    <input name="INPUT_0632D" type="text" id="INPUT_0632D" class="inputtext_disabled" onfocus="JavaScript:this.select();" onblur="autosupplyzero_date1(this,2,&#39;異動日&#39;,&#39;D&#39;);" onkeydown="key_send_data();" size="2" maxlength="2" disabled="">日
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr> 
+                                    <td> 
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_062" value="0" onclick="ISTYPE_Click();" disabled="">
+                                            收件年期字號
+                                        </span> 
+                                    </td>
+                                    <td> 
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_062" value="2" onclick="ISTYPE_Click();" disabled="">
+                                            地號
+                                        </span>
+                                    </td>
+                                    <td> 
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_062" value="4" onclick="ISTYPE_Click();" disabled="">
+                                            地號+登記次序
+                                        </span>
+                                    </td>
+                                    <td>  
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_062" value="6" onclick="ISTYPE_Click();" disabled="">
+                                            地號+部別
+                                        </span>
+                                    </td>
+                                    <td> 
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_062" value="8" onclick="ISTYPE_Click();" disabled="">
+                                            地號+統一編號
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr> 
+                                    <td> 
+                                        <span onclick="LabelClick(event);" style="display: none;">
+                                            <input type="radio" name="INPUT_062" value="1" onclick="ISTYPE_Click();" disabled="">
+                                            統一編號
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_062" value="3" onclick="ISTYPE_Click();" disabled="">
+                                            建號
+                                        </span> 
+                                    </td>
+                                    <td> 
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_062" value="5" onclick="ISTYPE_Click();" disabled="">
+                                            建號+登記次序
+                                        </span> 
+                                    </td>
+                                    <td>  
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_062" value="7" onclick="ISTYPE_Click();" disabled="">
+                                            建號+部別
+                                        </span> 
+                                    </td>
+                                    <td>  
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_062" value="9" onclick="ISTYPE_Click();" disabled="">
+                                            建號+統一編號
+                                        </span> 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5">
+                                        收件字號
+                                        <input type="text" name="INPUT_0611" size="3" class="inputtext_disabled" maxlength="3" onfocus="JavaScript:this.select();" onkeydown="key_send_data();" onblur="autosupplyzero_date(this,3,&#39;收件年&#39;);" disabled="">
+                                        年
+
+		                                <input type="radio" name="INPUT_065" id="INPUT_065" value="0" onclick="ChangeINPUT_065()" disabled="">本縣市
+                                        <input type="radio" name="INPUT_065" id="INPUT_065" value="1" onclick="ChangeINPUT_065()" disabled="">跨縣市(受理縣市)
+
+                                        <!--縣市下拉選單-->
+                                        
+                                        <select class="button" id="INPUT_06121" name="INPUT_06121" style="width:80px" disabled=""><option value="">請選擇</option>
+<option value="371010000A">金門縣</option>
+<option value="371030000A">連江縣</option>
+<option value="376410000A">新北市</option>
+<option value="376420000A">宜蘭縣</option>
+<option value="376430000A">桃園市</option>
+<option value="376440000A">新竹縣</option>
+<option value="376450000A">苗栗縣</option>
+<option value="376470000A">彰化縣</option>
+<option value="376480000A">南投縣</option>
+<option value="376490000A">雲林縣</option>
+<option value="376500000A">嘉義縣</option>
+<option value="376530000A">屏東縣</option>
+<option value="376540000A">臺東縣</option>
+<option value="376550000A">花蓮縣</option>
+<option value="376560000A">澎湖縣</option>
+<option value="376570000A">基隆市</option>
+<option value="376580000A">新竹市</option>
+<option value="376590000A">臺中市</option>
+<option value="376600000A">嘉義市</option>
+<option value="376610000A">臺南市</option>
+<option value="383160000A">高雄市</option>
+</select> 
+
+                                        <!--收件字號收入框-->
+                                        <input type="text" name="INPUT_0616" size="3" class="inputtext_disabled" maxlength="4" onblur="check_land_docid(this,2,&#39;收件字號&#39;,&#39;1&#39;);" style="ime-mode:disabled" disabled="">
+                                        <input type="text" name="INPUT_06162" size="3" class="input_text_gray" maxlength="4" onblur="check_land_docid(this,2,&#39;收件字號&#39;,&#39;4&#39;);" style="ime-mode:disabled;display:none">
+
+                                        <!--收件字號下拉選單-->
+                                        <select class="button" id="INPUT_0612" name="INPUT_0612" onchange="JavaScript:ApplyForm.INPUT_0616.value=ApplyForm.INPUT_0612.options[selectedIndex].value;" style="width:180px;" disabled=""><option value="AE15">AE15士林</option>
+<option value="AE16">AE16北投</option>
+<option value="AE65">AE65士信</option>
+<option value="AE74">AE74士清</option>
+<option value="AEAK">AEAK士管</option>
+<option value="AEAA">AEAA古士</option>
+<option value="AEAB">AEAB建士</option>
+<option value="AEAC">AEAC中士</option>
+<option value="AEAD">AEAD松士</option>
+<option value="AEAF">AEAF大士</option>
+<option value="AEAZ">AEAZ古士信</option>
+<option value="AEBZ">AEBZ建士信</option>
+<option value="AECZ">AECZ中士信</option>
+<option value="AEDZ">AEDZ松士信</option>
+<option value="AEFZ">AEFZ大士信</option>
+<option value="15">15士林</option>
+<option value="16">16北投</option>
+<option value="47">47所收文</option>
+<option value="65">65士信</option>
+<option value="74">74士清</option>
+<option value="AK">AK士管</option>
+<option value="Z5">Z5士簡登</option>
+</select> 
+                                        <select class="button" id="INPUT_06122" name="INPUT_06122" onchange="JavaScript:ApplyForm.INPUT_06162.value=ApplyForm.INPUT_06122.options[selectedIndex].value;" style="width:180px;display:none" disabled="">
+<option value="AE15">AE15士林</option><option value="AE16">AE16北投</option><option value="AE65">AE65士信</option><option value="AE74">AE74士清</option><option value="AEAK">AEAK士管</option><option value="AEAA">AEAA古士</option><option value="AEAB">AEAB建士</option><option value="AEAC">AEAC中士</option><option value="AEAD">AEAD松士</option><option value="AEAF">AEAF大士</option><option value="AEAZ">AEAZ古士信</option><option value="AEBZ">AEBZ建士信</option><option value="AECZ">AECZ中士信</option><option value="AEDZ">AEDZ松士信</option><option value="AEFZ">AEFZ大士信</option><option value="15">15士林</option><option value="16">16北投</option><option value="47">47所收文</option><option value="65">65士信</option><option value="74">74士清</option><option value="AK">AK士管</option><option value="Z5">Z5士簡登</option></select>
+                                        
+                                        <input type="text" name="INPUT_0613" size="6" maxlength="6" class="inputtext_disabled" onblur="autosupplyzero_date(this,6,&#39;收件號&#39;);" onfocus="JavaScript:this.select();" onkeydown="key_send_data();" disabled="">
+                                        號
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5">
+                                        登記次序
+                                        <input type="text" name="INPUT_0614" size="7" maxlength="8" class="inputtext_disabled" onblur="autosupplyzero1(this,&#39;登記次序&#39;);" onfocus="JavaScript:this.select();" onkeydown="key_send_data();" disabled="">
+                                        部別
+                                        <select name="INPUT_0615" id="INPUT_0615" class="button" disabled="">
+                                            <option value="A" selected="">土地標示部</option>
+                                            <option value="B">土地所有權部</option>
+                                            <option value="C">土地他項權利部</option>
+                                            <option value="D">建物標示部</option>
+                                            <option value="E">建物所有權部</option>
+                                            <option value="F">建物他項權利部</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody></table>                 
+                        </td>
+                    </tr>
+                </tbody></table>
+            </td> 
+        </tr> 
+        <tr style="display: none;">
+            <td>	         
+                <table border="0" cellpadding="0" cellspacing="0" width="880px">
+                    <tbody><tr>
+                        <td width="120px" align="left" valign="top" nowrap="" class="applyitem"> 
+                            <span onclick="LabelClick(event);">
+                                <input type="checkbox" name="INPUT_071" value="Y" onclick="IDR_Click();" disabled="">
+                                異動清冊
+                            </span>
+                            <br> 
+                            <font size="1"><a href="https://ep.land.nat.gov.tw/Home/SNIDRDate?Length=0" style="color:red" target="_blank">各縣市提供資料時程表</a><br>
+                            <a href="https://ep.land.nat.gov.tw/EpaperApply/Map#" onclick="document.getElementById(&#39;targeturl&#39;).value=&#39;/EpaperApplyP/Vold_Rechar&#39;;VoldRecharQry()" style="color:Red">收件字使用期間表</a></font>
+                        </td>
+                        <td>
+                            <table border="0" cellspacing="0" width="890px">
+                                <tbody><tr>
+                                    <td width="170px" nowrap="">
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_075" id="INPUT_075" value="1" onclick="IRSTYLE_Click()" disabled="">
+                                            全部
+                                        </span>
+                                    </td>
+                                    <td colspan="3">
+                                        <table width="100%" border="0">
+                                            <tbody><tr>
+                                                <td nowrap="">
+                                                    收件字號
+                                                    <input type="text" name="INPUT_0731" size="3" class="inputtext_disabled" maxlength="3" onfocus="JavaScript:this.select();" onkeydown="key_send_data();" onblur="autosupplyzero_date(this,3,&#39;收件年&#39;);" disabled="">
+                                                    年 
+		                                            <input type="radio" name="INPUT_0731_A" id="INPUT_0731_A" value="0" onclick="ChangeINPUT_0731_A()" disabled="">本縣市
+                                                    <input type="radio" name="INPUT_0731_A" id="INPUT_0731_A" value="1" onclick="ChangeINPUT_0731_A()" disabled="">跨縣市(受理縣市)
+
+                                                    <!--縣市下拉選單-->
+                                                    
+                                                    <select class="button" id="INPUT_07321" name="INPUT_07321" style="width:80px" disabled=""><option value="">請選擇</option>
+<option value="371010000A">金門縣</option>
+<option value="371030000A">連江縣</option>
+<option value="376410000A">新北市</option>
+<option value="376420000A">宜蘭縣</option>
+<option value="376430000A">桃園市</option>
+<option value="376440000A">新竹縣</option>
+<option value="376450000A">苗栗縣</option>
+<option value="376470000A">彰化縣</option>
+<option value="376480000A">南投縣</option>
+<option value="376490000A">雲林縣</option>
+<option value="376500000A">嘉義縣</option>
+<option value="376530000A">屏東縣</option>
+<option value="376540000A">臺東縣</option>
+<option value="376550000A">花蓮縣</option>
+<option value="376560000A">澎湖縣</option>
+<option value="376570000A">基隆市</option>
+<option value="376580000A">新竹市</option>
+<option value="376590000A">臺中市</option>
+<option value="376600000A">嘉義市</option>
+<option value="376610000A">臺南市</option>
+<option value="383160000A">高雄市</option>
+</select> 
+                                                    <!--收件字號收入框-->
+                                                    <input type="text" name="INPUT_0734" size="3" class="inputtext_disabled" maxlength="4" onblur="check_land_docid(this,2,&#39;收件字號&#39;,&#39;2&#39;);" style="ime-mode:disabled" disabled="">
+                                                    <input type="text" name="INPUT_07342" size="3" class="inputtext_disabled" maxlength="4" onblur="check_land_docid(this,2,&#39;收件字號&#39;,&#39;3&#39;);" style="ime-mode:disabled;display:none" disabled="">
+                                                    
+                                                    <!--收件字號下拉選單-->
+                                                    <select class="button" id="INPUT_0732" name="INPUT_0732" onchange="JavaScript:ApplyForm.INPUT_0734.value=ApplyForm.INPUT_0732.options[selectedIndex].value;" style="width:150px;" disabled=""><option value="AE15">AE15士林</option>
+<option value="AE16">AE16北投</option>
+<option value="AE65">AE65士信</option>
+<option value="AE74">AE74士清</option>
+<option value="AEAK">AEAK士管</option>
+<option value="AEAA">AEAA古士</option>
+<option value="AEAB">AEAB建士</option>
+<option value="AEAC">AEAC中士</option>
+<option value="AEAD">AEAD松士</option>
+<option value="AEAF">AEAF大士</option>
+<option value="AEAZ">AEAZ古士信</option>
+<option value="AEBZ">AEBZ建士信</option>
+<option value="AECZ">AECZ中士信</option>
+<option value="AEDZ">AEDZ松士信</option>
+<option value="AEFZ">AEFZ大士信</option>
+<option value="15">15士林</option>
+<option value="16">16北投</option>
+<option value="47">47所收文</option>
+<option value="65">65士信</option>
+<option value="74">74士清</option>
+<option value="AK">AK士管</option>
+<option value="Z5">Z5士簡登</option>
+</select> 
+                                                    <select class="button" id="INPUT_07322" name="INPUT_07322" onchange="JavaScript:ApplyForm.INPUT_07342.value=ApplyForm.INPUT_07322.options[selectedIndex].value;" style="width:150px;display:none" disabled="">
+<option value="AE15">AE15士林</option><option value="AE16">AE16北投</option><option value="AE65">AE65士信</option><option value="AE74">AE74士清</option><option value="AEAK">AEAK士管</option><option value="AEAA">AEAA古士</option><option value="AEAB">AEAB建士</option><option value="AEAC">AEAC中士</option><option value="AEAD">AEAD松士</option><option value="AEAF">AEAF大士</option><option value="AEAZ">AEAZ古士信</option><option value="AEBZ">AEBZ建士信</option><option value="AECZ">AECZ中士信</option><option value="AEDZ">AEDZ松士信</option><option value="AEFZ">AEFZ大士信</option><option value="15">15士林</option><option value="16">16北投</option><option value="47">47所收文</option><option value="65">65士信</option><option value="74">74士清</option><option value="AK">AK士管</option><option value="Z5">Z5士簡登</option></select>
+                                                    <input type="text" name="INPUT_0733" size="6" maxlength="6" class="inputtext_disabled" onblur="autosupplyzero_date(this,6,&#39;收件號&#39;);" onfocus="JavaScript:this.select();" onkeydown="key_send_data();" disabled=""> 
+                                                    號&nbsp;&nbsp;&nbsp;&nbsp; 
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_075" id="INPUT_075" value="2" onclick="IRSTYLE_Click()" disabled="">
+                                            部分
+                                        </span>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;請輸入下列選項
+                                    </td>
+                                    <td>
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_076" value="0" onclick="IRP_Click()" disabled="">
+                                            統一編號
+                                            <input type="text" name="INPUT_077" size="11" maxlength="11" class="inputtext_disabled" onblur="check_id_num(this);" onfocus="JavaScript:this.select();" onkeydown="key_send_data();" disabled="">
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_076" value="1" onclick="IRP_Click()" disabled="">
+                                            登記次序
+                                            <input type="text" name="INPUT_078" size="11" maxlength="11" class="inputtext_disabled" disabled="">
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span onclick="LabelClick(event);">
+                                            <input type="radio" name="INPUT_076" value="2" onclick="IRP_Click()" disabled="">
+                                            姓名
+                                            <input type="text" name="INPUT_079" size="11" maxlength="100" class="inputtext_disabled" disabled="">
+                                        </span>
+                                    </td>
+                                </tr>                 
+                            </tbody></table>
+                        </td>
+                    </tr>
+                </tbody></table>
+            </td> 
+        </tr> 
+        <tr> 
+            <td valign="top" nowrap="" class="applyitem"> 
+                <span onclick="LabelClick(event);">
+                    <input type="checkbox" name="INPUT_081" value="Y" onclick="REF_Click();">
+                    土地/建物參考資訊
+                </span>
+            </td>
+            <td colspan="3"></td>
+        </tr>
+        <tr>
+            <td>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div id="muti_row_list" class="miti_rows_rect">
+                    <table id="DataSheet" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;"> 
+                        <thead>
+                        <tr align="center" style="color:#003060;background-color:#92BDD8">
+                            <td style="display: none;">NO</td>
+                            <td nowrap=""><b>地段</b></td> 
+                            <td nowrap=""><b>地號</b></td> 
+                            <td nowrap=""><b>建號</b></td> 
+                            <td><b>統一編號</b></td> 
+                        </tr>
+                        </thead>
+                        <tbody width="1080px">
+                        </tbody>
+                    </table> 
+                </div> 
+            </td>
+        </tr>
+    </tbody></table>
+    </div>	
+
+  	<input type="hidden" id="IDENTITY_ID" name="IDENTITY_ID" value="">
+      
+	<!------------------------以上送件區---------------------------------------------------->
+	<!--確認選擇地號或建號-->
+  	<input type="hidden" name="CF_type" value="">
+		 
+    
+    <div id="SendNowMsg" style="position:absolute; left:280px; top:280px; width:580px; height:110px; background-color:#FFCC66; layer-background-color:#FFCC66; border: 1px none #000000; overflow: hidden; display: none">
+        <table width="100%" border="0" cellspacing="0" height="100%"> 
+            <tbody><tr>  
+                <td align="left">
+                    <b>
+                        <font color="#CC0000"> 
+                            本申請案目前正送至收件主機確認資料，在三分鐘內，如畫面未順利顯示收件成功訊息，係因線上申請案件量大或網路頻寬擁塞...等原因所致，請逕至謄本進度查詢-【領件區】查看案件辦理情形。  
+                        </font>
+                    </b>
+                </td> 
+            </tr> 
+        </tbody></table> 
+    </div>
+    <div id="SendNowMsg2" style="position:absolute; left:280px; top:280px; width:580px; height:110px; background-color:#FFCC66; layer-background-color:#FFCC66; border: 1px none #000000; overflow: hidden; display: none">
+        <table width="100%" border="0" cellspacing="0" height="100%"> 
+            <tbody><tr>  
+                <td align="left">
+                    <b>
+                        <font color="#CC0000"> 
+                            請於畫面上方輸入圖片驗証碼資料。  
+                        </font>
+                    </b>
+                </td> 
+            </tr> 
+        </tbody></table> 
+    </div>
+    <input type="hidden" name="A105070" id="A105070" size="1" value="Y"> 
+    <input type="hidden" name="targeturl" id="targeturl" value="">    
+    <input id="CityName" name="CityName" type="hidden" value="臺北市">
+    <input id="AreaName" name="AreaName" type="hidden" value="北投區">
+    <input id="CityID" name="CityID" type="hidden" value="379160000A">
+    <input id="City_ID" name="City_ID" type="hidden" value="379160000A">
+    <input id="AreaID" name="AreaID" type="hidden" value="16">
+    <input id="Link" name="Link" type="hidden" value="EpaperApply1">
+    <input id="STYPE" name="STYPE" type="hidden" value="PRO">
+    <input id="ApplyMsg" name="ApplyMsg" type="hidden" value="">
+    <input id="user_type" name="user_type" type="hidden" value="2">
+    <input id="APPLYUSER" name="APPLYUSER" type="hidden" value="黃鑫達">
+    <input id="APPLYUSER_LIDN" name="APPLYUSER_LIDN" type="hidden" value="">
+    <textarea cols="20" id="SXML" name="SXML" rows="2" style="display: none;"></textarea>
+    
+    <input value="False" data-val="true" data-val-required="isGov 欄位是必要項。" id="isGov" name="isGov" type="hidden">
+    </form>
+  
+    <script language="JavaScript" type="text/javascript">
+        var eApply = null;
+        $(function () {
+            $('#msg_dialog').dialog({ autoOpen: false });
+            eApply = new eDocApply();
+        });
+        makeSublist('INPUT_07321', 'INPUT_07322', 'Station');
+        makeSublist('INPUT_06121', 'INPUT_06122', 'Station');
+        ClearForm();
+        ChangeREGTYPE();
+        document.getElementById("INPUT_011").value = document.getElementById("session_title").title; //難字
+        ApplyForm.INPUT_07321.value = "";
+    </script> 
+                               
+                </td>
+            </tr>
+        </tbody></table><select style="display:none" id="INPUT_07321INPUT_07322"><option>System.Web.Mvc.SelectListItem</option></select><select style="display:none" id="INPUT_06121INPUT_06122"><option>System.Web.Mvc.SelectListItem</option></select>        
+ 
+    
+
+<script language="JavaScript" type="text/javascript">
+    if (self != top) {
+        try {
+            if (top.document.domain != document.domain)
+                location.href = '/Home/PubMsg3';
+        }
+        catch (err) {
+            location.href = '/Home/PubMsg3';
+        }
+    } 	
+</script>
+
+    <script language="JavaScript" type="text/javascript">
+        setTimeout("DisplaySessionTimeout(tempTimeout);", 0);
+    </script>
+<div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable" aria-describedby="msg_dialog" aria-labelledby="ui-id-1" style="display: none; position: absolute;"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-1" class="ui-dialog-title">&nbsp;</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title="x"><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span>x</button></div><div id="msg_dialog" style="" class="ui-dialog-content ui-widget-content"></div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div><div id="syno-nsc-ext-comp-1008" class=" x-tip-invalid" style="position: absolute; z-index: 11000; visibility: hidden; display: none;"><div class="x-tip-invalid-tl"><div class="x-tip-invalid-tr"><div class="x-tip-invalid-tc"><div class="x-tip-invalid-header x-unselectable" id="syno-nsc-ext-gen4"><span class="x-tip-invalid-header-text"></span></div></div></div></div><div class="x-tip-invalid-bwrap" id="syno-nsc-ext-gen5"><div class="x-tip-invalid-ml"><div class="x-tip-invalid-mr"><div class="x-tip-invalid-mc" id="syno-nsc-ext-gen8"><div class="x-tip-invalid-body" id="syno-nsc-ext-gen6" style="height: auto;"></div></div></div></div><div class="x-tip-invalid-bl x-panel-nofooter" id="syno-nsc-ext-gen7"><div class="x-tip-invalid-br"><div class="x-tip-invalid-bc"></div></div></div></div><div class="x-tip-anchor x-tip-anchor-top" id="syno-nsc-ext-gen9" style="z-index: 11001;"></div></div></body></html>

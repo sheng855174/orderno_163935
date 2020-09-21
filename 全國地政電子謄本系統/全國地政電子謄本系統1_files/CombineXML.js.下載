@@ -1,0 +1,182 @@
+﻿
+  /*****************************************
+  ☆組出所要送出的XML字串
+  *****************************************/
+
+function combinexml(){
+  var xmlstr="";
+  var OneRowNO=parseInt(document.all.DataSheet.rows(1).cells(0).innerText,10);
+  xmlstr=xmlstr+"[REQUEST]\n"+
+                  "[COMMON]\n";
+                 if (FromASP.length > 0){
+                  	xmlstr=xmlstr+"[FROM_ASP]"+FromASP+"[/FROM_ASP]\n"+
+                  	"[EXTRA TYPE=\"REG\"]AMC[/EXTRA]\n"	;
+                  }
+                  xmlstr=xmlstr+
+                  "[FROM_ID]" + FromID + "[/FROM_ID]\n" +
+                  "[USER_ID]" + UserID + "[/USER_ID]\n" +
+                  "[USERIP]" + UserIP + "[/USERIP]\n" +
+                  "[USER_NAME]" + UserName + "[/USER_NAME]\n" +
+                  "[USER_TYPE]" + LoginType + "[/USER_TYPE]\n" +
+                  "[APPLYUSER]" + APPLYUSER + "[/APPLYUSER]\n" +
+                  "[APPLYUSER_LIDN]" + APPLYUSERLIDN + "[/APPLYUSER_LIDN]\n" +	
+                  "[REASON_ORG_ID]"+INPUT_REASONORGID+"[/REASON_ORG_ID]\n"+	//申請用途政府單位ID
+                 "[REASON_ID]"+INPUT_APPLYFOR+"[/REASON_ID]\n";	//申請用途政ID
+           if (ApplyForm == "Y") 
+           {
+                xmlstr=xmlstr+   "[APPLYUSER1]"+ApplyForm.APPLYUSER1.value+"[/APPLYUSER1]\n"+
+                  "[APPLYUSER_LIDN1]"+ApplyForm.APPLYUSER_LIDN1.value+"[/APPLYUSER_LIDN1]\n"+	
+                   "[APPLYUSER_TEL1]"+ApplyForm.APPLYUSER_TEL1.value+"[/APPLYUSER_TEL1]\n"+	
+                  "[APPLYUSER2]"+ApplyForm.APPLYUSER2.value+"[/APPLYUSER2]\n"+
+                  "[APPLYUSER_LIDN2]"+ApplyForm.APPLYUSER_LIDN2.value+"[/APPLYUSER_LIDN2]\n"+	
+                  "[APPLYUSER_TEL2]"+ApplyForm.APPLYUSER_TEL2.value+"[/APPLYUSER_TEL2]\n"+
+                  "[CONSIGNOR_TEL]"+ApplyForm.CONSIGNOR_TEL.value+"[/CONSIGNOR_TEL]\n"+		
+                  "[REASON][/REASON]\n"+	
+          	      "[REG_CNT]"+ApplyForm.REG_CNT.value+"[/REG_CNT]\n"+
+          	      "[PIC1_CNT]"+ApplyForm.PIC1_CNT.value+"[/PIC1_CNT]\n"+
+          	      "[PIC2_CNT]"+ApplyForm.PIC2_CNT.value+"[/PIC2_CNT]\n"+
+          	      "[PRC_CNT]"+ApplyForm.PRC_CNT.value+"[/PRC_CNT]\n"+
+          	      "[IDX_CNT]"+ApplyForm.IDX_CNT.value+"[/IDX_CNT]\n"+
+          	      "[IDR_CNT]"+ApplyForm.IDR_CNT.value+"[/IDR_CNT]\n"+
+            	  "[REF_CNT]"+ApplyForm.REF_CNT.value+"[/REF_CNT]\n"+
+                  "[CNT]"+ApplyForm.CNT.value+"[/CNT]\n";
+            }
+           else
+           {
+               xmlstr=xmlstr+ "[CNT]1[/CNT]\n";
+           }
+            
+                xmlstr=xmlstr+   "[MAXPAGE]"+ApplyForm.MAXPAGE.value+"[/MAXPAGE]\n"+	
+		          "[LN]"+INPUT_017[OneRowNO]+"[/LN]\n"+
+                  "[AREA]"+INPUT_016[OneRowNO]+"[/AREA]\n"+
+                  "[CITYID]"+INPUT_018[OneRowNO]+"[/CITYID]\n"+
+                  "[CITYNAME]"+INPUT_018C[OneRowNO]+"[/CITYNAME]\n"+
+                  "[CONSIGNOR_ID]"+ApplyForm.CONSIGNOR_ID.value+"[/CONSIGNOR_ID]\n"+
+                  "[CONSIGNOR]" + ApplyForm.CONSIGNOR.value + "[/CONSIGNOR]\n" +
+                  "[APPLYUSER_TYPE]" + ApplyForm.UserApplyType.value + "[/APPLYUSER_TYPE]\n" +	
+                  "[USER_CITYID]" + UserCityID + "[/USER_CITYID]\n" +
+                  "[USER_LN]" + UserLN + "[/USER_LN]\n" +
+                  "[USER_AREAID]" + UserAreaID + "[/USER_AREAID]\n" +
+                  "[USER_MANAGER]" + UserManager + "[/USER_MANAGER]\n" +
+                  "[USER_LN_NAME]" + UserLnName + "[/USER_LN_NAME]\n" +
+                  "[SR_DATE]" + SrDate + "[/SR_DATE]\n" +
+                  "[SR_TIME]" + SrTime + "[/SR_TIME]\n" +
+                  "[CERT_ID CHECK='" + CertType + "']" + CertID + "[/CERT_ID]\n" +
+                  "[CERT_NAME]" + CertName + "[/CERT_NAME]\n";
+                if (CertLoingType.length == 0) {
+                  xmlstr=xmlstr+ "[CERT_TYPE][/CERT_TYPE]\n";
+                  }
+                  else
+                  {
+                      if (CertLoingType == "AA")
+                     xmlstr=xmlstr+"[CERT_TYPE]1[/CERT_TYPE]\n";
+                     else
+                     xmlstr=xmlstr+"[CERT_TYPE]0[/CERT_TYPE]\n";
+                  }
+                 
+                  xmlstr=xmlstr+"[IDENTITY_ID]"+ApplyForm.IDENTITY_ID.value+"[/IDENTITY_ID]\n"+
+                  "[CERT_AGENT_ID]" + CertAgentID + "[/CERT_AGENT_ID]\n" +
+                  "[CERT_AGENT_TYPE]"+ApplyForm.CERT_AGENT_TYPE.value+"[/CERT_AGENT_TYPE]\n"+
+                  "[REGTYPE]"+ApplyForm.REGTYPE.value+"[/REGTYPE]\n"+		
+                  "[/COMMON]\n";
+    for (var i=1;i<document.all.DataSheet.rows.length;i++){
+      Error_Message[i]="";
+      xmlstr+="[DATA NO=\""+(i-1).toString()+"\"]\n"+	  
+        combinexml_de(parseInt(document.all.DataSheet.rows(i).cells(0).innerText,10)) +
+      	"[/DATA]\n";
+    }
+  xmlstr += "[/REQUEST]\n";
+    return(xmlstr);
+}
+
+function combinexml_de(i){
+  var str="";
+	str=str+"[COMMON]\n"+
+			"[AA48]"+INPUT_011[i]+"[/AA48]\n"+
+			"[AA48C]"+land_char[i]+"[/AA48C]\n"+
+			"[AA49]"+INPUT_013[i]+"[/AA49]\n"+
+			"[AA49_1]"+INPUT_014[i]+"[/AA49_1]\n"+
+			"[LIDN]"+INPUT_015[i]+"[/LIDN]\n";
+            if (Applyform == "Y"){
+                  str=str+  "[OWNAME]"+INPUT_019[i]+"[/OWNAME]\n";  //所有權人姓名			
+                 }
+		    str=str+"[LN]"+INPUT_017[i]+"[/LN]\n"+
+		    "[AREA]"+INPUT_016[i]+"[/AREA]\n"+
+		    "[CITYID]"+INPUT_018[i]+"[/CITYID]\n"+
+		    "[CITYNAME]"+INPUT_018C[i]+"[/CITYNAME]\n"+
+		"[/COMMON]\n"+
+		"[REG CHECK=\""+INPUT_021[i]+"\"]\n"+
+			"[PRINT_HD]"+INPUT_022[i]+"[/PRINT_HD]\n"+
+			"[PRINT_OD]"+INPUT_024[i]+"[/PRINT_OD]\n"+
+         		"[REG_SRPRCE]"+INPUT_025[i]+"[/REG_SRPRCE]\n"+
+			"[TYPE]"+INPUT_023[i]+"[/TYPE]\n"+
+         		"[CNT]"+ApplyForm.REG_CNT.value+"[/CNT]\n"+
+		"[/REG]\n"+
+		"[PRC CHECK=\""+INPUT_051[i]+"\"]\n"+
+			"[BRSURVEY]"+INPUT_052[i]+"[/BRSURVEY]\n"+
+			"[AA16 CHECK=\""+INPUT_053[i]+"\" TYPE=\""+INPUT_056[i]+"\"]\n"+
+				"[START_YEAR]"+INPUT_0561[i]+"[/START_YEAR]\n"+
+				"[END_YEAR]"+INPUT_0562[i]+"[/END_YEAR]\n"+
+			"[/AA16]\n"+
+			"[BB21 CHECK=\""+INPUT_054[i]+"\" TYPE=\""+INPUT_057[i]+"\"]\n"+
+				"[START_YEAR]"+INPUT_0571[i]+"[/START_YEAR]\n"+
+				"[END_YEAR]"+INPUT_0572[i]+"[/END_YEAR]\n"+
+			"[/BB21]\n"+
+			"[SRPRCE]"+INPUT_055[i]+"[/SRPRCE]\n"+
+			"[PRCTYPE]"+INPUT_058[i]+"[/PRCTYPE]\n"+	
+         		"[CNT]"+ApplyForm.PRC_CNT.value+"[/CNT]\n"+
+		"[/PRC]\n"+
+		"[PIC1 CHECK=\""+INPUT_031[i]+"\"]\n"+
+			"[P1]"+INPUT_032[i]+"[/P1]\n"+
+			"[P2]";
+   if (INPUT_033[i]=="0"){
+     str+="-1";
+   }else if (INPUT_033[i]=="1"){
+     str+="0";
+   }else{
+     str+=INPUT_0331[i];
+   } 
+	str+="[/P2]\n"+
+	"[P3]A4[/P3]\n"+
+	"[CNT]"+ApplyForm.PIC1_CNT.value+"[/CNT]\n"+
+	    "[/PIC1]\n"+
+	    //建物測量圖
+  		"[PIC2 CHECK=\""+INPUT_041[i]+"\"]\n"+
+      		"[CNT]"+ApplyForm.PIC2_CNT.value+"[/CNT]\n"+
+		"[/PIC2]\n"+
+//土地參考資訊
+  		"[REF CHECK=\""+INPUT_081[i]+"\"]\n"+
+      		"[CNT]"+ApplyForm.REF_CNT.value+"[/CNT]\n"+
+		"[/REF]\n";
+//異動索引
+   /*    8`1
+   if ((INPUT_061[i]=="Y") && (INPUT_062[i]=="0")){
+	 str+="[IDX CHECK=\"N\">\n";   
+   }else{
+   */
+     str+="[IDX CHECK=\""+INPUT_061[i]+"\"]\n";   
+   //} 
+	str+=	"[IS03]"+INPUT_0611[i]+"[/IS03]\n"+
+		"[IS04_1]"+INPUT_0612[i]+"[/IS04_1]\n"+
+		"[IS04_1C]"+INPUT_0612C[i]+"[/IS04_1C]\n"+
+		"[IS04_2]"+INPUT_0613[i]+"[/IS04_2]\n"+
+		"[IS00]"+INPUT_0615[i]+"[/IS00]\n"+	
+		"[IS01]"+INPUT_0614[i]+"[/IS01]\n";	
+		if (INPUT_061[i]=="Y") 
+		  str+="[ISTYPE]"+ApplyForm.INPUT_062[INPUT_062[i]].value+"[/ISTYPE]\n";
+		else
+		  str+="[ISTYPE][/ISTYPE]\n";
+        str+=   "[IS05_START]"+INPUT_0631[i]+"[/IS05_START]\n"+ 
+                    "[IS05_END]"+INPUT_0632[i]+"[/IS05_END]\n"; 
+        str+="[CNT]"+ApplyForm.IDX_CNT.value+"[/CNT]\n";
+        str+="[/IDX]\n"+
+          "[IDR CHECK=\""+INPUT_071[i]+"\"]\n"+   
+            "[IS03]"+INPUT_0731[i]+"[/IS03]\n"+
+	    "[IS04_1]"+INPUT_0732[i]+"[/IS04_1]\n"+
+	    "[IS04_1C]"+INPUT_0732C[i]+"[/IS04_1C]\n"+
+	    "[IS04_2]"+INPUT_0733[i]+"[/IS04_2]\n";
+	    "[ISTYPE]0[/ISTYPE]\n";
+     str+="[CNT]"+ApplyForm.IDR_CNT.value+"[/CNT]\n";
+     str+="[/IDR]\n";
+   return(str);
+}

@@ -1,0 +1,404 @@
+﻿
+function saveteamparray(i){
+  //將畫面上勾選的選項轉成值存入指定的Array
+  INPUT_011[i] = ApplyForm.INPUT_011.value; //段小段
+  if (INPUT_011[i]==""){
+    land_char[i] = '';  //段小段中文
+    INPUT_017[i] = '';  //所別中文
+} else {
+    land_char[i] = ApplyForm.Show_land_num.options[document.getElementById("Show_land_num").selectedIndex].text;
+    INPUT_017[i] = document.getElementById("Show_land_num").options[document.getElementById("Show_land_num").selectedIndex].title;
+  }
+INPUT_016[i] = AreaID ;    //鄉鎮別
+INPUT_018[i] = CityID;    //縣市別別
+INPUT_018C[i] = CityName; //縣市中文
+ 
+  INPUT_013[i] = ApplyForm.INPUT_013.value; //地號
+  INPUT_014[i] = ApplyForm.INPUT_014.value; //建號
+  INPUT_015[i] = ApplyForm.INPUT_015.value.toUpperCase(); //統一編號
+  INPUT_019[i] = ApplyForm.INPUT_019.value; //統一編號姓名
+
+//===================================
+  //登記謄本--checkbox
+  if (ApplyForm.INPUT_021.checked)
+    INPUT_021[i]="Y";
+  else
+    INPUT_021[i]="N";
+  
+  //無需列印地上建物建號--checkbox
+  if (ApplyForm.INPUT_022.checked)
+    INPUT_022[i]="N";
+  else
+    INPUT_022[i]="Y";
+
+  //無需列印主建物附表--checkbox
+  if (ApplyForm.INPUT_024.checked)
+    INPUT_024[i]="N";
+  else
+    INPUT_024[i]="Y";
+
+      //無需列印前次移轉現值--checkbox
+  if (ApplyForm.INPUT_025.checked)
+    INPUT_025[i]="N";
+  else
+    INPUT_025[i]="Y";
+  
+  //登記謄本選項
+  INPUT_023[i] = "";
+   for (var r=0;r<ApplyForm.INPUT_023.length;r++){
+	  if (ApplyForm.INPUT_023[r].checked)
+		   INPUT_023[i]=ApplyForm.INPUT_023[r].value;
+   }
+
+  //登記謄本--份數
+  REG_CNT[i] = ApplyForm.REG_CNT.value; //登記謄本--份數
+
+//===================================
+  //地籍圖謄本--checkbox
+  if (ApplyForm.INPUT_031.checked)
+    INPUT_031[i]="Y";
+  else
+    INPUT_031[i]="N";
+  
+  //數值區列印界址點號及坐標表--checkbox
+  if (ApplyForm.INPUT_032.checked)
+    INPUT_032[i]="Y";
+  else
+    INPUT_032[i]="N";
+    
+  //比例尺選項
+  INPUT_033[i] = "";
+  for (var r=0;r<ApplyForm.INPUT_033.length;r++){
+    if (ApplyForm.INPUT_033[r].checked)
+      INPUT_033[i]=ApplyForm.INPUT_033[r].value;
+  }
+   
+  INPUT_0331[i] = ApplyForm.INPUT_0331.value; //指定比例尺
+  
+    PIC1_CNT[i] = ApplyForm.PIC1_CNT.value; //地籍圖謄本--份數
+
+//===================================
+  //建物測量成果圖謄本--checkbox
+  if (ApplyForm.INPUT_041.checked)
+    INPUT_041[i]="Y";
+  else
+    INPUT_041[i]="N";
+    
+ PIC2_CNT[i] = ApplyForm.PIC2_CNT.value; //建物測量圖謄本--份數
+
+//===================================
+//===================================
+  //土地參考資訊--checkbox
+  if (ApplyForm.INPUT_081.checked)
+    INPUT_081[i]="Y";
+  else
+    INPUT_081[i]="N";
+    
+ REF_CNT[i] = ApplyForm.REF_CNT.value; //建物測量圖謄本--份數
+
+//===================================
+  //地價謄本--checkbox
+  if (ApplyForm.INPUT_051.checked)
+    INPUT_051[i]="Y";
+  else
+    INPUT_051[i]="N";
+  
+  //重測前--checkbox
+  if (ApplyForm.INPUT_052.checked)
+    INPUT_052[i]="Y";
+  else
+    INPUT_052[i]="N";
+  
+  //公告現值--checkbox
+  if (ApplyForm.INPUT_053.checked)
+    INPUT_053[i]="Y";
+  else
+    INPUT_053[i]="N";
+  
+  //申報地價--checkbox
+  if (ApplyForm.INPUT_054.checked)
+    INPUT_054[i]="Y";
+  else
+    INPUT_054[i]="N";
+  
+  //前次移轉--checkbox
+  if (ApplyForm.INPUT_055.checked)
+    INPUT_055[i]="Y";
+  else
+    INPUT_055[i]="N";
+  
+  //公告現值--選項
+  
+  if ((ApplyForm.INPUT_056[0].checked) && (ApplyForm.INPUT_056[1].checked))
+    INPUT_056[i]="2";
+  else if (ApplyForm.INPUT_056[0].checked)
+    INPUT_056[i]="0";
+  else if (ApplyForm.INPUT_056[1].checked)
+    INPUT_056[i]="1";
+  else
+    INPUT_056[i] = "";
+
+  
+  //申報地價--選項
+  
+  if ((ApplyForm.INPUT_057[0].checked) && (ApplyForm.INPUT_057[1].checked))
+    INPUT_057[i]="2";
+  else if (ApplyForm.INPUT_057[0].checked)
+    INPUT_057[i]="0";
+  else if (ApplyForm.INPUT_057[1].checked)
+    INPUT_057[i]="1";
+  else
+    INPUT_057[i]="";
+
+  INPUT_0561[i] = ApplyForm.INPUT_0561.value; //公告現值--歷年--起
+  INPUT_0562[i] = ApplyForm.INPUT_0562.value; //公告現值--歷年--迄
+  INPUT_0571[i] = ApplyForm.INPUT_0571.value; //申報地價--歷年--起
+  INPUT_0572[i] = ApplyForm.INPUT_0572.value; //申報地價--歷年--迄
+  
+  INPUT_058[i]="";
+  //申報地價--個人或全部
+  if (ApplyForm.INPUT_058[0].checked)
+    INPUT_058[i] = "0";
+  if (ApplyForm.INPUT_058[1].checked)
+    INPUT_058[i] = "1";
+
+ PRC_CNT[i] = ApplyForm.PRC_CNT.value; //地價謄本--份數
+
+
+  //異動索引--checkbox
+  INPUT_061[i]="";
+  if (ApplyForm.INPUT_061.checked)
+    INPUT_061[i] = "Y";
+  else
+    INPUT_061[i] = "N";
+
+  INPUT_0611[i] = ApplyForm.INPUT_0611.value; //異動索引-收件年
+  
+  //異動索引-收件字
+  if (ApplyForm.INPUT_0612.disabled ==false){
+    INPUT_0612[i] = ApplyForm.INPUT_0612.options[ApplyForm.INPUT_0612.selectedIndex].value;
+    INPUT_0612C[i] = ApplyForm.INPUT_0612.options[ApplyForm.INPUT_0612.selectedIndex].text;  //收件字中文
+  }else{
+    INPUT_0612[i]="";
+    INPUT_0612C[i]="";
+  }
+  INPUT_0613[i] = ApplyForm.INPUT_0613.value; //異動索引-收件號
+  INPUT_0614[i] = ApplyForm.INPUT_0614.value; //異動索引-登記次序
+  
+  //異動索引-部別
+  
+  if (ApplyForm.INPUT_0615.disabled ==false)
+    INPUT_0615[i] = ApplyForm.INPUT_0615.options[ApplyForm.INPUT_0615.selectedIndex].value;
+  else
+    INPUT_0615[i]="";  
+    
+  //型態
+  INPUT_062[i]="";
+  for (var r=0;r<ApplyForm.INPUT_062.length;r++){
+    if (ApplyForm.INPUT_062[r].checked)
+      INPUT_062[i]=r;
+  }
+  
+  //勾選日期範圍--checkbox
+  INPUT_063[i]="";
+  if (ApplyForm.INPUT_063.checked)
+    INPUT_063[i] = "Y";
+  else
+    INPUT_063[i] = "N";
+
+  INPUT_0631[i] = ApplyForm.INPUT_0631.value; //異動索引-日期(起)
+  INPUT_0631Y[i] = ApplyForm.INPUT_0631Y.value; //異動索引-年(起)
+  INPUT_0631M[i] = ApplyForm.INPUT_0631M.value; //異動索引-月(起)
+  INPUT_0631D[i] = ApplyForm.INPUT_0631D.value; //異動索引-日(起)
+  INPUT_0632[i] = ApplyForm.INPUT_0632.value; //異動索引-日期(迄)
+  INPUT_0632Y[i] = ApplyForm.INPUT_0632Y.value; //異動索引-年(迄)
+  INPUT_0632M[i] = ApplyForm.INPUT_0632M.value; //異動索引-月(迄)
+  INPUT_0632D[i] = ApplyForm.INPUT_0632D.value; //異動索引-日(迄)
+  
+  IDX_CNT[i] = ApplyForm.IDX_CNT.value; //異動索引謄本--份數
+
+  //異動清冊選項
+  //異動清冊--checkbox
+  INPUT_071[i]="";
+  if (ApplyForm.INPUT_071.checked)
+    INPUT_071[i] = "Y";
+  else
+    INPUT_071[i] = "N";
+  
+  
+  INPUT_0731[i] = ApplyForm.INPUT_0731.value; //異動清冊-收件年
+  //異動清冊-收件字
+  if (ApplyForm.INPUT_0732.disabled ==false){
+    INPUT_0732[i] = ApplyForm.INPUT_0732.options[ApplyForm.INPUT_0732.selectedIndex].value;
+    INPUT_0732C[i] = ApplyForm.INPUT_0732.options[ApplyForm.INPUT_0732.selectedIndex].text;  //收件字中文
+  }else{
+    INPUT_0732[i]="";
+    INPUT_0732C[i]="";
+  }
+  INPUT_0733[i] = ApplyForm.INPUT_0733.value; //異動清冊-收件號
+  IDR_CNT[i] = ApplyForm.IDR_CNT.value; //異動清冊謄本--份數
+
+  Error_Message[i]="";
+}
+
+function giverowvlaue(i){
+
+  //從指定Array讀取值至畫面上
+  
+  ApplyForm.INPUT_011.value=INPUT_011[i]; //段小段
+  //段小段中文
+  for (var tempi=0;tempi<ApplyForm.Show_land_num.options.length;tempi++)
+    if (ApplyForm.Show_land_num.options[tempi].value==ApplyForm.INPUT_011.value)
+    ApplyForm.Show_land_num.selectedIndex=tempi;
+
+  ApplyForm.INPUT_013.value=INPUT_013[i]; //地號
+  ApplyForm.INPUT_014.value=INPUT_014[i]; //建號
+  ApplyForm.INPUT_015.value=INPUT_015[i]; //統一編號
+  ApplyForm.INPUT_019.value=INPUT_019[i]; //統一編號
+  
+  ApplyForm.INPUT_021.checked=(INPUT_021[i]=="Y"); //登記謄本-checkbox
+  ApplyForm.INPUT_022.checked=(INPUT_022[i]=="N"); //無需列印地上建物建號-checkbox
+  ApplyForm.INPUT_024.checked=(INPUT_024[i]=="N"); //無需列印主建物附表-checkbox	
+  ApplyForm.INPUT_025.checked=(INPUT_025[i]=="N"); //無需列印前次移轉現值-checkbox	
+  ApplyForm.REG_CNT.value=REG_CNT[i]; ////登記謄本--份數
+
+  for (var r=0;r<ApplyForm.INPUT_023.length;r++)  //登記謄本選項--radio
+    ApplyForm.INPUT_023[r].checked=(r.toString()==INPUT_023[i]);
+
+  ApplyForm.INPUT_031.checked=(INPUT_031[i]=="Y"); //地籍圖謄本--checkbox  
+  ApplyForm.INPUT_032.checked=(INPUT_032[i]=="Y"); //數值區列印界址點號及坐標表--checkbox  
+  
+  for (var r=0;r<ApplyForm.INPUT_033.length;r++)  //比例尺選項--radio
+    ApplyForm.INPUT_033[r].checked=(r.toString()==INPUT_033[i]);
+  
+  ApplyForm.INPUT_0331.value=INPUT_0331[i]; //比例
+  ApplyForm.PIC1_CNT.value = PIC1_CNT[i]; //地籍圖謄本--份數
+
+  ApplyForm.INPUT_041.checked=(INPUT_041[i]=="Y");  //建物測量成果圖謄本--checkbox
+  ApplyForm.PIC2_CNT.value = PIC2_CNT[i]; //建物測量成果圖謄本--份數
+
+
+  ApplyForm.INPUT_081.checked=(INPUT_081[i]=="Y");  //土地參考資訊--checkbox
+  ApplyForm.REF_CNT.value = REF_CNT[i]; //土地參考資訊--份數
+
+
+  ApplyForm.INPUT_051.checked=(INPUT_051[i]=="Y");  //地價謄本--checkbox
+  ApplyForm.INPUT_052.checked=(INPUT_052[i]=="Y");  //重測前--checkbox
+  ApplyForm.INPUT_053.checked=(INPUT_053[i]=="Y");  //公告現值--checkbox
+  ApplyForm.INPUT_054.checked=(INPUT_054[i]=="Y");  //申報地價--checkbox
+  ApplyForm.INPUT_055.checked=(INPUT_055[i]=="Y");  //前次移轉--checkbox
+  //公告現值--選項
+  ApplyForm.INPUT_056[0].checked=(INPUT_056[i]=="0")||(INPUT_056[i]=="2");
+  ApplyForm.INPUT_056[1].checked=(INPUT_056[i]=="1")||(INPUT_056[i]=="2");
+  //申報地價--選項
+  ApplyForm.INPUT_057[0].checked=(INPUT_057[i]=="0")||(INPUT_057[i]=="2");
+  ApplyForm.INPUT_057[1].checked=(INPUT_057[i]=="1")||(INPUT_057[i]=="2");
+  ApplyForm.INPUT_0561.value=INPUT_0561[i]; //公告現值--歷年--起
+  ApplyForm.INPUT_0562.value=INPUT_0562[i]; //公告現值--歷年--迄
+  ApplyForm.INPUT_0571.value=INPUT_0571[i]; //申報地價--歷年--起
+  ApplyForm.INPUT_0572.value=INPUT_0572[i]; //申報地價--歷年--迄
+  ApplyForm.INPUT_058[0].checked=(INPUT_058[i]=="0");  //個人
+  ApplyForm.INPUT_058[1].checked=(INPUT_058[i]=="1"); //全部
+  ApplyForm.PRC_CNT.value = PRC_CNT[i]; //地價謄本--份數
+
+  ApplyForm.INPUT_061.checked=(INPUT_061[i]=="Y");  //異動索引-checkbox
+  ApplyForm.INPUT_0611.value=INPUT_0611[i]; //異動索引--收件年
+  //異動索引--收件字
+  if (INPUT_0612[i]=="")
+    ApplyForm.INPUT_0612.value='';
+  else{
+     ApplyForm.INPUT_0616.value=INPUT_0612[i];
+    for (var tempi=0;tempi<ApplyForm.INPUT_0612.options.length;tempi++){
+      if (ApplyForm.INPUT_0612.options[tempi].value==INPUT_0612[i])
+         ApplyForm.INPUT_0612.selectedIndex=tempi;
+    }	
+  }	
+  ApplyForm.INPUT_0613.value=INPUT_0613[i]; //異動索引--收件號
+  ApplyForm.INPUT_0614.value=INPUT_0614[i]; //異動索引--登記次序
+  //異動索引--部門
+  if (INPUT_0615[i]=="")
+    ApplyForm.INPUT_0615.value='';
+  else{
+    for (var tempi=0;tempi<ApplyForm.INPUT_0615.options.length;tempi++){
+      if (ApplyForm.INPUT_0615.options[tempi].value==INPUT_0615[i])
+        ApplyForm.INPUT_0615.selectedIndex=tempi;
+    }	
+  }
+  
+  for (var r=0;r<ApplyForm.INPUT_062.length;r++)  //異動索引類型--radio
+    ApplyForm.INPUT_062[r].checked=(r.toString()==INPUT_062[i].toString());
+    
+  ApplyForm.INPUT_063.checked=(INPUT_063[i]=="Y");  //異動索引-勾選日期範圍
+  ApplyForm.INPUT_0631.value = INPUT_0631[i]; //異動索引--日期(起)
+  ApplyForm.INPUT_0631Y.value = INPUT_0631Y[i]; //異動索引--年(起)
+  ApplyForm.INPUT_0631M.value = INPUT_0631M[i]; //異動索引--月(起)
+  ApplyForm.INPUT_0631D.value = INPUT_0631D[i]; //異動索引--日(起)
+  ApplyForm.INPUT_0632.value = INPUT_0632[i]; //異動索引--日期(迄)
+  ApplyForm.INPUT_0632Y.value = INPUT_0632Y[i]; //異動索引--年(迄)
+  ApplyForm.INPUT_0632M.value = INPUT_0632M[i]; //異動索引--月(迄)
+  ApplyForm.INPUT_0632D.value = INPUT_0632D[i]; //異動索引--日(迄)
+  ApplyForm.IDX_CNT.value = IDX_CNT[i]; //異動索引謄本--份數
+
+  //異動清冊
+  //2014-02-21異動清冊」只有「登記名義人本人」、「登記名義人代理人」「第一類」可申請
+  ApplyForm.INPUT_071.disabled = (ApplyForm.REGTYPE.value == "2");
+  ApplyForm.INPUT_071.checked=(INPUT_071[i]=="Y");  //異動清冊-checkbox
+  ApplyForm.INPUT_0731.value=INPUT_0731[i]; //異動清冊--收件年
+  ApplyForm.IDR_CNT.value = IDR_CNT[i]; //異動清冊謄本--份數
+
+  //異動清冊--收件字
+  if (INPUT_0732[i]=="")
+    ApplyForm.INPUT_0732.value='';
+  else{
+    for (var tempi=0;tempi<ApplyForm.INPUT_0732.options.length;tempi++){
+      if (ApplyForm.INPUT_0732.options[tempi].value==INPUT_0732[i])
+         ApplyForm.INPUT_0732.selectedIndex=tempi;
+    }	
+  }	
+  ApplyForm.INPUT_0733.value=INPUT_0733[i]; //異動清冊--收件
+  
+  if (Error_Message[i].length > 0)
+  document.getElementById('ErrorMsgText').innerHTML =Error_Message[i];
+
+}
+
+function selectcity() {
+    if (document.getElementById("City_ID").selectedIndex == 0) {
+        alert("請選擇縣市!!");
+        document.location.href = "../EpaperApply/CityArea1";
+    }
+    else {
+        //document.ApplyForm.area_id.selectindex = 0;
+        document.ApplyForm.City_ID.value = ApplyForm.City_ID.options[document.getElementById("City_ID").selectedIndex].value;
+        document.ApplyForm.area_id.value = "";
+        document.ApplyForm.CityName.value = ApplyForm.City_ID.options[document.getElementById("City_ID").selectedIndex].text;
+        document.ApplyForm.action = "../EpaperApply/CityArea1";
+        document.ApplyForm.submit();
+    }
+}
+
+function selectarea() {
+    if (document.getElementById("area_id").selectedIndex == 0) 
+    {
+        alert("請選擇鄉鎮市區!!");
+        document.ApplyForm.City_ID.value = ApplyForm.City_ID.options[document.getElementById("City_ID").selectedIndex].value;
+        document.ApplyForm.area_id.value = "";
+        document.ApplyForm.CityName.value = ApplyForm.City_ID.options[document.getElementById("City_ID").selectedIndex].text;
+        document.ApplyForm.action = "../EpaperApply/CityArea1";
+        document.ApplyForm.submit();
+    }
+    else 
+    {
+        document.ApplyForm.AreaName.value = ApplyForm.area_id.options[document.getElementById("area_id").selectedIndex].text;
+        document.ApplyForm.action = "../EpaperApply/CityArea1";
+        document.ApplyForm.submit();
+    }
+}
+
+function goback1() {
+    document.ApplyForm.City_ID.value = ApplyForm.City_ID.options[document.getElementById("City_ID").selectedIndex].value;
+    document.ApplyForm.area_id.value = "";
+    document.ApplyForm.CityName.value = ApplyForm.City_ID.options[document.getElementById("City_ID").selectedIndex].text;
+    document.ApplyForm.action = "../EpaperApply/CityArea1";
+    document.ApplyForm.submit();
+}

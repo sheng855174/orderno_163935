@@ -1,0 +1,8 @@
+{
+	"delayTime": 2,
+	"物件追蹤表excel": "A物件追蹤表-(完整版).xlsx",
+	"身分證字號excel": "身分證字號.xlsx",
+	"選擇縣市url": "https://ep.land.nat.gov.tw/EpaperApply/TaiwanMapTest",
+	"選擇區域url": "https://ep.land.nat.gov.tw/EpaperApply/MapTest",
+	"主頁面url": "https://ep.land.nat.gov.tw/Home/SystemNote"
+}

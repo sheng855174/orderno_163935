@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<!-- saved from url=(0042)https://ep.land.nat.gov.tw/EpaperApply/Map -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" class="  ext-strict"><head id="Head1"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge;IE=11;IE=10;IE=9;IE=EmulateIE9"><title>
+	
+            
+                全國地政電子謄本系統
+            
+</title><link href="./全國地政電子謄本系統_files/pager.css" rel="stylesheet" type="text/css"><link href="./全國地政電子謄本系統_files/bootstrap.min.css" rel="stylesheet" type="text/css"><link href="./全國地政電子謄本系統_files/hall.css" rel="stylesheet" type="text/css">
+    <title>選擇鄉鎮市區</title>
+    <style type="text/css">     
+        A:link {color:#8A2BE2; text-decoration: none}
+        A:visited {color:#0000CD; text-decoration: none}
+        A:hover {color: #FF8C00; text-decoration: underline}
+        p {line-height: 25pt}        
+    </style> 
+    <script language="JavaScript" type="text/javascript">
+        function selectarea() {
+            if (document.getElementById("area_id").selectindex == 0) { //沒有選擇鄉鎮市區
+                alert("請選擇鄉鎮市區!!");
+                return (null);
+            }
+            document.getElementById("AreaName").value  = CityForm.area_id.options[document.getElementById("area_id").selectedIndex].text;
+            document.CityForm.action = "Map";
+            document.CityForm.submit();
+        }
+
+        function clickMap(areaid, areaname) {
+  
+            document.getElementById("area_id").value = areaid;
+
+            document.getElementById("AreaName").value = areaname;
+            document.CityForm.action = "Map";
+            document.CityForm.submit();
+        }
+
+
+        function MM_swapImgRestore() 
+        { 
+            var i,x,a=document.MM_sr;
+            for(i=0; a && i<a.length && (x=a[i]) &&x.oSrc;i++) 
+                x.src=x.oSrc;
+        }
+
+        function MM_findObj(n, d) 
+        { 
+            var p,i,x;
+            if(!d) d=document;
+            if( (p=n.indexOf("?")) > 0 && parent.frames.length) 
+            {
+                d=parent.frames[n.substring(p+1)].document;
+                n=n.substring(0,p);
+            }
+            if(!(x=d[n])&&d.all) 
+                x=d.all[n]; 
+            for (i=0;!x && i< d.forms.length;i++) 
+                x=d.forms[i][n];
+            for(i=0;!x && d.layers && i<d.layers.length;i++) 
+                x=MM_findObj(n,d.layers[i].document);
+            if(!x && d.getElementById) 
+                x=d.getElementById(n);
+            return x;
+        }
+
+        function MM_swapImage() 
+        { 
+            var i,j=0,x,a=MM_swapImage.arguments;
+            document.MM_sr=new Array; 
+            for(i=0;i<(a.length-2);i+=3)
+            if ((x=MM_findObj(a[i]))!=null)
+            {
+                document.MM_sr[j++]=x; 
+                if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];
+            }
+        }
+    </script>
+
+            <script language="JavaScript" type="text/javascript">
+                document.oncontextmenu = function () { return false; } ////防止按滑鼠右鍵        
+                function form_submit() 
+                {
+                    if (check_data()) 
+                    {
+                        var thisForm = document.getElementById("logoutform");
+                        var key = CryptoJS.enc.Utf8.parse('8080808080808080');
+                        var iv = CryptoJS.enc.Utf8.parse('8080808080808080');
+                        var encryptedlogin = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(thisForm.ID.value), key,
+                                            {
+                                                keySize: 128 / 8,
+                                                iv: iv,
+                                                mode: CryptoJS.mode.CBC,
+                                                padding: CryptoJS.pad.Pkcs7
+                                            });
+                        var encryptedpassword = CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(thisForm.PWD.value), key,
+                                                {
+                                                    keySize: 128 / 8,
+                                                    iv: iv,
+                                                    mode: CryptoJS.mode.CBC,
+                                                    padding: CryptoJS.pad.Pkcs7
+                                                });
+                        thisForm.ID.value = encryptedlogin;
+                        thisForm.PWD.value = encryptedpassword;
+                        document.logoutform.submit();
+                    }
+                }
+
+                function check_data() {
+                    var alertStr = '';
+                    var thisForm = document.getElementById("logoutform");
+
+                    if (alertStr == '') {
+                        alertStr = check_empty(thisForm.ID.value, "帳號");
+                    }
+                    if (alertStr == '')
+                        alertStr += check_empty(thisForm.PWD.value, "密碼");
+
+                    if (alertStr == '')
+                        alertStr = check_empty(thisForm.ID.value, "帳號");
+
+                    if ((alertStr == '') && ((thisForm.ID.value.length > 20) || (thisForm.PWD.value.length > 20)))
+                        alertStr = "帳號或密碼超過長度,請檢查!!";
+
+                    if (alertStr != '') {
+                        alert(alertStr);
+                        return (false);
+                    } else
+                        return (true);
+                }
+
+
+                function check_empty(column, name) {
+                    if (column.length == 0)
+                        return (name + "不可以空白 !\n");
+                    return ("");
+                }
+
+                function openwin(src, w_name, w_width, w_height, w_opt) {
+                    if (!w_opt) w_opt = 'resizable=1,scrollbars=1';
+                    if (!w_width) w_width = 700;
+                    if (!w_height) w_height = 500;
+
+                    w_opt += ',width=' + w_width + ',height=' + w_height;
+
+                    if (typeof (screen) != 'undefined') {
+                        w_left = parseInt((screen.width - w_width) / 2);
+                        w_top = parseInt((screen.height - w_height) / 2);
+                        w_opt += ',left=' + w_left + ',top=' + w_top;
+                    }
+
+                    wobj = window.open(src, w_name, w_opt);
+                    wobj.focus();
+                    return wobj;
+                }
+
+                function LoginOut() {
+                    if (confirm("您確定要登出嗎?")) {
+                        document.logoutform.action = '../login/LoginOut';
+                        document.logoutform.submit();
+                    } else {
+                        return (false);
+                    }
+                }
+                function MM_preloadImages() { //v3.0
+                    var d = document; if (d.images) {
+                        if (!d.MM_p) d.MM_p = new Array();
+                        var i, j = d.MM_p.length, a = MM_preloadImages.arguments; for (i = 0; i < a.length; i++)
+                            if (a[i].indexOf("#") != 0) { d.MM_p[j] = new Image; d.MM_p[j++].src = a[i]; }
+                    }
+                }
+
+                function MM_findObj(n, d) { //v4.01
+                    var p, i, x; if (!d) d = document; if ((p = n.indexOf("?")) > 0 && parent.frames.length) {
+                        d = parent.frames[n.substring(p + 1)].document; n = n.substring(0, p);
+                    }
+                    if (!(x = d[n]) && d.all) x = d.all[n]; for (i = 0; !x && i < d.forms.length; i++) x = d.forms[i][n];
+                    for (i = 0; !x && d.layers && i < d.layers.length; i++) x = MM_findObj(n, d.layers[i].document);
+                    if (!x && d.getElementById) x = d.getElementById(n); return x;
+                }
+
+                function MM_swapImgRestore() { //v3.0
+                    var i, x, a = document.MM_sr; for (i = 0; a && i < a.length && (x = a[i]) && x.oSrc; i++) x.src = x.oSrc;
+                }
+
+                function MM_swapImage() { //v3.0
+                    var i, j = 0, x, a = MM_swapImage.arguments; document.MM_sr = new Array; for (i = 0; i < (a.length - 2); i += 3)
+                        if ((x = MM_findObj(a[i])) != null) { document.MM_sr[j++] = x; if (!x.oSrc) x.oSrc = x.src; x.src = a[i + 2]; }
+                }
+
+            </script>
+
+            
+                <script language="JavaScript" type="text/javascript">
+                    var sessionTimeout =  '21' ;
+                    var tempTimeout = '21';
+                    var meter1;
+                    function DisplaySessionTimeout(i) {
+                        if (sessionTimeout > 0) {
+                            sessionTimeout = i - 1;
+                            meter1 = window.setTimeout("DisplaySessionTimeout(sessionTimeout)", 60000);
+                        }
+                        else {
+                            alert("閒置時間過久，請重新登入網頁");
+                            document.location.href = '../login/LoginOut';
+                        }
+                            
+                                document.getElementById('sessiontime1').innerText = "登出時間：" + sessionTimeout + "  分後";
+                                document.getElementById('sessiontime1').textContent = "登出時間：" + sessionTimeout + "  分後";
+                            
+                    }   
+                    function SetSessionTime() 
+                    {
+                        clearTimeout(meter1);
+                        DisplaySessionTimeout(tempTimeout);
+                    }                            
+                </script>
+            </head>
+
+
+    <body class=" ext-webkit ext-chrome" id="syno-nsc-ext-gen3">  
+        
+            <form name="logoutform" id="logoutform" method="post"></form>                    
+            <table id="table1" height="91px" border="0" cellspacing="0" cellpadding="0">
+                <tbody><tr>
+	                <td colspan="10" class="header" valign="top"><img src="./全國地政電子謄本系統_files/header.jpg"></td>
+                </tr>
+                <tr height="31px">
+	                <td width="30px" height="31px" align="center" valign="middle" background="./全國地政電子謄本系統_files/menu-bg.jpg"></td>
+	                <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統_files/menu-bg(1).jpg"><a href="http://mobile.ep.land.nat.gov.tw/" target="blank" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image11&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-1_f2.jpg&#39;,1)"><img src="./全國地政電子謄本系統_files/menu-1.jpg" name="Image11" border="0"></a></td>
+                    <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統_files/menu-bg(1).jpg"><a href="https://ep.land.nat.gov.tw/Home/EpaperManual1" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image10&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-2_f2.jpg&#39;,1)"><img src="./全國地政電子謄本系統_files/menu-2.jpg" name="Image10" border="0"></a></td>
+	                <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統_files/menu-bg(1).jpg"><a href="https://ep.land.nat.gov.tw/Home/DownloadCenter1" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image9&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-3_f2.jpg&#39;,1)"><img src="./全國地政電子謄本系統_files/menu-3.jpg" name="Image9" border="0"></a></td>
+                    <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統_files/menu-bg(1).jpg"><a href="https://ep.land.nat.gov.tw/Home/QA" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image6&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-4_f2.jpg&#39;,1)"><img src="./全國地政電子謄本系統_files/menu-4.jpg" name="Image6" border="0"></a></td>
+	                <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統_files/menu-bg(1).jpg"><a href="https://ep.land.nat.gov.tw/Home/EpaperForum" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image8&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-5_f2.jpg&#39;,1)"><img src="./全國地政電子謄本系統_files/menu-5.jpg" name="Image8" border="0"></a></td>
+	                <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統_files/menu-bg(1).jpg"><a href="https://ep.land.nat.gov.tw/Home/CallCenter" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image7&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-6_f2.jpg&#39;,1)"><img src="./全國地政電子謄本系統_files/menu-6.jpg" name="Image7" border="0"></a></td>
+                    <td width="95px" height="31px" valign="top" background="./全國地政電子謄本系統_files/menu-bg(1).jpg"><a href="https://ep.land.nat.gov.tw/Home/Index" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;Image3&#39;,&#39;&#39;,&#39;../Images/Hepaper/menu-7_f2.jpg&#39;,1)" target="_parent"><img src="./全國地政電子謄本系統_files/menu-7.jpg" name="Image3" border="0"></a></td>
+                    <td height="31px" width="200px" background="./全國地政電子謄本系統_files/menu-bg(1).jpg">
+                        <font size="2" color="#820000">104&nbsp;&nbsp;線上訪客</font><font size="2" color="#FF0000">3</font><font size="2" color="#820000">人</font> 　
+                    </td>
+                    <td height="31px" width="500px" background="./全國地政電子謄本系統_files/menu-bg(1).jpg">
+                        <font size="2" color="#820000"><div id="sessiontime1">登出時間：19  分後</div></font>
+                    </td>
+                </tr>
+            </tbody></table>   
+            
+
+        <table border="0" cellspacing="5" cellpadding="0">
+            <tbody><tr>
+                <td background="./全國地政電子謄本系統_files/bg.jpg" valign="top" align="left">
+                    
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" background="./全國地政電子謄本系統_files/footer-main_f2.jpg">
+        <tbody><tr>
+            
+                <td width="300px"><img src="./全國地政電子謄本系統_files/in-title-02.jpg" width="300" height="37"></td>
+                <td class="in-title-bg" width="500px">&nbsp;   </td>
+                <td width="260px" background="./全國地政電子謄本系統_files/in-title-right.jpg" style="background-repeat:no-repeat">
+                    <span class="in_title">
+                        <span class="box_btn2">
+                            <a href="https://ep.land.nat.gov.tw/EpaperApply/TaiwanMap">回上頁</a>                       
+                        </span>
+                    </span>
+                </td>
+                
+        </tr>
+    </tbody></table>       
+
+    <table width="800px" border="0" cellspacing="0" cellpadding="0"> 
+        <tbody><tr>
+            <td width="230px" valign="top">
+            
+            <form action="https://ep.land.nat.gov.tw/EpaperApply/Map" method="post" name="CityForm">
+                <table width="100px" border="1" cellspacing="0" cellpadding="0" bgcolor="#F6F6F6" bordercolordark="#000000">
+                    <tbody><tr> 
+                        <td colspan="2" align="center"><strong><font color="#060606" size="2">請選擇鄉鎮市區</font></strong></td>
+                    </tr>
+                    <tr> 
+                        <td align="center">    
+                            <select id="area_id" name="area_id" onchange="selectarea();"><option value="">請選擇鄉鎮市區</option>
+<option value="15">士林區</option>
+<option value="09">大同區</option>
+<option value="02">大安區</option>
+<option value="10">中山區</option>
+<option value="03">中正區</option>
+<option value="03">中正區</option>
+<option value="14">內湖區</option>
+<option value="11">文山區</option>
+<option value="16">北投區</option>
+<option value="01">松山區</option>
+<option value="17">信義區</option>
+<option value="13">南港區</option>
+<option value="05">萬華區</option>
+</select> 
+                            <input id="City_ID" name="City_ID" type="hidden" value="379160000A">
+                            <input id="CityName" name="CityName" type="hidden" value="臺北市">
+                            <input id="AreaName" name="AreaName" type="hidden" value=""> 
+                            <input id="FormNote3" name="FormNote3" type="hidden" value="">  
+                            <input id="FormNote4" name="FormNote4" type="hidden" value="">        
+                        </td>
+                    </tr>    
+                </tbody></table>
+            </form>
+            <br>
+            </td>   
+            
+                <td valign="top" align="center" width="530"> 
+                    <img name="mapimg" src="./全國地政電子謄本系統_files/379160000A.gif" usemap="#Map2" border="0" ismap="" hidefocus="true"> 
+                </td>
+                <td align="center" valign="top"> 
+                </td>
+            
+        </tr>
+    </tbody></table>
+
+    <map name="Map2">
+        
+
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge;IE=11;IE=10;IE=9;IE=EmulateIE9"><title>
+	
+            
+                全國地政電子謄本系統
+            
+</title>
+
+<link href="./全國地政電子謄本系統_files/hall.css" rel="stylesheet" type="text/css">
+         <script language="JavaScript" type="text/javascript">
+             document.oncontextmenu = function () { return false; } ////防止按滑鼠右鍵     
+        </script>       
+    
+    
+        
+    
+            <area shape="poly" coords="246,263,256,281,272,281,272,295,292,293,272,315,247,326,220,323,223,287,225,269" onclick="clickMap(&#39;01&#39;, &#39;松山區&#39;)" alt="松山區" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;mapimg&#39;,&#39;&#39;,&#39;../Images/AreaMap/379160000A/01.gif&#39;,1)">  
+     
+            <area shape="poly" coords="205,323,246,331,249,346,240,361,256,375,265,388,251,383,243,390,212,389,199,369,191,352" onclick="clickMap(&#39;02&#39;, &#39;大安區&#39;)" alt="大安區" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;mapimg&#39;,&#39;&#39;,&#39;../Images/AreaMap/379160000A/02.gif&#39;,1)">				
+     
+            <area shape="poly" coords="152,325,171,322,196,327,196,344,178,342,185,360,204,381,192,390,170,375,148,360,142,346,145,329" onclick="clickMap(&#39;03&#39;, &#39;中正區&#39;)" alt="中正區" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;mapimg&#39;,&#39;&#39;,&#39;../Images/AreaMap/379160000A/03.gif&#39;,1)">				
+     
+            <area shape="poly" coords="152,325,171,322,196,327,196,344,178,342,185,360,204,381,192,390,170,375,148,360,142,346,145,329" onclick="clickMap(&#39;03&#39;, &#39;中正區&#39;)" alt="中正區" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;mapimg&#39;,&#39;&#39;,&#39;../Images/AreaMap/379160000A/03.gif&#39;,1)">				
+     
+            <area shape="poly" coords="144,328,137,349,149,366,123,390,107,377,95,360,100,336" onclick="clickMap(&#39;05&#39;, &#39;萬華區&#39;)" alt="萬華區" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;mapimg&#39;,&#39;&#39;,&#39;../Images/AreaMap/379160000A/05.gif&#39;,1)">				
+     
+            <area shape="poly" coords="142,272,169,277,170,317,142,321,127,306,122,294" onclick="clickMap(&#39;09&#39;, &#39;大同區&#39;)" alt="大同區" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;mapimg&#39;,&#39;&#39;,&#39;../Images/AreaMap/379160000A/09.gif&#39;,1)">
+     
+            <area shape="poly" coords="202,255,235,251,248,259,228,263,221,278,217,320,187,322,174,319,175,286,181,275" onclick="clickMap(&#39;10&#39;, &#39;中山區&#39;)" alt="中山區" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;mapimg&#39;,&#39;&#39;,&#39;../Images/AreaMap/379160000A/10.gif&#39;,1)">
+     
+            <area shape="poly" coords="221,395,254,392,261,392,293,384,331,382,339,400,335,423,338,444,379,457,351,466,342,475,308,470,257,467,241,442,227,427,187,423,198,392,206,391" onclick="clickMap(&#39;11&#39;, &#39;文山區&#39;)" alt="文山區" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;mapimg&#39;,&#39;&#39;,&#39;../Images/AreaMap/379160000A/11.gif&#39;,1)">				
+     
+            <area shape="poly" coords="296,320,326,302,336,305,354,302,378,299,383,309,372,318,399,346,418,341,449,356,475,348,473,367,451,360,438,363,421,364,404,366,392,374,362,368,339,377,303,380,294,380,326,352,314,336" onclick="clickMap(&#39;13&#39;, &#39;南港區&#39;)" alt="南港區" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;mapimg&#39;,&#39;&#39;,&#39;../Images/AreaMap/379160000A/13.gif&#39;,1)">
+      
+            <area shape="poly" coords="319,213,348,221,369,224,385,237,393,256,380,273,374,288,370,298,330,302,324,295,309,308,279,315,306,293,295,289,274,293,278,272,259,273,250,253,245,246,287,221" onclick="clickMap(&#39;14&#39;, &#39;內湖區&#39;)" alt="內湖區" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;mapimg&#39;,&#39;&#39;,&#39;../Images/AreaMap/379160000A/14.gif&#39;,1)">				
+     
+            <area shape="poly" coords="293,69,269,86,263,109,246,134,227,162,199,182,186,207,143,242,124,240,117,210,84,217,62,215,44,218,49,228,92,227,117,240,136,264,164,271,201,249,238,243,268,230,298,213,352,183" onclick="clickMap(&#39;15&#39;, &#39;士林區&#39;)" alt="士林區" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;mapimg&#39;,&#39;&#39;,&#39;../Images/AreaMap/379160000A/15.gif&#39;,1)">				
+      
+            <area shape="poly" coords="256,43,238,64,221,64,209,82,179,90,166,112,127,109,104,140,46,192,54,207,87,216,106,205,120,212,126,237,143,240,165,230,179,210,182,190,200,167,226,157,244,131,255,115,262,92,270,72" onclick="clickMap(&#39;16&#39;, &#39;北投區&#39;)" alt="北投區" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;mapimg&#39;,&#39;&#39;,&#39;../Images/AreaMap/379160000A/16.gif&#39;,1)">				
+      
+            <area shape="poly" coords="251,327,290,319,303,331,322,353,309,364,291,377,266,386,243,363" onclick="clickMap(&#39;17&#39;, &#39;信義區&#39;)" alt="信義區" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage(&#39;mapimg&#39;,&#39;&#39;,&#39;../Images/AreaMap/379160000A/17.gif&#39;,1)">
+    
+         
+    
+
+<script language="JavaScript" type="text/javascript">
+    if (self != top) {
+        try {
+            if (top.document.domain != document.domain)
+                location.href = '/Home/PubMsg3';
+        }
+        catch (err) {
+            location.href = '/Home/PubMsg3';
+        }
+    } 	
+</script>
+    </map>
+
+    <map name="Map3">
+        
+    </map>
+
+
+
+                           
+                </td>
+            </tr>
+        </tbody></table>        
+ 
+    
+
+<script language="JavaScript" type="text/javascript">
+    if (self != top) {
+        try {
+            if (top.document.domain != document.domain)
+                location.href = '/Home/PubMsg3';
+        }
+        catch (err) {
+            location.href = '/Home/PubMsg3';
+        }
+    } 	
+</script>
+
+    <script language="JavaScript" type="text/javascript">
+        setTimeout("DisplaySessionTimeout(tempTimeout);", 0);
+    </script>
+<div id="syno-nsc-ext-comp-1008" class=" x-tip-invalid" style="position: absolute; z-index: 11000; visibility: hidden; display: none;"><div class="x-tip-invalid-tl"><div class="x-tip-invalid-tr"><div class="x-tip-invalid-tc"><div class="x-tip-invalid-header x-unselectable" id="syno-nsc-ext-gen4"><span class="x-tip-invalid-header-text"></span></div></div></div></div><div class="x-tip-invalid-bwrap" id="syno-nsc-ext-gen5"><div class="x-tip-invalid-ml"><div class="x-tip-invalid-mr"><div class="x-tip-invalid-mc" id="syno-nsc-ext-gen8"><div class="x-tip-invalid-body" id="syno-nsc-ext-gen6" style="height: auto;"></div></div></div></div><div class="x-tip-invalid-bl x-panel-nofooter" id="syno-nsc-ext-gen7"><div class="x-tip-invalid-br"><div class="x-tip-invalid-bc"></div></div></div></div><div class="x-tip-anchor x-tip-anchor-top" id="syno-nsc-ext-gen9" style="z-index: 11001;"></div></div></body></html>

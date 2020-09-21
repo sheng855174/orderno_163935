@@ -1,0 +1,1270 @@
+﻿
+  /*****************************************
+  ☆其它功能連結
+  *****************************************/
+var oNewWindow  //宣告物件控制開啟的Windows
+
+
+function normal_open(loc,tle,param,win_width,win_height){
+  //param="toolbar=no,status=no,menubar=no,location=no,scrollbars=yes,resizable=yes"
+  var whparam;
+  whparam=mathwihe(win_width,win_height);  
+  normal_open=window.open(loc,tle,param+","+whparam);
+}
+
+function normal_fullscreen_open(loc,tle,ftype){
+  //param="toolbar=no,status=no,menubar=no,location=no,scrollbars=yes,resizable=yes"
+  if (ftype==0)
+    normalwin=window.open(loc,tle,"fullscreen,scrollbars");
+  else
+    normalwin=window.open(loc,tle,"channelmode,scrollbars");
+}
+
+
+function mathwihe(win_width,win_height){
+  if (win_width=="" || win_height=="")
+    return('');
+  else {	
+  var chasm = screen.availWidth;
+  var mount = screen.availHeight-30;
+  var wintop,winleft
+  var whparam;
+  if (win_width > chasm) win_width=chasm;
+  if (win_height > mount) win_height=mount;
+  if ((chasm-win_width)!= 0) winleft=(chasm-win_width)/2;
+  if ((mount-win_height)!= 0) wintop=(mount-win_height)/2;
+  whparam="width="+win_width+",height="+win_height+",left=" + winleft + ",top=" + wintop;
+  return(whparam);
+  }
+ // window.open(loc,tle,param+","+whparam);
+}
+
+function contain(str, charset)//   字符串包含測試函數
+{
+    var i;
+    for (i = 0; i < charset.length; i++)
+        if (str.indexOf(charset.charAt(i)) >= 0)
+            return true;
+    return false;
+}
+
+function checkreason(reason)//   字符串包含測試函數
+{
+    if (ApplyForm.applyfor.value == "") {
+        alert('請選擇申請用途再查詢!!');
+        return false;
+    }
+    if (reason.length > 100) {
+        alert('申請用途原因最多可輸入100個字');
+        return false;
+    }
+    if (contain(reason, "><")) {
+        alert("不可輸入><符號");
+        return false;
+    }
+    return true;
+}
+
+/*****************************************
+☆建物門牌查詢
+*****************************************/
+function ShowBuildWindow1() {
+    var targeturl = ApplyForm.targeturl.value;
+    var isgov = document.ApplyForm.isGov.value;
+    //alert(isgov);
+    var city_id = document.ApplyForm.CityID.value;
+    var area_id = document.ApplyForm.AreaID.value;
+    var reason_id = document.getElementById("applyfor").options[document.getElementById("applyfor").selectedIndex].value; //申請用途ID
+    var reason = document.getElementById("REASON").value; //申請原因
+    var reasonOrgId = document.getElementById("ReasonOrgId").options[document.getElementById("ReasonOrgId").selectedIndex].value; //申請政府機關
+    if (isgov == "True") {
+        if (!checkreason(reason))
+            return false;
+    }
+    var sURL = "../EpaperApplyP/Build_Index1?City_ID=" + city_id + "&area_id=" + area_id + "&reason_id=" + reason_id + "&reason=" + reason + "&ReasonOrgId=" + reasonOrgId;
+
+    var keys = [];
+    var values = [];
+    keys[0] = "City_ID";
+    keys[1] = "area_id";
+    keys[2] = "reason_id";
+    keys[3] = "reason";
+    keys[4] = "ReasonOrgId";
+    values[0] = city_id;
+    values[1] = area_id;
+    values[2] = reason_id
+    values[3] = reason;
+    values[4] = reasonOrgId;
+
+    var whparam = mathwihe(790, 600);
+    if (oNewWindow == null) {
+        openWindowWithPost(targeturl, "web", keys, values, "", whparam);
+    } else if (oNewWindow.closed == false) {
+        alert('您已開啟查詢功能,請先結束再重新查詢!!');
+        oNewWindow.focus();
+    } else {
+        openWindowWithPost(targeturl, "web", keys, values, "", whparam);
+    }
+}
+
+function showbuildwindow(){
+    normal_open('../build/build_input.asp?city_id=<%= city_id %>&area_id=<%= area_id %>','使用說明','toolbar=no,titlebar=no,status=no,menubar=no,location=no,scrollbars=yes,resizable=no',760,280);
+}
+
+
+/*****************************************
+☆數值數化區查詢
+*****************************************/
+function NUMquery() {
+    var targeturl = ApplyForm.targeturl.value;
+    var city_id = document.ApplyForm.CityID.value;
+    var sURL = "../EpaperApplyP/NUM_Query?City_ID=" + city_id + "&kind=01";
+    var keys = [];
+    var values = [];
+    keys[0] = "City_ID";
+    keys[1] = "kind";
+    values[0] = city_id;
+    values[1] = "01";
+
+    var param = "scrollbars=yes";
+    var whparam = mathwihe(760, 600);
+    if (oNewWindow == null) {
+        openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+    } else if (oNewWindow.closed == false) {
+        alert('您已開啟查詢功能,請先結束再重新查詢!!');
+        oNewWindow.focus();
+    } else {
+        openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+    }
+
+}
+
+/*****************************************
+☆新舊地建號查詢
+*****************************************/
+function RVAquery1() {
+    var targeturl = ApplyForm.targeturl.value;
+    var city_id = document.ApplyForm.CityID.value;
+    var area_id = document.ApplyForm.AreaID.value;
+    var sURL = "../EpaperApplyP/RVA_Input1?City_ID=" + city_id + "&area_id=" + area_id;
+
+    var keys = [];
+    var values = [];
+    keys[0] = "City_ID";
+    keys[1] = "area_id";
+    values[0] = city_id;
+    values[1] = area_id;
+
+    var param = "scrollbars=yes";
+    var whparam = mathwihe(860, 300);
+    if (oNewWindow == null) {
+        openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+    } else if (oNewWindow.closed == false) {
+        alert('您已開啟查詢功能,請先結束再重新查詢!!');
+        oNewWindow.focus();
+    } else {
+        openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+    }
+}
+
+function getCF(stype, sfunc) {
+  ApplyForm.CF_type.value = stype;
+  if (sfunc == "ownerquery") {
+      ownerquery();
+  } else if (sfunc == "ano_query") {
+      ano_query();
+  } else if (sfunc == "mgm_query") {
+      mgm_query();
+  } else if (sfunc == "con_query") {
+      con_query();
+  } else if (sfunc == "CPU_query") {
+      CPU_query();
+  }
+}
+
+/*****************************************
+☆所有權人查詢
+*****************************************/
+function ownerquery() {
+    var targeturl = ApplyForm.targeturl.value;
+    var isgov = document.ApplyForm.isGov.value;
+    var ldcd = ApplyForm.INPUT_011.value; //段小段
+    var city_id = document.getElementById("CityID").value;
+    var area_id = document.getElementById("AreaID").value;
+    //var lncode = document.getElementById("Show_land_num").options[document.getElementById("Show_land_num").selectedIndex].title;//難字
+    var lncode = document.getElementById("LN").value; //難字
+    var land = ApplyForm.INPUT_013; //地號 
+    var build = ApplyForm.INPUT_014; //建號 
+    var userid = escape(document.getElementById("INPUT_015").value); //統編
+    var reason_id = document.getElementById("applyfor").options[document.getElementById("applyfor").selectedIndex].value; //申請用途ID
+    var reason = document.getElementById("REASON").value; //申請原因
+    var reasonOrgId = document.getElementById("ReasonOrgId").options[document.getElementById("ReasonOrgId").selectedIndex].value; //申請政府機關
+    //alert(userid);
+    var lob=true;
+    var stype="";
+
+    if (ApplyForm.CF_type.value == "") 
+    {
+        if (ldcd.length == 0) {
+            alert('段小段代碼為空白!請選擇段小段再查詢!!');
+            return false;
+        }
+        
+        if ((land.value.length==0) && (build.value.length==0)){
+            alert('請輸入地號或建號再查詢!!');  
+            return false;
+        }
+
+        if (isgov == "True") {
+            if (!checkreason(reason))
+                return false;
+        } else 
+        {
+            if (ApplyForm.REGTYPE.value == "1") {
+                alert('申請第一類謄本不可使用此功能!!');
+                return false;
+            } else {
+                if (ApplyForm.UserApplyType.value == "1") {
+                    alert('登記名義人本人不可使用此功能!!');
+                    return false;            
+                }
+            }
+        }
+
+        if ((land.value.length>0) && (build.value.length>0)) 
+        {
+            wx = 260; wy = 80;
+            x = (screen.width - wx)/2;
+            y = (screen.height - wy) / 2;
+            //stype = window.showModalDialog("confirm_CF.asp?func=ownerquery",window,"dialogHeight: "+wy+"px; dialogWidth: "+wx+"px; dialogTop: px; dialogLeft: px; edge: Raised; center: Yes; help: No; resizable: No; status: No;scroll: NO");
+            //stype = window.showModalDialog("../EpaperApplyP/confirm_CF?func=ownerquery", window, "dialogHeight: " + wy + "px; dialogWidth: " + wx + "px; dialogTop: px; dialogLeft: px; edge: Raised; center: Yes; help: No; resizable: No; status: No;scroll: NO");
+            $('#msg_dialog').html('請選擇以地號或建號查詢!!').dialog(
+                { title: '', buttons: [
+                    { text: "地號", click: function () {
+                        $(this).dialog("close");
+                        getCF("C", 'ownerquery');
+                    }
+                    },
+                    { text: "建號", click: function () {
+                        $(this).dialog("close");
+                        getCF("F", 'ownerquery');
+                    }
+                    }]
+                }).dialog('open');
+         
+            ApplyForm.CF_type.value = stype;
+        }
+        else 
+        {   
+            if (land.value.length>0)
+                stype = "C";
+            else if (build.value.length>0)
+                stype = "F";
+        }
+
+        if (stype == "C" || stype == "F" )
+            getCF(stype, 'ownerquery');
+        else
+      	    ApplyForm.CF_type.value = "";
+
+    } else if (ApplyForm.CF_type.value != "") 
+    {
+      var doctype,obj,substr;
+      obj = "";
+      substr = "";
+      doctype=ApplyForm.CF_type.value;
+      ApplyForm.CF_type.value = ""; 
+      if (land.value.length>0 && build.value.length==0) 
+      {
+          lob == true
+          obj = land.value;
+      } else if (land.value.length==0 && build.value.length>0) 
+      {
+          lob == false
+          obj = build.value;
+      } 
+      else 
+      {
+      	  if (doctype=="C") {
+              lob == true
+              obj = land.value;
+      	  }
+	        else if (doctype=="F") 
+	        {
+              lob == false
+              obj = build.value;
+      	    }
+      }
+
+      for(var i=0; i < obj.length; i++ ){
+         if ((obj.charAt(i) == ',')||(obj.charAt(i) == '，')
+            ||(obj.charAt(i) == '~')||(obj.charAt(i) == '～')){
+            if (lob==true)
+                alert('請輸入單筆地號!!');
+            else
+                alert('請輸入單筆建號!!');
+            return false;
+         }
+      }
+
+        substr = 'reason_id=' + reason_id + '&reason=' + reason + '&ReasonOrgId=' + reasonOrgId + '&doctype=' + doctype + '&ldcd=' + ldcd + '&nb=' + obj + '&lncode=' + lncode + '&City_ID=' + city_id + '&area_id=' + area_id + '&userid=' + userid;
+        //      alert(substr);
+        var sURL = "../EpaperApplyP/Owner_Query?" + substr;
+        var keys = [];
+        var values = [];
+        keys[0] = "reason_id";
+        keys[1] = "reason";
+        keys[2] = "ReasonOrgId";
+        keys[3] = "doctype";
+        keys[4] = "ldcd";
+        keys[5] = "nb";
+        keys[6] = "lncode";
+        keys[7] = "City_ID";
+        keys[8] = "area_id";
+        keys[9] = "userid";
+        keys[10] = "QryFun";
+        values[0] = reason_id;
+        values[1] = reason; //申請原因
+        values[2] = reasonOrgId; //申請政府機關
+        values[3] = doctype;
+        values[4] = ldcd; //地號
+        values[5] = obj;
+        values[6] = lncode;
+        values[7] = city_id;
+        values[8] = area_id;
+        values[9] = userid;
+        values[10] = "Owner_Query";
+
+      var sName = "所有權人查詢";
+      var param="toolbar=no,titlebar=no,status=no,menubar=no,location=no,status=yes,scrollbars=yes,resizable=no";
+      var whparam=mathwihe(760,280);
+      if (oNewWindow == null) {
+          openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+      } else if (oNewWindow.closed==false) {
+          alert("您已開啟查詢功能,請先結束再重新查詢!!");
+          oNewWindow.focus();
+      } else {
+          openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+      }
+    }
+}
+
+
+/*****************************************
+☆他項權利人查詢
+*****************************************/
+function ano_query() {
+    var targeturl = ApplyForm.targeturl.value;
+    var isgov = document.ApplyForm.isGov.value;
+    var ldcd = ApplyForm.INPUT_011.value; //段小段
+    var city_id = document.getElementById("CityID").value;
+    var area_id = document.getElementById("AreaID").value;
+    //var lncode = document.getElementById("Show_land_num").options[document.getElementById("Show_land_num").selectedIndex].title;//難字
+    var lncode = document.getElementById("LN").value; //難字
+  var land=ApplyForm.INPUT_013;
+  var build = ApplyForm.INPUT_014;
+  var lob=true;
+  var stype = "";
+  var reason_id = document.getElementById("applyfor").options[document.getElementById("applyfor").selectedIndex].value; //申請用途ID
+  var reason = document.getElementById("REASON").value; //申請原因
+  var reasonOrgId = document.getElementById("ReasonOrgId").options[document.getElementById("ReasonOrgId").selectedIndex].value; //申請政府機關
+    
+  if (ApplyForm.CF_type.value =="") {
+
+      if (ldcd.length == 0) {
+          alert('段小段代碼為空白!請選擇段小段再查詢!!');
+          return false;
+      } 
+      
+      if ((land.value.length==0) && (build.value.length==0)){
+          alert('請輸入地號或建號再查詢!!');  
+          return false;
+      }
+
+      if (isgov == "True") {
+          if (!checkreason(reason))
+              return false;
+      } else {
+          if (ApplyForm.REGTYPE.value == "1") {
+              alert('申請第一類謄本不可使用此功能!!');
+              return false;
+          } else {
+              if (ApplyForm.UserApplyType.value == "1") {
+                  alert('登記名義人本人不可使用此功能!!');
+                  return false;
+              }
+          }
+      }
+
+      if ((land.value.length > 0) && (build.value.length > 0)) {
+          wx = 260; wy = 80;
+          x = (screen.width - wx)/2;
+          y = (screen.height - wy) / 2;
+          //var sURL = "/EpaperApply/RVA_Input1?controllor=EpaperApply&City_ID=" + city_id + "&area_id=" + area_id;
+          //stype = window.showModalDialog("../EpaperApplyP/confirm_CF?func=ano_query", window, "dialogHeight: " + wy + "px; dialogWidth: " + wx + "px; dialogTop: px; dialogLeft: px; edge: Raised; center: Yes; help: No; resizable: No; status: No;scroll: NO");
+
+          $('#msg_dialog').html('請選擇以地號或建號查詢!!').dialog(
+                { title: '', buttons: [
+                    { text: "地號", click: function () {
+                        $(this).dialog("close");
+                        getCF("C", 'ano_query');
+                    }
+                    },
+                    { text: "建號", click: function () {
+                        $(this).dialog("close");
+                        getCF("F", 'ano_query');
+                    }
+                    }]
+                }).dialog('open');          
+          ApplyForm.CF_type.value = stype;
+      } else {
+          if (land.value.length>0)
+              stype = "C";
+          else if (build.value.length>0)
+              stype = "F";
+      }
+      if (stype == "C" || stype == "F" ) {
+          getCF(stype, 'ano_query');
+      } else {
+      	  ApplyForm.CF_type.value = "";
+      }
+
+  } else if (ApplyForm.CF_type.value !="") {
+
+      var doctype,obj,substr;
+      obj = "";
+      substr = "";
+      doctype=ApplyForm.CF_type.value;
+      ApplyForm.CF_type.value = ""; 
+      if (land.value.length>0 && build.value.length==0) {
+          lob == true
+          obj = land.value;
+      } else if (land.value.length==0 && build.value.length>0) {
+          lob == false
+          obj = build.value;
+      } else {
+      	  if (doctype=="C") {
+              lob == true
+              obj = land.value;
+      	  } else if (doctype=="F") {
+              lob == false
+              obj = build.value;
+      	  }
+      }
+
+      for(var i=0; i < obj.length; i++ ){
+         if ((obj.charAt(i) == ',')||(obj.charAt(i) == '，')
+            ||(obj.charAt(i) == '~')||(obj.charAt(i) == '～')){
+            if (lob==true)
+                alert('請輸入單筆地號!!');
+            else
+                alert('請輸入單筆建號!!');
+            return false;
+         }
+      }
+
+    substr = 'reason_id=' + reason_id + '&reason=' + reason + '&ReasonOrgId=' + reasonOrgId + '&doctype=' + doctype + '&ldcd=' + ldcd + '&nb=' + obj + '&lncode=' + lncode + '&City_ID=' + city_id + '&area_id=' + area_id;
+      //      alert(substr);
+    var sURL = "../EpaperApplyP/ANO_Query?" + substr;
+    var keys = [];
+    var values = [];
+    keys[0] = "reason_id";
+    keys[1] = "reason";
+    keys[2] = "ReasonOrgId";
+    keys[3] = "doctype";
+    keys[4] = "ldcd";
+    keys[5] = "nb";
+    keys[6] = "lncode";
+    keys[7] = "City_ID";
+    keys[8] = "area_id";
+    keys[9] = "QryFun";
+    values[0] = reason_id;
+    values[1] = reason; //申請原因
+    values[2] = reasonOrgId; //申請政府機關
+    values[3] = doctype;
+    values[4] = ldcd; //地號
+    values[5] = obj;
+    values[6] = lncode;
+    values[7] = city_id;
+    values[8] = area_id;
+    values[9] = "ANO_Query";
+
+      var sName="他項權利人查詢";
+      var param="toolbar=no,titlebar=no,status=no,menubar=no,location=no,scrollbars=yes,resizable=no";
+      var whparam=mathwihe(760,280);
+      if (oNewWindow == null) {
+          openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+      } else if (oNewWindow.closed==false) {
+          alert("您已開啟查詢功能,請先結束再重新查詢!!");
+          oNewWindow.focus();
+      } else {
+          openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+      }
+  }
+  
+}
+
+
+/*****************************************
+☆管理者查詢
+*****************************************/
+function mgm_query() {
+    var targeturl = ApplyForm.targeturl.value;
+    var isgov = document.ApplyForm.isGov.value;
+    var ldcd = ApplyForm.INPUT_011.value; //段小段
+    var city_id = document.getElementById("CityID").value;
+    var area_id = document.getElementById("AreaID").value;
+    //var lncode = document.getElementById("Show_land_num").options[document.getElementById("Show_land_num").selectedIndex].title;//難字
+    var lncode = document.getElementById("LN").value; //難字
+  var land=ApplyForm.INPUT_013;
+  var build=ApplyForm.INPUT_014;
+  var lob=true;
+  var stype="";
+  var reason_id = document.getElementById("applyfor").options[document.getElementById("applyfor").selectedIndex].value; //申請用途ID
+  var reason = document.getElementById("REASON").value; //申請原因
+  var reasonOrgId = document.getElementById("ReasonOrgId").options[document.getElementById("ReasonOrgId").selectedIndex].value; //申請政府機關
+      
+  if (ApplyForm.CF_type.value =="") {
+
+      if (ldcd.length == 0) {
+          alert('段小段代碼為空白!請選擇段小段再查詢!!');
+          return false;
+      }
+
+      
+      if ((land.value.length==0) && (build.value.length==0)){
+          alert('請輸入地號或建號再查詢!!');  
+          return false;
+      }
+
+      if (isgov == "True") {
+          if (!checkreason(reason))
+              return false;
+      } else {
+          if (ApplyForm.REGTYPE.value == "1") {
+              alert('申請第一類謄本不可使用此功能!!');
+              return false;
+          } else {
+              if (ApplyForm.UserApplyType.value == "1") {
+                  alert('登記名義人本人不可使用此功能!!');
+                  return false;
+              }
+          }
+      }
+
+      if ((land.value.length>0) && (build.value.length>0)) {
+          wx = 260; wy = 80;
+          x = (screen.width - wx)/2;
+          y = (screen.height - wy) / 2;
+          //var sURL = "/EpaperApply/RVA_Input1?controllor=EpaperApply&City_ID=" + city_id + "&area_id=" + area_id;
+          //stype = window.showModalDialog("../EpaperApplyP/confirm_CF?func=mgm_query", window, "dialogHeight: " + wy + "px; dialogWidth: " + wx + "px; dialogTop: px; dialogLeft: px; edge: Raised; center: Yes; help: No; resizable: No; status: No;scroll: NO");
+
+          $('#msg_dialog').html('請選擇以地號或建號查詢!!').dialog(
+                { title: '', buttons: [
+                    { text: "地號", click: function () {
+                        $(this).dialog("close");
+                        getCF("C", 'mgm_query');
+                    }
+                    },
+                    { text: "建號", click: function () {
+                        $(this).dialog("close");
+                        getCF("F", 'mgm_query');
+                    }
+                    }]
+                }).dialog('open');          
+          ApplyForm.CF_type.value = stype;          
+      } else {
+          if (land.value.length>0)
+              stype = "C";
+          else if (build.value.length>0)
+              stype = "F";
+      }
+      if (stype == "C" || stype == "F" ) {
+          getCF(stype, 'mgm_query');
+      } else {
+      	  ApplyForm.CF_type.value = "";
+      }
+
+  } else if (ApplyForm.CF_type.value !="") {
+      
+      var doctype,obj,substr;
+      obj = "";
+      substr = "";
+      doctype=ApplyForm.CF_type.value;
+      ApplyForm.CF_type.value = ""; 
+      if (land.value.length>0 && build.value.length==0) {
+          lob == true
+          obj = land.value;
+      } else if (land.value.length==0 && build.value.length>0) {
+          lob == false
+          obj = build.value;
+      } else {
+      	  if (doctype=="C") {
+              lob == true
+              obj = land.value;
+      	  } else if (doctype=="F") {
+              lob == false
+              obj = build.value;
+      	  }
+      }
+
+      for(var i=0; i < obj.length; i++ ){
+         if ((obj.charAt(i) == ',')||(obj.charAt(i) == '，')
+            ||(obj.charAt(i) == '~')||(obj.charAt(i) == '～')){
+            if (lob==true)
+                alert('請輸入單筆地號!!');
+            else
+                alert('請輸入單筆建號!!');
+            return false;
+         }
+      }
+
+    substr = 'reason_id=' + reason_id + '&reason=' + reason + '&ReasonOrgId=' + reasonOrgId + '&doctype=' + doctype + '&ldcd=' + ldcd + '&nb=' + obj + '&lncode=' + lncode + '&City_ID=' + city_id + '&area_id=' + area_id;     
+    var sURL = "../EpaperApplyP/MGM_Query?" + substr;
+    var keys = [];
+    var values = [];
+    keys[0] = "reason_id";
+    keys[1] = "reason";
+    keys[2] = "ReasonOrgId";
+    keys[3] = "doctype";
+    keys[4] = "ldcd";
+    keys[5] = "nb";
+    keys[6] = "lncode";
+    keys[7] = "City_ID";
+    keys[8] = "area_id";
+    keys[9] = "QryFun";
+    values[0] = reason_id;
+    values[1] = reason; //申請原因
+    values[2] = reasonOrgId; //申請政府機關
+    values[3] = doctype;
+    values[4] = ldcd; //段小段
+    values[5] = obj;
+    values[6] = lncode;
+    values[7] = city_id;
+    values[8] = area_id;
+    values[9] = "MGM_Query";
+
+      var sName="管理者查詢";
+      var param="toolbar=no,titlebar=no,status=no,menubar=no,location=no,scrollbars=yes,resizable=no";
+      var whparam=mathwihe(760,280);
+      if (oNewWindow == null) {
+          openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+      } else if (oNewWindow.closed==false) {
+          alert("您已開啟查詢功能,請先結束再重新查詢!!");
+          oNewWindow.focus();
+      } else {
+          openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+      }
+  }
+}
+
+/*****************************************
+☆信託委託人查詢
+*****************************************/
+function con_query() {
+    var targeturl = ApplyForm.targeturl.value;
+    var isgov = document.ApplyForm.isGov.value;
+    var ldcd = ApplyForm.INPUT_011.value; //段小段
+    var city_id = document.getElementById("CityID").value;
+    var area_id = document.getElementById("AreaID").value;
+    //var lncode = document.getElementById("Show_land_num").options[document.getElementById("Show_land_num").selectedIndex].title;//難字
+    var lncode = document.getElementById("LN").value; //難字
+    var land = ApplyForm.INPUT_013;
+    var build = ApplyForm.INPUT_014;
+    var lob = true;
+    var stype = "";
+    var reason_id = document.getElementById("applyfor").options[document.getElementById("applyfor").selectedIndex].value; //申請用途ID
+    var reason = document.getElementById("REASON").value; //申請原因
+    var reasonOrgId = document.getElementById("ReasonOrgId").options[document.getElementById("ReasonOrgId").selectedIndex].value; //申請政府機關
+    if (ApplyForm.CF_type.value == "") {
+
+        if (ldcd.length == 0) {
+            alert('段小段代碼為空白!請選擇段小段再查詢!!');
+            return false;
+        }        
+        
+        if ((land.value.length == 0) && (build.value.length == 0)) {
+            alert('請輸入地號或建號再查詢!!');
+            return false;
+        }
+
+        if (isgov == "True") {
+            if (!checkreason(reason))
+                return false;
+        }
+        if ((land.value.length > 0) && (build.value.length > 0)) {
+            wx = 260; wy = 80;
+            x = (screen.width - wx) / 2;
+            y = (screen.height - wy) / 2;
+            //stype = window.showModalDialog("../EpaperApplyP/confirm_CF?func=con_query", window, "dialogHeight: " + wy + "px; dialogWidth: " + wx + "px; dialogTop: px; dialogLeft: px; edge: Raised; center: Yes; help: No; resizable: No; status: No;scroll: NO");
+            $('#msg_dialog').html('請選擇以地號或建號查詢!!').dialog(
+                { title: '', buttons: [
+                    { text: "地號", click: function () {
+                        $(this).dialog("close");
+                        getCF("C", 'con_query');
+                    }
+                    },
+                    { text: "建號", click: function () {
+                        $(this).dialog("close");
+                        getCF("F", 'con_query');
+                    }
+                    }]
+                }).dialog('open');            
+            ApplyForm.CF_type.value = stype;
+        } else {
+            if (land.value.length > 0)
+                stype = "C";
+            else if (build.value.length > 0)
+                stype = "F";
+        }
+
+        if (stype == "C" || stype == "F") {
+            getCF(stype, 'con_query');
+        } else {
+            ApplyForm.CF_type.value = "";
+        }
+
+    } else if (ApplyForm.CF_type.value != "") {
+        var doctype, obj, substr;
+        obj = "";
+        substr = "";
+        doctype = ApplyForm.CF_type.value;
+        ApplyForm.CF_type.value = "";
+        if (land.value.length > 0 && build.value.length == 0) {
+            lob == true
+            obj = land.value;
+        } else if (land.value.length == 0 && build.value.length > 0) {
+            lob == false
+            obj = build.value;
+        } else {
+            if (doctype == "C") {
+                lob == true
+                obj = land.value;
+            } else if (doctype == "F") {
+                lob == false
+                obj = build.value;
+            }
+        }
+
+        for (var i = 0; i < obj.length; i++) {
+            if ((obj.charAt(i) == ',') || (obj.charAt(i) == '，')
+            || (obj.charAt(i) == '~') || (obj.charAt(i) == '～')) {
+                if (lob == true)
+                    alert('請輸入單筆地號!!');
+                else
+                    alert('請輸入單筆建號!!');
+                return false;
+            }
+        }
+        substr = 'reason_id=' + reason_id + '&reason=' + reason + '&ReasonOrgId=' + reasonOrgId + '&doctype=' + doctype + '&ldcd=' + ldcd + '&nb=' + obj + '&lncode=' + lncode + '&City_ID=' + city_id + '&area_id=' + area_id;
+        var sURL = "../EpaperApplyP/CON_Query?" + substr;
+        var keys = [];
+        var values = [];
+        keys[0] = "reason_id";
+        keys[1] = "reason";
+        keys[2] = "ReasonOrgId";
+        keys[3] = "doctype";
+        keys[4] = "ldcd";
+        keys[5] = "nb";
+        keys[6] = "lncode";
+        keys[7] = "City_ID";
+        keys[8] = "area_id";
+        values[0] = reason_id;
+        values[1] = reason; //申請原因
+        values[2] = reasonOrgId; //申請政府機關
+        values[3] = doctype;
+        values[4] = ldcd; //地號
+        values[5] = obj;
+        values[6] = lncode;
+        values[7] = city_id;
+        values[8] = area_id;
+
+        var sName = "信託委託人查詢";
+        var param = "toolbar=no,titlebar=no,status=no,menubar=no,location=no,scrollbars=yes,resizable=no";
+        var whparam = mathwihe(760, 280);
+        if (oNewWindow == null) {
+            openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+        } else if (oNewWindow.closed == false) {
+            alert("您已開啟查詢功能,請先結束再重新查詢!!");
+            oNewWindow.focus();
+        } else {
+            openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+        }
+    }
+}
+
+
+/*****************************************
+☆地上建物查詢
+*****************************************/
+function RHD10_query() {
+    var targeturl = ApplyForm.targeturl.value;
+    var obj = "";
+    var doctype;
+    var isgov = document.ApplyForm.isGov.value;
+    var ldcd = ApplyForm.INPUT_011.value; //段小段
+    var city_id = document.getElementById("CityID").value;
+    var area_id = document.getElementById("AreaID").value;
+    var lncode = document.getElementById("LN").value; //地所
+    var land = ApplyForm.INPUT_013; //地號
+    var lob = true;
+    var stype = "";
+    var reason_id = document.getElementById("applyfor").options[document.getElementById("applyfor").selectedIndex].value; //申請用途ID
+    var reason = document.getElementById("REASON").value; //申請原因
+    var reasonOrgId = document.getElementById("ReasonOrgId").options[document.getElementById("ReasonOrgId").selectedIndex].value; //申請政府機關
+    if (ApplyForm.CF_type.value == "") 
+    {
+        if (ldcd.length == 0) {
+            alert('段小段代碼為空白!請選擇段小段再查詢!!');
+            return false;
+        }
+
+        if (isgov == "True") {
+            if (!checkreason(reason))
+                return false;
+        }
+
+        if (land.value.length == 0 || ldcd == "") {
+            alert('請輸入段/地號再查詢!!');
+            return false;
+        }else 
+        {
+            obj = land.value;
+            for (var i = 0; i < obj.length; i++) 
+            {
+                if ((obj.charAt(i) == ',') || (obj.charAt(i) == '，') || (obj.charAt(i) == '~') || (obj.charAt(i) == '～') || (obj.charAt(i) == '.')) 
+                {
+                    alert('請輸入單筆地號!!');
+                    return false;
+                }
+            }
+        }
+    }
+
+    substr = 'reason_id=' + reason_id + '&reason=' + reason + '&ReasonOrgId=' + reasonOrgId + '&doctype=' + doctype + '&ldcd=' + ldcd + '&nb=' + obj + '&lncode=' + lncode + '&City_ID=' + city_id + '&area_id=' + area_id;
+    var sURL = "../EpaperApplyP/RHD10_Query?" + substr;
+    var keys = [];
+    var values = [];
+    keys[0] = "reason_id";
+    keys[1] = "reason";
+    keys[2] = "ReasonOrgId";
+    keys[3] = "doctype";
+    keys[4] = "ldcd";
+    keys[5] = "nb";
+    keys[6] = "lncode";
+    keys[7] = "City_ID";
+    keys[8] = "area_id";
+    values[0] = reason_id;
+    values[1] = reason; //申請原因
+    values[2] = reasonOrgId; //申請政府機關
+    values[3] = "C"; //地建別
+    values[4] = ldcd; //段小段
+    values[5] = obj; //地號
+    values[6] = lncode;
+    values[7] = city_id;
+    values[8] = area_id;
+
+    var sName = "地上建物查詢";
+    var param = "toolbar=no,titlebar=no,status=no,menubar=no,location=no,scrollbars=yes,resizable=no";
+    var whparam = mathwihe(760, 280);
+    if (oNewWindow == null) {
+        openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+    } else if (oNewWindow.closed == false) {
+        alert("您已開啟查詢功能,請先結束再重新查詢!!");
+        oNewWindow.focus();
+    } else {
+        openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+    }
+    
+}
+
+/*****************************************
+☆地址隱匿查詢
+*****************************************/
+function CPU_query() 
+{
+    var targeturl = ApplyForm.targeturl.value;
+    var obj = "";
+    var doctype;
+    var isgov = document.ApplyForm.isGov.value;
+    var ldcd = ApplyForm.INPUT_011.value; //段小段
+    var city_id = document.getElementById("CityID").value;
+    var area_id = document.getElementById("AreaID").value;
+    var lncode = document.getElementById("LN").value; //地所
+    var land = ApplyForm.INPUT_013; //地號
+    var build = ApplyForm.INPUT_014; //建號
+    var lob = true;
+    var stype = "";
+    var reason_id = document.getElementById("applyfor").options[document.getElementById("applyfor").selectedIndex].value; //申請用途ID
+    var reason = document.getElementById("REASON").value; //申請原因
+    var reasonOrgId = document.getElementById("ReasonOrgId").options[document.getElementById("ReasonOrgId").selectedIndex].value; //申請政府機關
+    if (ApplyForm.CF_type.value == "") {
+        if (ldcd.length == 0) {
+            alert('段小段代碼為空白!請選擇段小段再查詢!!');
+            return false;
+        }
+
+        if ((land.value.length == 0) && (build.value.length == 0)) {
+            alert('請輸入地號或建號再查詢!!');
+            return false;
+        }
+
+        if (isgov == "True") {
+            if (!checkreason(reason))
+                return false;
+        }
+
+        if ((land.value.length > 0) && (build.value.length > 0)) {
+            wx = 260; wy = 80;
+            x = (screen.width - wx) / 2;
+            y = (screen.height - wy) / 2;
+
+            $('#msg_dialog').html('請選擇以地號或建號查詢!!').dialog(
+                { title: '', buttons: [
+                    { text: "地號", click: function () {
+                        $(this).dialog("close");
+                        getCF("C", 'CPU_query');
+                    }
+                    },
+                    { text: "建號", click: function () {
+                        $(this).dialog("close");
+                        getCF("F", 'CPU_query');
+                    }
+                    }]
+                }).dialog('open');
+            ApplyForm.CF_type.value = stype;
+        } else {
+            if (land.value.length > 0)
+                stype = "C";
+            else if (build.value.length > 0)
+                stype = "F";
+        }
+
+        if (stype == "C" || stype == "F") {
+            getCF(stype, 'CPU_query');
+        } else {
+            ApplyForm.CF_type.value = "";
+        }
+
+    } else if (ApplyForm.CF_type.value != "") {
+
+        var doctype, obj, substr;
+        obj = "";
+        substr = "";
+        doctype = ApplyForm.CF_type.value;
+        ApplyForm.CF_type.value = "";
+        if (land.value.length > 0 && build.value.length == 0) {
+            lob == true
+            obj = land.value;
+        } else if (land.value.length == 0 && build.value.length > 0) {
+            lob == false
+            obj = build.value;
+        } else {
+            if (doctype == "C") {
+                lob == true
+                obj = land.value;
+            } else if (doctype == "F") {
+                lob == false
+                obj = build.value;
+            }
+        }
+
+        for (var i = 0; i < obj.length; i++) {
+            if ((obj.charAt(i) == ',') || (obj.charAt(i) == '，')
+            || (obj.charAt(i) == '~') || (obj.charAt(i) == '～')) {
+                if (lob == true)
+                    alert('請輸入單筆地號!!');
+                else
+                    alert('請輸入單筆建號!!');
+                return false;
+            }
+        }
+
+        substr = 'reason_id=' + reason_id + '&reason=' + reason + '&ReasonOrgId=' + reasonOrgId + '&doctype=' + doctype + '&ldcd=' + ldcd + '&nb=' + obj + '&lncode=' + lncode + '&City_ID=' + city_id + '&area_id=' + area_id;
+        var sURL = "../EpaperApplyP/CPU_Query?" + substr;
+        var keys = [];
+        var values = [];
+        keys[0] = "reason_id";
+        keys[1] = "reason";
+        keys[2] = "ReasonOrgId";
+        keys[3] = "doctype";
+        keys[4] = "ldcd";
+        keys[5] = "nb";
+        keys[6] = "lncode";
+        keys[7] = "City_ID";
+        keys[8] = "area_id";
+        values[0] = reason_id;
+        values[1] = reason; //申請原因
+        values[2] = reasonOrgId; //申請政府機關
+        values[3] = doctype; //地建別
+        values[4] = ldcd; //段小段
+        values[5] = obj; //地建號
+        values[6] = lncode;
+        values[7] = city_id;
+        values[8] = area_id;
+
+        var sName = "地址隱匿查詢";
+        var param = "toolbar=no,titlebar=no,status=no,menubar=no,location=no,scrollbars=yes,resizable=no";
+        var whparam = mathwihe(760, 280);
+        if (oNewWindow == null) {
+            openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+        } else if (oNewWindow.closed == false) {
+            alert("您已開啟查詢功能,請先結束再重新查詢!!");
+            oNewWindow.focus();
+        } else {
+            openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+        }
+    }
+}
+
+
+/*****************************************
+☆代理人、複代理人查詢
+*****************************************/
+function AGN_query(userid, QryFun)
+{
+    if (userid.length == 0) {//統編
+        alert('請輸入「代理人統編」或「複代理人統編」再查詢!!');
+        return false;
+    } else if (userid.length < 8) {
+        alert('請輸入正確的「代理人統編」或「複代理人統編」!!');
+        return false;
+    }
+
+    var targeturl = ApplyForm.targeturl.value;
+    var isgov = document.ApplyForm.isGov.value;
+    var city_id = document.getElementById("CityID").value;
+    var area_id = document.getElementById("AreaID").value;
+    var lncode = document.getElementById("LN").value; //
+    var ldcd = ApplyForm.INPUT_011.value; //段小段
+    var reason_id = document.getElementById("applyfor").options[document.getElementById("applyfor").selectedIndex].value; //申請用途ID
+    var reason = document.getElementById("REASON").value; //申請原因
+    var reasonOrgId = document.getElementById("ReasonOrgId").options[document.getElementById("ReasonOrgId").selectedIndex].value; //申請政府機關
+    var substr;
+    
+    if (isgov == "True") {
+        if (!checkreason(reason))
+            return false;
+    }
+
+    substr = 'reason_id=' + reason_id + '&reason=' + reason + '&ReasonOrgId=' + reasonOrgId + '&userid=' + userid + '&City_ID=' + city_id + '&area_id=' + area_id + '&lncode=' + lncode + '&ldcd=' + ldcd;
+    //      alert(substr);
+    var sURL = "../EpaperApplyP/AGN_Query?" + substr;
+    var keys = [];
+    var values = [];
+    keys[0] = "reason_id";
+    keys[1] = "reason";
+    keys[2] = "ReasonOrgId";
+    keys[3] = "userid";
+    keys[4] = "City_ID";
+    keys[5] = "area_id";
+    keys[6] = "lncode";
+    keys[7] = "ldcd";
+    keys[8] = "QryFun";
+    values[0] = reason_id;
+    values[1] = reason; //申請原因
+    values[2] = reasonOrgId; //申請政府機關
+    values[3] = userid; //統編
+    values[4] = city_id;
+    values[5] = area_id;
+    values[6] = lncode;
+    values[7] = ldcd; //段小段
+    values[8] = QryFun; //查詢的欄位
+
+    var sName = "代理人、複代理人查詢";
+    var param = "toolbar=no,titlebar=no,status=no,menubar=no,location=no,scrollbars=yes,resizable=no";
+    var whparam = mathwihe(760, 280);
+    if (oNewWindow == null) {
+        openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+    } else if (oNewWindow.closed == false) {
+        alert("您已開啟查詢功能,請先結束再重新查詢!!");
+        oNewWindow.focus();
+    } else {
+        openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+    }
+   
+}
+
+function AGN_query2(userid, QryFun) {
+    if (userid.length == 0) {//統編
+        alert('請輸入「代理人統編」或「複代理人統編」再查詢!!');
+        return false;
+    } else if (userid.length < 8) {
+        alert('請輸入正確的「代理人統編」或「複代理人統編」!!');
+        return false;
+    }
+    document.getElementById("QryAGNMsg").style.display = 'inline';
+    document.getElementById("APPLYUSER1_Qry").disabled = true;
+    document.getElementById("APPLYUSER2_Qry").disabled = true;
+
+    $.ajax({
+        type: 'POST',
+        url: "../EpaperApplyP/AGN_Query2",
+        data:
+        {
+            userid: userid,
+            City_ID: document.getElementById("CityID").value,
+            area_id: document.getElementById("AreaID").value,
+            lncode: document.getElementById("LN").value,
+            ldcd: ApplyForm.INPUT_011.value //段小段
+        }
+    }).done(function (data) {
+
+        document.getElementById("QryAGNMsg").style.display = 'none';
+        document.getElementById("APPLYUSER1_Qry").disabled = false;
+        document.getElementById("APPLYUSER2_Qry").disabled = false;
+        if (QryFun == '1') //代理人
+            document.getElementById("APPLYUSER1_Qry").className = 'btn_LidnRtn';
+        else//複代理人
+            document.getElementById("APPLYUSER2_Qry").className = 'btn_LidnRtn';
+
+        if (data.length > 0) {
+            var msg = data.split("~~:");
+            if (msg[0] == "0") {
+                var rtndata = msg[1].split("$");
+
+                if (QryFun == '1') {//代理人
+                    document.getElementById("APPLYUSER1").value = rtndata[0];
+                    document.getElementById("APPLYUSER_TEL1").value = rtndata[1];
+                } else {//複代理人
+                    document.getElementById("APPLYUSER2").value = rtndata[0];
+                    document.getElementById("APPLYUSER_TEL2").value = rtndata[1];
+                }
+            } else {
+                var qrymsg = "查詢";
+                qrymsg += (QryFun == '1') ? "代理人" : "複代理人";
+                qrymsg += "\n";
+                alert(qrymsg +msg[1]); //錯誤訊息
+            }
+        }
+    });
+
+}
+
+/*****************************************
+☆相鄰地查詢
+*****************************************/
+function nearby_query() {
+    var targeturl = ApplyForm.targeturl.value;
+    var obj = "";
+    var city_id = document.getElementById("CityID").value;
+    var area_id = document.getElementById("AreaID").value;
+    var land = ApplyForm.INPUT_013; //地號
+    var ldcd = ApplyForm.INPUT_011.value; //段小段
+    //var lncode = document.getElementById("Show_land_num").options[document.getElementById("Show_land_num").selectedIndex].title;//難字
+    var lncode = document.getElementById("LN").value; //難字
+    var reason_id = document.getElementById("applyfor").options[document.getElementById("applyfor").selectedIndex].value; //申請用途ID
+    var reason = document.getElementById("REASON").value; //申請原因
+    var reasonOrgId = document.getElementById("ReasonOrgId").options[document.getElementById("ReasonOrgId").selectedIndex].value; //申請政府機關
+    if (ApplyForm.CF_type.value == "") 
+    {
+        if (ldcd.length == 0) {
+            alert('段小段代碼為空白!請選擇段小段再查詢!!');
+            return false;
+        }        
+        
+        if (!checkreason(reason))
+            return false;
+
+        if (land.value.length == 0 || ldcd == "") {
+            alert('請輸入段/地號再查詢!!');
+            return false;
+        } else 
+        {
+            obj = land.value;
+            for (var i = 0; i < obj.length; i++) 
+            {
+                if ((obj.charAt(i) == ',') || (obj.charAt(i) == '，') || (obj.charAt(i) == '~') || (obj.charAt(i) == '～') || (obj.charAt(i) == '.')) 
+                {
+                    alert('請輸入單筆地號!!');
+                    return false;
+                }
+            }
+        }
+    }
+    substr = 'reason_id=' + reason_id + '&reason=' + reason + '&ReasonOrgId=' + reasonOrgId + '&CityId=' + city_id + '&AreaId=' + area_id + '&AA48=' + ldcd + '&AA49=' + land.value + '&LNCode=' + lncode;
+    var sURL = "../EpaperApplyP/Nearby_Query?" + substr;
+    var keys = [];
+    var values = [];
+    keys[0] = "reason_id";
+    keys[1] = "reason";
+    keys[2] = "ReasonOrgId";
+    keys[3] = "CityId";
+    keys[4] = "AreaId";
+    keys[5] = "AA48";
+    keys[6] = "AA49";
+    keys[7] = "LNCode";
+    values[0] = reason_id;
+    values[1] = reason; //申請原因
+    values[2] = reasonOrgId; //申請政府機關
+    values[3] = city_id;
+    values[4] = area_id;
+    values[5] = ldcd;
+    values[6] = land.value;
+    values[7] = lncode;
+
+    var sName = "相鄰地查詢";
+    var param = "toolbar=no,titlebar=no,status=no,menubar=no,location=no,scrollbars=yes,resizable=no";
+    var whparam = mathwihe(760, 850);
+    if (oNewWindow == null) {
+        openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+    } else if (oNewWindow.closed == false) {
+        alert("您已開啟查詢功能,請先結束再重新查詢!!");
+        oNewWindow.focus();
+    } else {
+        openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+    }
+}
+
+function get_full_url(url_path) {
+    var loc = window.location;
+    var url = "" + loc.protocol + "//" + loc.host + url_path;
+    return url;
+}
+
+
+function openWindowWithPost(url, name, keys, values, param, whparam) {
+    oNewWindow = window.open("", name, param + "," + whparam);
+    if (!oNewWindow) return false;
+    var html = "";
+    html += "<html><head></head><body>";
+    html += "<div style='text-align:center;margin:0 auto'><img width='260px' src='../Images/pub/loader.gif' /></div>";
+    html +="<form id='formid' method='post' action='" + get_full_url(url) + "'>";
+    if (keys && values && (keys.length == values.length))
+        for (var i = 0; i < keys.length; i++)
+            html += "<input type='hidden' name='" + keys[i] + "' value='" + values[i] + "'/>";
+    html += "</form></body></html>";
+    //oNewWindow.document.write(html);
+    oNewWindow.document.body.innerHTML = html;
+    oNewWindow.formid.submit();
+    return oNewWindow;
+}
+
+/*****************************************
+☆收件字使用期間表 
+*****************************************/
+function VoldRecharQry() {
+    var targeturl = ApplyForm.targeturl.value;
+    var city_id = document.ApplyForm.CityID.value;
+    var area_id = document.ApplyForm.AreaID.value;
+    var sURL = "../EpaperApplyP/Vold_Rechar?City_ID=" + city_id + "&area_id=" + area_id;
+    var keys = [];
+    var values = [];
+    keys[0] = "City_ID";
+    keys[1] = "area_id";
+    values[0] = city_id;
+    values[1] = area_id;
+
+    var param = "scrollbars=yes";
+    var whparam = mathwihe(760, 600);
+    if (oNewWindow == null) {
+        openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+    } else if (oNewWindow.closed == false) {
+        alert('您已開啟查詢功能,請先結束再重新查詢!!');
+        oNewWindow.focus();
+    } else {
+        openWindowWithPost(targeturl, "web", keys, values, param, whparam);
+    }
+}
+
+

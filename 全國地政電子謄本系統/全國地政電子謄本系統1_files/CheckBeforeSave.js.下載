@@ -1,0 +1,309 @@
+﻿
+function checksinglerow(i,type){
+  
+  //檢查段號是否輸入
+  if (ApplyForm.INPUT_011.value==""){
+      alert('請輸入段號!!');
+	  return (null);
+  }
+
+  //檢查申請項目是否有勾選
+  if ((ApplyForm.INPUT_021.checked==false)&&
+      (ApplyForm.INPUT_031.checked==false)&&
+      (ApplyForm.INPUT_041.checked==false)&&
+      (ApplyForm.INPUT_051.checked==false)&&
+      (ApplyForm.INPUT_061.checked==false)&&
+      (ApplyForm.INPUT_071.checked==false)&&
+      (ApplyForm.INPUT_081.checked==false)){      
+      alert('您尚未勾選申請項目!!\n至少需勾選一筆!!');
+	  return (null);
+  }
+  
+  //檢查地籍圖比例尺是否輸入
+  if ((ApplyForm.INPUT_033[2].checked==true) && (ApplyForm.INPUT_0331.value.length==0)){
+    alert('請輸入地籍圖比例尺!!');
+    return(null);
+  }
+  
+  //地建號自動補0  
+  if (autosupplyzero(ApplyForm.INPUT_013,'地號')==null)  
+    return (null);
+  if (autosupplyzero(ApplyForm.INPUT_014,'建號')==null)  
+    return (null);
+
+  //地號或建號至少輸入一項
+  if ((ApplyForm.INPUT_021.checked)||
+      (ApplyForm.INPUT_031.checked)||
+      (ApplyForm.INPUT_041.checked)||
+      (ApplyForm.INPUT_051.checked)||
+      (ApplyForm.INPUT_081.checked)||
+      (ApplyForm.INPUT_061.checked)){
+       if ((ApplyForm.INPUT_061.checked==false) && (ApplyForm.INPUT_013.value.length==0)&&(ApplyForm.INPUT_014.value.length==0)){
+          alert('請輸入地號或建號!!');
+	  return (null);
+       }
+  } 
+
+  //****************  
+  //單筆檢查
+  //**************
+  //檢查地建號單筆時，統編才能多筆，反之亦然
+  //0:單筆,1:多筆
+  var LANDFlag=1;
+  var BUILDFlag=1;
+  var LIDNFlag=1;
+  
+  if ((ApplyForm.INPUT_013.value.indexOf(',')==-1) && (ApplyForm.INPUT_013.value.indexOf('~')==-1))
+    LANDFlag=0;
+    
+  if ((ApplyForm.INPUT_014.value.indexOf(',')==-1) && (ApplyForm.INPUT_014.value.indexOf('~')==-1))
+    BUILDFlag=0;
+
+  if ((ApplyForm.INPUT_015.value.indexOf(',')==-1) && (ApplyForm.INPUT_015.value.indexOf('~')==-1))
+    LIDNFlag=0;
+  
+  if (((LANDFlag==1)||(BUILDFlag==1)) && (LIDNFlag==1)){
+    alert('地建號與統一編號無法同時輸入多筆，請擇一重新輸入單筆資料!!');
+    return(null);
+  }
+
+//第一類謄本,申請登記和地價謄本的統編檢查
+//2013-12-06 改為「所有權部」、「標示部及所有權部」統編可選擇輸入或不輸入 
+ if (ApplyForm.REGTYPE.value=="1"){   
+   if ((ApplyForm.INPUT_023[0].checked)||(ApplyForm.INPUT_023[1].checked)
+      ||(ApplyForm.INPUT_023[4].checked)
+      ||(ApplyForm.INPUT_023[5].checked)
+      ||(ApplyForm.INPUT_023[7].checked)
+      ||(ApplyForm.INPUT_054.checked)||(ApplyForm.INPUT_055.checked)
+      ){
+        //當登記勾選除了標示部的其他選項或地價勾選申報申報地價或前次移轉現值,統編要輸入
+        if (ApplyForm.INPUT_015.value.length<8){	  
+          alert('請輸入正確的統一編號!!');
+	  return (null);
+	}
+      } 
+  
+ }
+ //第二類謄本,申請登記和地價謄本的統編檢查
+if (ApplyForm.REGTYPE.value == "2") {
+    var userapplytype = ApplyForm.UserApplyType.value;
+   //檢查統編要輸入的情況,以登記優先檢查
+    if (ApplyForm.INPUT_021.checked)
+    {
+        if (userapplytype == "1") {
+            if (ApplyForm.INPUT_015.value.length < 8) {
+                alert('請輸入正確的統一編號!!');
+                return (null);
+            }
+        } else {
+            if (ApplyForm.INPUT_023[0].checked || ApplyForm.INPUT_023[5].checked) {
+                //當勾選「他項權利部個人」或「部分」
+                if (ApplyForm.INPUT_015.value.length < 8) {
+                    alert('請輸入正確的統一編號!!');
+                    return (null);
+                }
+            } else if (ApplyForm.INPUT_023[1].checked) {
+                //當勾選「全部」
+                if ((userapplytype == "2") && (ApplyForm.INPUT_015.value.length < 8)) {
+                    //「登記名義人代理人」
+                    alert('請輸入正確的統一編號!!');
+                    return (null);
+                } else if (userapplytype != "2") {
+                    if (ApplyForm.INPUT_015.value.length > 0) {
+                        alert('不需輸入統一編號!!');
+                        ApplyForm.INPUT_015.value = "";
+                        return (null);
+                    }
+                }
+            } else if (ApplyForm.INPUT_023[3].checked || ApplyForm.INPUT_023[6].checked) 
+            {
+                //2013-12-06 改為「所有權部」、「標示部及所有權部」統編可選擇輸入或不輸入
+            } 
+            else 
+            {
+                if (ApplyForm.INPUT_015.value.length > 0) {
+                    alert('不需輸入統一編號!!');
+                    ApplyForm.INPUT_015.value = "";
+                    return (null);
+                }
+            }
+        }
+
+   }else if (ApplyForm.INPUT_051.checked){
+     //地價謄本
+     if ((ApplyForm.INPUT_054.checked)||(ApplyForm.INPUT_055.checked)){
+       //如果未勾選登記謄本時,檢查是否勾選申報地價或前次移轉現值,統編要輸入
+       if (ApplyForm.INPUT_015.value.length<8){	  
+         alert('請輸入正確的統一編號!!');
+	 return (null);
+       }        
+     }else if (ApplyForm.INPUT_058[1].checked){
+       //檢查是否勾選地價的全部,統編要清掉
+	if (ApplyForm.INPUT_015.value.length>0){
+          alert('不需輸入統一編號!!');
+	  ApplyForm.INPUT_015.value="";
+	  return (null);
+	}
+     }
+   }
+
+ }
+    
+  
+
+  
+  
+  if (((ApplyForm.INPUT_031.checked)||(ApplyForm.INPUT_051.checked))&&(ApplyForm.INPUT_013.value.length==0)){
+      //當勾選地籍圖或地價謄本,檢查地號要輸入
+      alert('請輸入地號!!');
+	  return (null);
+  }
+  if ((ApplyForm.INPUT_041.checked)&&(ApplyForm.INPUT_014.value.length==0)){
+      //當勾選地建物測量成果圖謄本,檢查建號要輸入
+      alert('請輸入建號!!');
+	  return (null);
+  }
+  
+  if ((ApplyForm.INPUT_056[1].checked)&&(parseInt(ApplyForm.INPUT_0562.value,10)<parseInt(ApplyForm.INPUT_0561.value,10)))
+  {
+      //檢查地價謄本--公告現值的歷年區間輸入
+      alert('地價謄本--公告現值的歷年區間輸入有誤!!');
+	  return (null);     
+  }
+  if ((ApplyForm.INPUT_057[1].checked)&&(parseInt(ApplyForm.INPUT_0572.value,10)<parseInt(ApplyForm.INPUT_0571.value,10)))
+  {
+      //檢查地價謄本--申報地價的歷年區間輸入
+      alert('地價謄本--申報地價的歷年區間輸入有誤!!');
+	  return (null);     
+  }
+  if ((ApplyForm.INPUT_056[1].checked)&&(
+  (parseInt(ApplyForm.INPUT_0561.value,10)>='<%=reciyear%>')||
+  (parseInt(ApplyForm.INPUT_0562.value,10)>='<%=reciyear%>')
+  ))
+  {
+      //檢查地價謄本--公告現值的歷年區間輸入需小於今年
+      alert('地價謄本--公告現值的歷年區間輸入有誤!!\n輸入數值需小於今年!!');
+	  return (null);     
+  }
+  if ((ApplyForm.INPUT_057[1].checked)&&(
+  (parseInt(ApplyForm.INPUT_0571.value,10)>='<%=prcyear%>')||
+  (parseInt(ApplyForm.INPUT_0572.value,10)>='<%=prcyear%>')
+  ))
+  {
+      //檢查地價謄本--申報地價的歷年區間輸入需小於今年
+      alert('地價謄本--申報地價的歷年區間輸入有誤!!\n輸入數值需小於當期(<%=prcyear%>年)!!');
+	  return (null);     
+  }
+
+  //勾選異動索引
+  if (ApplyForm.INPUT_061.checked){
+    if ((ApplyForm.INPUT_0612.length==0) && (ApplyForm.INPUT_062[0].checked)){
+	  alert('無異動索引收件字資料,請勿勾選!!');
+	  return (null);
+	}
+	if ((ApplyForm.INPUT_062[0].checked) && ((ApplyForm.INPUT_0611.value.length==0) || (ApplyForm.INPUT_0613.value.length==0))){
+	  alert('請輸入異動索引完整收件年字號!!');
+	  return (null);
+	}else if ((ApplyForm.INPUT_062[1].checked) && (ApplyForm.INPUT_013.value.length==0)){
+	  alert('請輸入地號!!');	
+	  return (null);
+	}else if ((ApplyForm.INPUT_062[2].checked) && ((ApplyForm.INPUT_013.value.length==0)||(ApplyForm.INPUT_0614.value.length==0))){
+	  alert('請輸入地號和異動索引登記次序!!');	
+	  return (null);
+	}else if ((ApplyForm.INPUT_062[3].checked) && (ApplyForm.INPUT_013.value.length==0)){
+	  alert('請輸入地號!!');	
+	  return (null);
+	}else if ((ApplyForm.INPUT_062[4].checked) && ((ApplyForm.INPUT_013.value.length==0)||(ApplyForm.INPUT_015.value.length==0))){
+	  alert('請輸入地號和統一編號!!');		
+	  return (null);
+	}else if ((ApplyForm.INPUT_062[5].checked) && (ApplyForm.INPUT_015.value.length==0)){
+	  alert('請輸入統一編號!!');		
+	  return (null);
+	}else if ((ApplyForm.INPUT_062[6].checked) && (ApplyForm.INPUT_014.value.length==0)){
+	  alert('請輸入建號!!');		
+	  return (null);
+	}else if ((ApplyForm.INPUT_062[7].checked) && ((ApplyForm.INPUT_014.value.length==0)||(ApplyForm.INPUT_0614.value.length==0))){
+	  alert('請輸入建號和異動索引登記次序!!');		
+	  return (null);
+	}else if ((ApplyForm.INPUT_062[8].checked) && (ApplyForm.INPUT_014.value.length==0)){
+	  alert('請輸入建號和異動索引部別!!');		
+	  return (null);
+	}else if ((ApplyForm.INPUT_062[9].checked) && ((ApplyForm.INPUT_014.value.length==0)||(ApplyForm.INPUT_015.value.length==0))){
+	  alert('請輸入建號和統一編號!!');		
+	  return (null);
+	}  
+    
+    //除了收件年字號類型，檢查申請連續地建號
+    if ((ApplyForm.INPUT_062[1].checked)||(ApplyForm.INPUT_062[2].checked)||
+	(ApplyForm.INPUT_062[3].checked)||(ApplyForm.INPUT_062[4].checked)||
+	(ApplyForm.INPUT_062[6].checked)||(ApplyForm.INPUT_062[7].checked)||
+	(ApplyForm.INPUT_062[8].checked)||(ApplyForm.INPUT_062[9].checked))
+	{	
+	  if ((check_snumber(ApplyForm.INPUT_013.value)==false)||(check_snumber(ApplyForm.INPUT_014.value)==false)){
+	    alert('異動所引無法申請連續地建號,請拆件申請!!');		
+	    return (null);
+	  }  
+	}
+  }
+  
+  
+  //勾選異動清冊
+  if (ApplyForm.INPUT_071.checked){
+    if (ApplyForm.INPUT_0732.length==0){
+	alert('無異動清冊收件字資料,請勿勾選!!');
+	return (null);
+    }
+    
+    if ((ApplyForm.INPUT_0731.value.length==0) || (ApplyForm.INPUT_0733.value.length==0)){
+       alert('請輸入異動清冊完整收件年字號!!');
+      return (null);
+    }
+    
+  }
+    
+    
+  //公告現值勾選歷年,只輸入起始年自動帶入終止年
+  if ((ApplyForm.INPUT_056[1].checked)&&(ApplyForm.INPUT_0562.value.length==0))
+     ApplyForm.INPUT_0562.value=ApplyForm.INPUT_0561.value;
+  //申報地價勾選歷年,只輸入起始年自動帶入終止年
+  if ((ApplyForm.INPUT_057[1].checked)&&(ApplyForm.INPUT_0572.value.length==0))
+     ApplyForm.INPUT_0572.value=ApplyForm.INPUT_0571.value;
+  
+  //檢查歷年區間值是否輸入
+  if (
+  ((ApplyForm.INPUT_056[1].checked)&&((ApplyForm.INPUT_0561.value.length==0)||(ApplyForm.INPUT_0562.value.length==0)))
+  ||
+  ((ApplyForm.INPUT_057[1].checked)&&((ApplyForm.INPUT_0571.value.length==0)||(ApplyForm.INPUT_0572.value.length==0)))
+  ){
+     //勾選歷年
+     alert('請輸入歷年起迄!!');
+	 return (null);
+  }
+  
+  //檢查異動索引指定日期
+  if (ApplyForm.INPUT_063.checked){
+    if ((ApplyForm.INPUT_0631.value.length<7)||(ApplyForm.INPUT_0632.value.length<7)){
+      alert('請輸入異動索引指定日期範圍起迄!!')
+      return (null);
+    }
+    
+  }
+  
+  if (type=="new"){
+    //檢查申請項目是否有勾選
+    if ((ApplyForm.INPUT_021.checked)||(ApplyForm.INPUT_031.checked)||
+        (ApplyForm.INPUT_041.checked)||(ApplyForm.INPUT_051.checked)||
+        (ApplyForm.INPUT_061.checked)||(ApplyForm.INPUT_081.checked)){      
+       //新增時檢查地.建號重覆輸入
+       for (var x=1;x<document.all.DataSheet.rows.length;x++){
+         if ((ApplyForm.INPUT_013.value==INPUT_013[document.all.DataSheet.rows(x).cells(0).innerText])&&(ApplyForm.INPUT_014.value==INPUT_014[document.all.DataSheet.rows(x).cells(0).innerText])){
+          if (confirm('地建號輸入重覆,繼續新增?')==false)
+            return(null);
+          break;  
+         }
+       }
+    }
+  }
+  
+  return ("");
+}

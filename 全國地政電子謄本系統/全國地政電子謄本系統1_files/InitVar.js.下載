@@ -1,0 +1,85 @@
+﻿var row_index=0;    //多筆顯示index
+var FocusRowIndex=0; //Focus的記錄id
+
+var INPUT_011 = new Array(); //段小段
+var land_char = new Array(); //段小段中文
+var INPUT_013 = new Array(); //地號
+var INPUT_014 = new Array(); //建號
+var INPUT_015 = new Array(); //統一編號
+var INPUT_016 = new Array(); //鄉鎮
+var INPUT_017 = new Array(); //所別
+var INPUT_018 = new Array(); //縣市別
+var INPUT_019 = new Array(); //所有權人姓名
+var INPUT_018C = new Array(); //縣市別中文
+//===================================
+var INPUT_021 = new Array(); //登記謄本
+var INPUT_022 = new Array(); //無需列印地上建物建號
+var INPUT_023 = new Array(); //登記謄本選項
+var INPUT_024 = new Array(); //無需列印主建物附表
+var INPUT_025 = new Array(); //無需列印前次移轉現值
+//===================================
+var INPUT_031 = new Array(); //地籍圖謄本
+var INPUT_032 = new Array(); //數值區列印界址點號及坐標表
+var INPUT_033 = new Array(); //比例尺選項
+var INPUT_0331 = new Array();//指定比例尺比例
+
+//===================================
+var INPUT_041 = new Array(); //建物測量成果圖謄本
+//===================================
+var INPUT_051 = new Array(); //地價謄本
+var INPUT_052 = new Array(); //重測前
+var INPUT_053 = new Array(); //公告現值
+var INPUT_054 = new Array(); //申報地價
+var INPUT_055 = new Array(); //前次移轉
+var INPUT_056 = new Array(); //公告現值--選項
+var INPUT_057 = new Array(); //申報地價--選項
+var INPUT_0561 = new Array(); //公告現值--歷年--起
+var INPUT_0562 = new Array(); //公告現值--歷年--迄
+var INPUT_0571 = new Array(); //申報地價--歷年--起
+var INPUT_0572 = new Array(); //申報地價--歷年--迄
+var INPUT_058 = new Array();  //申報地價--個人或全部
+//=====================================
+var INPUT_061 = new Array();  //異動索引
+var INPUT_0611 = new Array(); //異動索引--收件年
+var INPUT_0612 = new Array(); //異動索引--收件字
+var INPUT_0612C = new Array(); //異動索引--收件字中文
+var INPUT_0613 = new Array(); //異動索引--收件號
+var INPUT_0614 = new Array(); //異動索引--登記次序
+var INPUT_0615 = new Array(); //異動索引--部門
+var INPUT_062 = new Array();  //異動索引類型
+var INPUT_063 = new Array();  //異動索引指定日期範圍
+var INPUT_0631 = new Array();  //異動索引-指定日期範圍起
+var INPUT_0631Y = new Array();  //異動索引-指定年起
+var INPUT_0631M = new Array();  //異動索引-指定月起
+var INPUT_0631D = new Array();  //異動索引-指定日起
+var INPUT_0632 = new Array();  //異動索引-指定日期範圍迄
+var INPUT_0632Y = new Array();  //異動索引-指定年迄
+var INPUT_0632M = new Array();  //異動索引-指定月迄
+var INPUT_0632D = new Array();  //異動索引-指定日迄
+//=====================================
+var INPUT_071 = new Array();  //異動清冊
+//var INPUT_072 = new Array();  //異動清冊類型
+var INPUT_0731 = new Array(); //異動清冊--收件年
+var INPUT_0732 = new Array(); //異動清冊--收件字
+var INPUT_0732C = new Array(); //異動清冊--收件字中文
+var INPUT_0733 = new Array(); //異動清冊--收件號
+var REG_CNT = new Array(); //登記謄本-份數
+var PIC1_CNT = new Array(); //地籍圖謄本-份數
+var PRC_CNT = new Array(); //地價謄本-份數
+var PIC2_CNT = new Array(); //建物測量圖-份數
+var IDX_CNT = new Array(); //異動索引-份數
+var IDR_CNT = new Array(); //異動清冊--份數
+var REF_CNT = new Array(); //土地參考資訊--份數
+var PEO_CNT = new Array(); //人工登記謄本--份數
+//===================================
+var INPUT_081 = new Array(); //土地參考資訊
+//===================================
+var INPUT_091 = new Array(); //人工登記謄本
+var INPUT_092 = new Array(); //人工登記謄本選項
+//===================================
+var Error_Message = new Array(); //錯誤訊息
+var INPUT_APPLYFOR="";
+var INPUT_REASONORGID = "";
+
+
+

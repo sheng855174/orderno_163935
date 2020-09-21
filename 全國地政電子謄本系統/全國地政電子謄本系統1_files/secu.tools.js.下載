@@ -1,0 +1,949 @@
+﻿/*
+* jQuery Secureinside Tools plugin
+* Version 1.0 (09/01/2010)
+* @requires jQuery v1.4.1 or later
+*
+* Copyright (c) 2010 Secureinside co.,
+* Dual licensed under the MIT (MIT-LICENSE.txt)
+* and GPL (GPL-LICENSE.txt) licenses.
+*
+* Depends:
+*	jquery.selectboxes.js
+*/
+(function ($) {
+    // 指定city, 設定 area,section 
+    $.fn.showCityAreaSection = function (options) {
+        var defaultOptions = {
+            ln: '',
+            area: '',
+            section: '',
+            defaultValue: { city: '--', ln: '--', area: '--', section: '--' },
+            defOption: {
+                city: { '--': '請選擇' },
+                ln: { '--': '請選擇' },
+                area: { '--': '請選擇' },
+                section: { '--': '請選擇' }
+            },
+            targetID: { city: 'City', ln: 'LN', area: 'Area', section: 'Session' },
+            url: { city: '/gateManager/Infomant/Section/Cities',
+                ln: '/gateManager/Infomant/Section/LNs',
+                area: '/gateManager/Infomant/Section/Areas',
+                section: '/gateManager/Infomant/Section/Sections'
+            },
+            cityDiscard: [],
+            sortByText: {city: false, ln: false, area: false, section: true}
+        };
+        var opt = $.extend({}, defaultOptions, options);
+        opt.defOption.toArray = function (key) {
+            var v = [];
+            if (key) {
+                for (var item in this[key]) {
+                    v.push({ key: item, value: this[key][item] });
+                }
+            } else {
+                for (var item in this) {
+                    for (var kv in this[item]) {
+                        if (typeof (this[item]) != 'function')
+                            v.push({ key: kv, value: this[item][kv] });
+                    }
+                }
+            }
+            return v;
+        };
+        var $city = this;
+        var $ln = exist(opt.ln);
+        var $area = exist(opt.area);
+        var $section = exist(opt.section);
+        var _cityValue = defValue(opt.defaultValue.city, opt.defOption.toArray('city')[0].key);
+        var _lnValue = defValue(opt.defaultValue.ln, opt.defOption.toArray('ln')[0].key);
+        var _areaValue = defValue(opt.defaultValue.area, opt.defOption.toArray('area')[0].key);
+        var _sectionValue = defValue(opt.defaultValue.section, opt.defOption.toArray('section')[0].key);
+        var $cityTarget = exist(opt.targetID.city);
+        var $lnTarget = exist(opt.targetID.ln);
+        var $areaTarget = exist(opt.targetID.area);
+        var $sectionTarget = exist(opt.targetID.section);
+        // 開始產生關聯下拉式選單
+        $city.showCityOptions(opt.url.city, _cityValue, opt.defOption.city, opt.cityDiscard, opt.sortByText.city)
+            .change(function (e, chgVal) {
+                if (chgVal) {
+                    for (var item in opt.defaultValue) {
+                        if (chgVal[item])
+                            opt.defaultValue[item] = chgVal[item];
+                        else
+                            opt.defaultValue[item] = opt.defOption.toArray(item)[0].key;
+                    }
+                    _cityValue = defValue(opt.defaultValue.city, opt.defOption.toArray('city')[0].key);
+                    _lnValue = defValue(opt.defaultValue.ln, opt.defOption.toArray('ln')[0].key);
+                    _areaValue = defValue(opt.defaultValue.area, opt.defOption.toArray('area')[0].key);
+                    _sectionValue = defValue(opt.defaultValue.section, opt.defOption.toArray('section')[0].key);
+                }
+                // 觸發第二階下拉式選單
+                if ($cityTarget) {
+                    $cityTarget.val($(this).val()).trigger('textchange');
+                }
+                changeLNOptions();
+                if ($ln == false)
+                    changeAreaOptions();
+            }).after(function() {
+            	if(typeof opt.fn == 'function') {
+                    if (typeof opt.args == 'object') {
+                        opt.fn.apply($city, opt.args);
+                    } else {
+                        opt.fn.call($city);
+                    }
+            	}
+            });
+
+        function changeLNOptions() {
+            if ($ln) {
+                $ln.unbind('change').removeOption(/.?/);
+                if ($city.val() != null && $city.val() != opt.defOption.toArray('city')[0].key) {
+                    $ln.showLnOptions(opt.url.ln, _lnValue, $city.val(), '', opt.defOption.ln, opt.sortByText.ln)
+                        .change(function (e, chgVal) {
+                            if (chgVal) {
+                                for (var item in opt.defaultValue) {
+                                    if (item == 'area' || item == 'section')
+                                        if (chgVal[item])
+                                            opt.defaultValue[item] = chgVal[item];
+                                        else
+                                            opt.defaultValue[item] = opt.defOption.toArray(item)[0].key;
+                                }
+                                _areaValue = defValue(opt.defaultValue.area, opt.defOption.toArray('area')[0].key);
+                                _sectionValue = defValue(opt.defaultValue.section, opt.defOption.toArray('section')[0].key);
+                            }
+                            if ($lnTarget) {
+                                $lnTarget.val($(this).val()).trigger('textchange');
+                            }
+                            changeAreaOptions();
+                        });
+                } else {
+                    $ln.addOption(opt.defOption.ln, true);
+                    if ($lnTarget) {
+                        $lnTarget.val($ln.val()).trigger('textchange');
+                    }
+                    changeAreaOptions();
+                }
+            }
+        }
+        function changeAreaOptions() {
+            if ($area) {
+                $area.unbind('change').removeOption(/.?/);
+                var _dfCityVal = (opt.defOption.city ? opt.defOption.toArray('city')[0].key : null);
+                var _dfLnVal = (opt.defOption.ln ? opt.defOption.toArray('ln')[0].key : null);
+                if (($city.val() != null && $city.val() != _dfCityVal) || ($ln && $ln.val() != null && $ln.val() != _dfLnVal)) {
+                    $area.showAreaOptions(opt.url.area, _areaValue,
+                    	$city.val(), ($ln ? (defValue($ln.val(), _dfLnVal) == _dfLnVal ? '' : $ln.val()) : ''),
+                    	opt.defOption.area, opt.sortByText.area)
+                     .change(function (e, chgVal) {
+                         if (chgVal) {
+                             for (var item in opt.defaultValue) {
+                                 if (item == 'section')
+                                     if (chgVal[item])
+                                         opt.defaultValue[item] = chgVal[item];
+                                     else
+                                         opt.defaultValue[item] = opt.defOption.toArray(item)[0].key;
+                             }
+                             _sectionValue = defValue(opt.defaultValue.section, opt.defOption.toArray('section')[0].key);
+                         }
+                         if ($areaTarget) {
+                             $areaTarget.val($(this).val()).trigger('textchange');
+                         }
+                         // 觸發第三階下拉式選單
+                         changeSectionOptions();
+                     });
+                } else {
+                    $area.addOption(opt.defOption.area, true);
+                    if ($areaTarget) {
+                        $areaTarget.val($area.val()).trigger('textchange');
+                    }
+                    changeSectionOptions();
+                }
+            }
+        }
+        function changeSectionOptions() {
+            if ($section) {
+                $section.unbind('change').removeOption(/.?/);
+                var _dfAreaVal = (opt.defOption.area ? opt.defOption.toArray('area')[0].key : null);
+                var _dfLnVal = (opt.defOption.ln ? opt.defOption.toArray('ln')[0].key : null);
+                if ($area.val() != null && $area.val() != _dfAreaVal) {
+                    $section.showSectionOptions(opt.url.section, _sectionValue,
+                    	$city.val(), $area.val(), ($ln ? (defValue($ln.val(), _dfLnVal) == _dfLnVal ? '' : $ln.val()) : ''),
+                    	opt.defOption.section, opt.sortByText.section)
+                    .change(function (e, chgVal) {
+                        if ($sectionTarget) {
+                            $sectionTarget.val($(this).val()).trigger('textchange');
+                        }
+                    });
+                } else {
+                    $section.addOption(opt.defOption.section, true);
+                    if ($sectionTarget) {
+                        $sectionTarget.val($section.val()).trigger('textchange');
+                    }
+                }
+            }
+        }
+
+    };
+
+    this.exist = function (p) {
+        if ($.trim(p).length > 0 && $('#' + p).length > 0)
+            return $('#' + p);
+        else
+            return false;
+    };
+
+    this.defValue = function (p, d) {
+        if (p != null && typeof p == 'string' && $.trim(p).length > 0)
+            return $.trim(p);
+        else
+            return d;
+    };
+
+    $.fn.defaultValue = function (d) {
+        var el = this;
+        if (typeof el.val() == 'string' && $.trim(el.val()).length > 0)
+            return $.trim(el.val());
+        else
+            return d;
+    };
+
+    $.fn.showCityOptions = function (url, defaultValue, defOption, discard, sortByText) {
+        var el = this;
+        el.ajaxAddOption({
+            url: url,
+            data: {},
+            select: false,
+            fn: function () {
+            	if (sortByText) 
+            		el.sortOptions();
+                // 設定預設選項
+                if (defOption && typeof defOption == 'object') {
+                    el.addOption(defOption, defaultValue == getKeyArray(defOption)[0]);
+                }
+                if (0 < $.trim(defaultValue).length) {
+                    el.selectOptions(defaultValue, true);
+                }
+                if (discard && $.isArray(discard)) {
+                	el.removeOption(discard);
+                }
+				
+                el.trigger('change');
+            }
+        });
+        return this;
+    };
+
+    $.fn.changeCityOption = function (cityValue, lnValue, areaValue, sectionValue) {
+        var el = this;
+        el.val(cityValue);
+        el.trigger('change', { city: cityValue, ln: lnValue, area: areaValue, section: sectionValue });
+        return this;
+    }
+
+    $.fn.showAreaOptions = function (url, defaultValue, city, ln, defOption, sortByText) {
+        var el = this;
+        el.ajaxAddOption({
+            url: url,
+            data: { city: city, ln: ln },
+            select: false,
+            fn: function () {
+            	if (sortByText) 
+            		el.sortOptions();
+                if (defOption && typeof defOption == 'object') {
+                    el.addOption(defOption, defaultValue == getKeyArray(defOption)[0]);
+                }
+                if (0 < $.trim(defaultValue).length) {
+                    el.selectOptions(defaultValue, true);
+                }
+                el.trigger('change');
+            }
+        });
+        return this;
+    };
+
+    $.fn.changeAreaOption = function (areaValue, sectionValue) {
+        var el = this;
+        el.val(areaValue);
+        el.trigger('change', { area: areaValue, section: sectionValue });
+        return this;
+    }
+
+    $.fn.showSectionOptions = function (url, defaultValue, city, area, ln, defOption, sortByText) {
+        var el = this;
+        el.ajaxAddOption({
+            url: url,
+            data: { city: city, area: area, ln: ln },
+            select: false,
+            fn: function () {
+            	if (sortByText) 
+            		el.sortOptions();
+                if (defOption && typeof defOption == 'object') {
+                    el.addOption(defOption, defaultValue == getKeyArray(defOption)[0]);
+                }
+                if (0 < $.trim(defaultValue).length) {
+                    el.selectOptions(defaultValue, true);
+                }
+                el.trigger('change');
+            }
+        });
+        return this;
+    };
+
+    $.fn.changeSectionOption = function (sectionValue) {
+        var el = this;
+        el.val(sectionValue);
+        el.trigger('change', { section: sectionValue });
+        return this;
+    }
+
+    $.fn.showLnOptions = function (url, defaultValue, city, area, defOption, sortByText) {
+        var el = this;
+        el.ajaxAddOption({
+            url: url,
+            data: { city: city, area: area },
+            select: false,
+            fn: function () {
+            	if (sortByText) 
+            		el.sortOptions();
+                if (defOption && typeof defOption == 'object') {
+                    el.addOption(defOption, defaultValue == getKeyArray(defOption)[0]);
+                }
+                if (0 < $.trim(defaultValue).length) {
+                    el.selectOptions(defaultValue, false);
+                }
+                el.trigger('change');
+            }
+        });
+        return this;
+    };
+
+    $.fn.changeLnOption = function (lnValue, areaValue, sectionValue) {
+        var el = this;
+        el.val(lnValue);
+        el.trigger('change', { ln: lnValue, area: areaValue, section: sectionValue });
+        return this;
+    }
+
+    $.fn.showKindOptions = function (options) {
+        var defaultOptions = {
+            url: '/gateManager/System/Parameter/Kind',
+            kindValue: '',
+            defaultValue: '',
+            parentValue: '',
+            targetID: '',
+            defOption: { '0': '請選擇' }
+        };
+        var opt = $.extend({}, defaultOptions, options); var el = this;
+        var $tar = exist(opt.targetID);
+        if ($.trim(opt.defaultValue).length == 0 && $tar)
+            opt.defaultValue = $tar.val();
+        if ($tar && $tar.val() == '') //新增資料時,選項應為'請選擇'
+            opt.defaultValue = getKeyArray(opt.defOption)[0];
+        el.ajaxAddOption({
+            url: opt.url,
+            data: { kind: opt.kindValue, id: opt.parentValue, defaultItem: false },
+            select: false,
+            fn: function () {
+                if (opt.defOption)
+                    $(this).addOption(opt.defOption, opt.defaultValue == getKeyArray(opt.defOption)[0]);
+                // 設定預設選項
+                if (0 < $.trim(opt.defaultValue).length) {
+                    el.selectOptions(opt.defaultValue, true);
+                }
+            }
+        });
+        if ($tar) {
+            el.change(function () {
+                $tar.val($(this).val());
+            });
+        }
+        return this;
+    };
+
+    $.fn.showNumOptions = function (startNum, endNum, defaultValue) {
+        var el = this;
+        el.addOption('', '', false);
+        var i = 0;
+        var v = '';
+        for (i = startNum; i <= endNum; i++) {
+            v = '' + i;
+            if (i < 10) v = '0' + v;
+            if (v == defaultValue) {
+                obj.addOption(v, v);
+            } else {
+                obj.addOption(v, v, false);
+            }
+        }
+        return this;
+    };
+
+    $.fn.ajaxCheckboxList = function (options) {
+        var defaultOptions = {
+            url: '',
+            id: '',
+            kind: '',
+            text: '',
+            target: ''
+        };
+        var opt = $.extend({}, defaultOptions, options);
+        var el = this;
+        var $tar = exist(opt.target);
+        el.addCheckbox(opt.kind, opt.text, 'all_' + opt.kind, false)
+            .append('<br />')
+            .ajaxCheckboxes({
+                url: opt.url,
+                data: { kind: opt.kind, id: opt.id, defaultItem: false, IdValue: false },
+                checkedValue: ($tar ? $tar.val() : ''),
+                params: { name: opt.kind },
+                fn: function () {
+                    $(this).each(function () {
+                        $(this).children('input[name=' + opt.kind + ']:checkbox')
+                            .each(function () {
+                                $(this).click(function () {
+                                    if ($tar) {
+                                        if (this.checked)
+                                            $tar.pushValue($(this).val());
+                                        else
+                                            $tar.spliceValue($(this).val());
+                                    }
+                                });
+                            });
+                        $(this).children('input[name=all_' + opt.kind + ']:checkbox')
+                            .each(function () {
+                                $(this).click(function () {
+                                    var v = this.checked;
+                                    $('input[name=' + $(this).val() + ']:checkbox')
+                                        .each(function () {
+                                            this.checked = v;
+                                            $(this).triggerHandler('click');
+                                        });
+                                });
+                            });
+                    });
+                }
+            })
+    };
+
+    $.fn.addCheckbox = function () {
+        var add = function (el, v, t, n, sO) {
+            $(el).append(
+                $(document.createElement('input'))
+                .attr({
+                    id: 'chk_' + v,
+                    name: n,
+                    type: 'checkbox',
+                    value: v,
+                    checked: sO
+                })
+            ).append(
+                $(document.createElement('label')).attr({
+                    'for': 'chk_' + v
+                }).text(t)
+            )
+
+        };
+
+        var a = arguments;
+        if (a.length == 0) return this;
+        // checked ? default is false
+        var checkedValues = [];
+        var sO = false;
+        // multiple items, default is false
+        var m = false;
+        // other variables
+        var items, v, t, n;
+        if (typeof (a[0]) == 'object') {
+            m = true;
+            items = a[0];
+        }
+        if (a.length >= 2) {
+            if (!m) {
+                v = a[0];
+                t = a[1];
+                if (typeof (a[2]) == 'string') n = a[2];
+                else if (typeof (a[2]) == 'boolean') {
+                    n = v;
+                    sO = a[2];
+                }
+                if (typeof (a[3]) == 'boolean') sO = a[3];
+            } else {
+                if (a.length > 2) {
+                    if (typeof (a[1]) == 'string') n = a[1];
+                    if (typeof (a[2]) == 'string') checkedValues = a[2].split(',');
+                } else {
+                    if (typeof (a[1]) == 'string') checkedValues = a[1].split(',');
+                }
+            }
+        }
+        this.each(
+            function () {
+                if (m) {
+                    for (var item in items) {
+                        sO = ($.inArray(item, checkedValues) >= 0);
+                        add(this, item, items[item], n, sO);
+                    }
+                } else {
+                    add(this, v, t, n, sO);
+                }
+            }
+	    );
+        return this;
+    };
+
+    $.fn.ajaxCheckboxes = function (options) {
+        var defaultOptions = {
+            url: '',
+            type: 'POST',
+            data: ({}),
+            dataType: 'json',
+            checkedValue: '',
+            params: {},
+            fn: function () { },
+            args: 'undefined'
+        };
+        var opt = $.extend({}, defaultOptions, options);
+        this.each(
+		    function () {
+		        var el = this;
+		        $.ajax({
+		            url: opt.url,
+		            type: opt.type,
+		            data: opt.data,
+		            dataType: opt.dataType,
+		            success: function (r) {
+		                if (opt.params['name']) {
+		                    $(el).addCheckbox(r, opt.params['name'], opt.checkedValue);
+		                } else {
+		                    $(el).addCheckbox(r, opt.checkedValue);
+		                }
+		                if (typeof opt.fn == 'function') {
+		                    if (typeof opt.args == 'object') {
+		                        opt.fn.apply(el, opt.args);
+		                    } else {
+		                        opt.fn.call(el);
+		                    }
+		                }
+		            },
+		            error: function (errmsg) {
+		                alert('資料查詢失敗!!' + errmsg);
+		            }
+		        });
+		    }
+	    );
+        return this;
+    };
+
+    this.listToString = function (list) {
+        if (typeof (list) != 'object')
+            return list;
+        var v = '';
+        for (var item in list) {
+            if (list[item].length > 0)
+                v += ',' + list[item];
+        }
+        if (v.length > 0)
+            v = v.substring(1);
+        return v;
+    }
+
+    this.getKeyArray = function (list) {
+        if (typeof (list) != 'object')
+            return list;
+        var v = [];
+        for (var item in list) {
+            v.push(item);
+        }
+        return v;
+    }
+
+    $.fn.pushValue = function (v) {
+        var list = $(this).val().split(',');
+        var idx = $.inArray(v, list);
+        if (idx < 0)
+            list.push(v);
+        $(this).val(listToString(list));
+        return this;
+    };
+
+    $.fn.spliceValue = function (v) {
+        var list = $(this).val().split(',');
+        var idx = $.inArray(v, list);
+        if (idx >= 0)
+            list.splice(idx, 1);
+        $(this).val(listToString(list));
+        return this;
+    };
+
+
+    $.fn.CascadingDropDown = function (options) {
+        var defaultOptions = {
+            url: '',
+            defaultValue: '--',
+            defOption: { '--': '請選擇' },
+            parID: '0',
+            targetID: ''
+        };
+        var opt = $.extend({}, defaultOptions, options);
+        var el = this;
+
+        function removeSelect(pre) {
+            $('select[id^="' + pre + '_"]').remove();
+        }
+
+        function createSelect(pre, pid, defaultValue) {
+            $('<select>', {
+                id: pre + '_' + pid,
+                style: 'margin: 1px;',
+                change: function () {
+                    $('#' + opt.targetID).val($(this).val());
+                    removeSelect(this.id);
+                    for (var item in opt.defOption) {
+                        if ($(this).val() != item)
+                            createSelect(this.id, $(this).val(), item);
+                    }
+                }
+            }).ajaxAddOption({
+                url: opt.url,
+                data: { parentID: pid },
+                select: false,
+                fn: function () {
+                    if (this.options.length > 0) {
+                        el.append(this);
+                        if (opt.defOption)
+                            $(this).addOption(opt.defOption, defaultValue == getKeyArray(opt.defOption)[0]);
+                        if (0 < $.trim(opt.defaultValue).length)
+                            $(this).selectOptions(opt.defaultValue, true);
+                        else
+                            $(this).selectOptions();
+                    }
+                }
+            });
+        }
+
+        if (opt.defaultValue.length == '0') {
+            opt.defaultValue = '--';
+        }
+        createSelect(el.attr('ID'), opt.parID, opt.defaultValue);
+        return this;
+    };
+    
+    $.fn.selectRadio = function (value, disabled) {
+    	var _disabled = ($(disabled) != 'undefined' && typeof(disabled) == 'boolean') ? disabled : false;
+		$(this).each(function(i, item){
+			item.checked = false;
+			item.disabled = _disabled;
+			if($(item).val() == value)
+				item.checked = true;
+		});
+		return this;
+    }
+
+    $.fn.selectCheckBox = function (value, disabled) {
+    	var _disabled = ($(disabled) != 'undefined' && typeof(disabled) == 'boolean') ? disabled : false;
+    	var list = [];
+    	if(typeof(value) != 'string') value = value.toString();
+    	if(value.indexOf(',') >= 0)
+    		list = value.split(',');
+    	else
+    		list.push(value);
+		$(this).each(function(i, item){
+			item.checked = false;
+			item.disabled = _disabled;
+			if($.inArray($(item).val(), list) >= 0)
+				item.checked = true;
+		});
+		return this;
+    }
+    
+    //En                          英文字母
+	//Number                      數字
+	//Tilde                       ~
+	//EnNumber                    英數
+	//NumberDash                  數字與-符號
+	//NumberDashComma             數字與-,符號
+	//NumberDashCommaTilde        數字與-,~符號
+	//EnNumberDashUnderscore      英數與-_符號
+	//其它指定的 regx format
+	this.checkFormat = function(_type, _value) {
+		var reg;
+		if (_value != '' || _value == null) {
+			if (_type=='En')
+				reg = /[^a-zA-Z]/g;
+			else if (_type=='Number')
+				reg = /[^0-9]/g;
+			else if (_type=='Tilde')
+				reg = /[^\~]/g;
+			else if (_type=='EnNumber')
+				reg = /[^a-zA-Z0-9]/g;
+			else if (_type=='NumberDash')
+				reg = /[^0-9\-]/g;
+			else if (_type=='NumberDashComma')
+				reg = /[^0-9\-\,]/g;
+			else if (_type=='NumberDashCommaTilde')
+				reg = /[^0-9\-\,\~]/g;
+			else if (_type=='EnNumberDashUnderscore')
+				reg = /[^0-9\-\_]/g;
+			else if ($.trim(_type).length > 0)
+				reg = $.trim(_type);
+			return (!reg.test(_value));
+		} else
+			return false;
+	}
+	
+	/**
+	 * 檢查身份證及統編是否正確
+	 * 統編的驗証僅驗証是否為八碼
+	 * @return true 身份証字號無誤，否則為false
+	**/
+	$.fn.idcheck = function() {
+		var str = $.trim($(this).val());
+		if (str.length == 0) {
+			return true;
+		} else if (str.length == 10 || str.length == 8) {
+			str = str.toUpperCase();
+			checknum1=((str.charAt(0)>='A') && (str.charAt(0)<='Z'));
+			checknum2=((str.charAt(1) == 1) || (str.charAt(1) == 2));
+			if (checknum2 && checknum1) {
+				var idNums = [[1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7],[3,4],[1,8],[1,9],[2,0],[2,1],[2,2],[3,5],[2,3],[2,4],[2,5],[2,6],[2,7],[2,8],[2,9],[3,2],[3,0],[3,1],[3,3]];
+				var id1 = idNums[str.charCodeAt(0)-65][0];
+				var id2 = idNums[str.charCodeAt(0)-65][1];
+				var sum = (id1*1) + (id2*9) + str.charAt(1)*8 + str.charAt(2)*7 + str.charAt(3)*6 + str.charAt(4)*5 + str.charAt(5)*4 + str.charAt(6)*3 + str.charAt(7)*2 + str.charAt(8)*1;
+				var checknum = str.charAt(9);
+				var checkresult = (parseInt(sum) + parseInt(checknum)) % 10;
+				if(checkresult != 0) {
+					alert('對不起，您輸入的身分證有問題!');
+					return false;
+				} else
+					return true;
+//因資料隱匿先註解			} else if(str.length == 10&&(!checknum1||!checknum2)) {
+//				alert('對不起，身分證第一碼應為英文字母，第二碼應為「1」或「2」!')
+//				return false;
+			} else if (str.length == 8) {
+				return true;
+			}
+		} else {
+			alert('對不起，您輸入的長度不正確!身分證一共有10碼，統編為8碼!')
+			return false;
+		}
+	}
+
+	/*
+		defOption : null or {'': '請選擇' }
+		dateFormat: yyy/mm/dd=>100/03/01, yyyy-mm-dd=>2011-03-01
+		objDate.dropDownDate({day: null, dateFormat: 'yyy/mm'}) : 不顯示日
+	*/
+	$.fn.dropdownDate = function(options) {
+        var defaultOptions = {
+            year: '',
+            month: '',
+            day: '',
+            defOption: null,
+            dateFormat: 'yyy/mm/dd'
+        };
+        var opt = $.extend({}, defaultOptions, options);
+		var month = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+		var defVal = null;
+		var defText = null;
+		for(var item in opt.defOption) {
+			defVal = item;
+			defText = opt.defOption[item];
+		}
+		var fmt = null;
+		var fmtSplit = '';
+		if(opt.dateFormat.indexOf('/') > 0)
+			fmtSplit = '/';
+		else if(opt.dateFormat.indexOf('-') > 0)
+			fmtSplit = '-';
+        if(fmtSplit.length > 0)
+        	fmt = opt.dateFormat.split(fmtSplit);
+        else {
+        	if(opt.dateFormat.length == 7)
+        		fmt = ['yyy','mm','dd'];
+        	else if(opt.dateFormat.length == 8)
+        		fmt = ['yyyy','mm','dd'];
+        	else if(opt.month == null) {
+        		if(opt.dateFormat.length == 3)
+        			fmt = ['yyy'];
+        		else
+        			fmt = ['yyyy'];
+        	} else if(opt.day == null) {
+        		if(opt.dateFormat.length == 5)
+        			fmt = ['yyy','mm'];
+        		else
+        			fmt = ['yyyy','mm'];
+        	}
+        }
+		var _date = new Date();
+		var _year = _date.getFullYear();
+		if(fmt[0].length == 3)
+			_year -= 1911;
+		var _month = _date.getMonth();
+		var _day = _date.getDate();
+		var start_date = _year-10;
+		var end_date = _year+1;
+        //For each matching class
+		this.each(function() {
+			var element = $(this); 
+			var element_id = $(element).attr('id'); 
+			var elval = $(element).val();
+			if(elval.length > 0 && elval.length == opt.dateFormat.length) {
+				if(fmtSplit.length > 0) {
+					var vdt = elval.split(fmtSplit);
+					_year = vdt[0];
+					_month = parseInt(vdt[1],10)-1;
+					_day = vdt[2];
+				} else {
+					_year = elval.substr(0,fmt[0].length);
+					_month = parseInt(elval.substr(fmt[0].length-1,fmt[1].length),10)-1;
+					_day = elval.substr(fmt[0].length+fmt[1].length-1,fmt[2].length);
+				}
+			}
+			
+	        function leadingzeros(mynumber, len)
+			{
+				var max = 2;
+				if(len) max = len;
+				var l = $.trim(''+mynumber).length;
+				for(var i = l; i < max; i++) {
+					mynumber = '0'+mynumber;
+				}
+				return mynumber;
+			}
+			
+			var ddID = '';
+			var $day = null;
+			if( opt.day != null) {
+				ddID = element_id+'day';
+				if(opt.day.length > 0) ddID = opt.day;
+		        $day = $("<select name='" + ddID + "' id='" + ddID + "'></select>");
+		        if(defVal != null)
+		        	$day.append('<option value="'+ defVal + '">'+ defText +'</option>');
+		        for (i = 1; i <= 31; i++)
+				{
+					$day.append('<option value="' + leadingzeros(i) + '" '+ (_day == i ? 'selected' : '') +'>' + leadingzeros(i) + '</option>');
+				}
+			}
+			var $month = null;
+			if(opt.month != null) {
+				ddID = element_id+'month';
+				if(opt.month.length > 0) ddID = opt.month;
+				$month = $("<select name='" + ddID + "' id='" + ddID + "'></select>");
+		        if(defVal != null)
+		        	$month.append('<option value="'+ defVal + '">'+ defText +'</option>');
+		        for (i = 0; i <= 11; i++)
+				{
+					$month.append('<option value="' + leadingzeros(i + 1) + '" '+ (_month == i ? 'selected' : '') +'>' + month[i] + '</option>');
+				}
+			}
+
+			ddID = element_id+'year';
+			if(opt.year.length > 0) ddID = opt.year;
+			var $year = $("<select name='" + ddID + "' id='" + ddID + "'></select>");
+	        if(defVal != null)
+	        	$year.append('<option value="'+ defVal + '">'+ defText +'</option>');
+	        for(i = start_date; i <= end_date; i++)
+			{
+				$year.append('<option value="' + leadingzeros(i,fmt[0].length) + '" '+ (_year == i ? 'selected' : '') +'>' + leadingzeros(i,3) + '</option>');
+			}
+			
+			$(element).css('display', 'none');
+			$year.insertAfter($(element));
+			if($month) {
+				$('<span>年</span>').insertBefore($month.insertAfter($year)); 
+				if($day) {
+					$('<span>月</span>').insertBefore($day.insertAfter($month));
+					$('<span>日</span>').insertAfter($day);
+				} else {
+					$('<span>月</span>').insertAfter($month);
+				}
+			} else {
+				$('<span>年</span>').insertAfter($year);
+			}
+
+	        if($day) $day.change(changeDay);
+			if($month) $month.change(changeMonth);
+			$year.change(changeYear);
+			changeDay();
+
+			function changeYear() {
+				var _year = $year.val();
+				var _month = $month.val();
+				if(_year.length != fmt[0].length)
+					_month = defVal;
+				$month.selectOptions(_month, true).change();
+			}
+
+			function changeMonth() {
+				var _year = parseInt($year.val(), 10);
+				var _month = parseInt($month.val(), 10)-1;
+				if($day) {
+					var _day = $day.val();
+					$day.unbind('change').removeOption(/.?/);
+					var v = '';
+					var _days = getDaysOfMonth(_year, _month);
+					if(defVal != null)
+						$day.addOption(defVal, defText, _days == null);
+					if(_days != null) {
+						for(var i = 1; i <= getDaysOfMonth(_year, _month); i++) {
+							v = leadingzeros(i);
+							$day.addOption(v, v, v == _day);
+						}
+					}
+					$day.change(changeDay).change();
+				}
+			}
+
+			function changeDay() {
+				var v = $year.val();
+				if($month) {
+					v += fmtSplit + $month.val()
+					if($day) 
+						v += fmtSplit + $day.val();
+				}
+				if(v.length != opt.dateFormat.length) v = '';
+				$(element).attr('value', v);
+			}
+			
+			function getDaysOfMonth(_year, _month) {
+				var days = [31,28,31,30,31,30,31,31,30,31,30,31];
+				_days = days[_month];
+				var _yy = _year;
+				if(fmt[0].length == 3)
+					_yy += 1911;
+				if((_month == 1 && (_yy % 400 == 0)) || (_month == 1 && (_yy % 4 == 0) && (_yy % 100 != 0))) 
+					_days = 29;
+				return _days; 
+			}
+			
+			return this;
+		});
+	}
+
+	this.DateDiff = function(startDate, endDate, periodDays) {
+		var sDateID = (startDate ? startDate : 's');
+		var eDateID = (endDate ? endDate : 'e');
+		var sdate = $('#'+sDateID).val().split('/');
+		var edate = $('#'+eDateID).val().split('/');
+		var date1 = new Date(parseInt(sdate[0],10)+1911,sdate[1],sdate[2]);
+		var date2 = new Date(parseInt(edate[0],10)+1911,edate[1],edate[2]);
+		var maxDays = (periodDays ? periodDays : (365 * 2));
+		var iDays  =  parseInt((date2 - date1)  /  1000  /  60  /  60  /24)    //轉換為天數 
+		if (iDays < 0) {
+			alert("結束日期不得小於開始日期");
+			return false;
+		} else if (iDays > maxDays) {
+			alert("結束日期不得大於開始日期2年");
+			return false;
+		} else {
+			return true;  
+		}
+	}
+	
+	this.selectAll = function(objname, ischeck)
+	{
+		if ($('input[name='+objname+']').length>0)
+			$('input[name='+objname+']').attr('checked',ischeck);
+	}
+
+})(jQuery);
+
