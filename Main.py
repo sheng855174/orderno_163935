@@ -25,7 +25,9 @@ delayTime = config["delayTime"]
 caps = DesiredCapabilities.INTERNETEXPLORER
 caps['ignoreProtectedModeSettings'] = True
 caps['ignoreZoomSetting'] = True
-driver = webdriver.Ie(executable_path='IEDriverServer.exe',capabilities=caps)
+
+#driver = webdriver.Edge()
+driver = webdriver.Edge(executable_path='msedgedriver.exe')
 driver.get(主頁面url)
 
 
