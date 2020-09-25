@@ -14,8 +14,9 @@ Types if import:
 IMPORTANT: Do NOT post this list to the issue-tracker. Use it as a basis for
            yourself tracking down the missing module. Thanks!
 
-missing module named 'org.python' - imported by copy (optional), xml.sax (delayed, conditional)
+missing module named org - imported by copy (optional)
 missing module named pwd - imported by posixpath (delayed, conditional), shutil (optional), tarfile (optional), http.server (delayed, optional), webbrowser (delayed), netrc (delayed, conditional), getpass (delayed)
+missing module named 'org.python' - imported by pickle (optional), xml.sax (delayed, conditional)
 missing module named grp - imported by shutil (optional), tarfile (optional)
 missing module named urllib.urlencode - imported by urllib (optional), urllib3.packages.rfc3986.compat (optional)
 missing module named urllib.quote - imported by urllib (optional), urllib3.packages.rfc3986.compat (optional)
@@ -35,7 +36,6 @@ missing module named System - imported by pyreadline.clipboard.ironpython_clipbo
 missing module named StringIO - imported by pyreadline.py3k_compat (conditional), selenium.webdriver.remote.webelement (optional), urllib3.packages.six (conditional), xlutils.compat (conditional)
 missing module named IronPythonConsole - imported by pyreadline.console.ironpython_console (top-level)
 missing module named clr - imported by pyreadline.clipboard.ironpython_clipboard (top-level), pyreadline.console.ironpython_console (top-level)
-missing module named org - imported by pickle (optional)
 missing module named errorhandler - imported by xlutils.filter (delayed)
 missing module named guppy - imported by xlutils.filter (optional)
 missing module named elementtree - imported by xlrd.xlsx (delayed, conditional, optional)
